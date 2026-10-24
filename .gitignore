@@ -1,0 +1,8 @@
+# Godot editor cache (regenerated on import)
+godot/.godot/
+# exporter dependencies
+tools/export-world/node_modules
+# optional heavy export (npm run export -- --terrain-mesh)
+godot/data/world/meshes/terrain.glb
+__pycache__/
+*.blend1

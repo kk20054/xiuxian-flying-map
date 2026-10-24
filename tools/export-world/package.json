@@ -1,0 +1,15 @@
+{
+  "name": "xiuxian-export-world",
+  "private": true,
+  "description": "Run the Three.js demo headless and export its generated world for Godot / Blender",
+  "scripts": {
+    "export": "node export_world.js",
+    "export:eco": "node export_world.js --eco",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "1.63.0",
+    "pngjs": "7.0.0",
+    "three": "0.170.0"
+  }
+}
