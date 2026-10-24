@@ -6,3 +6,4 @@ tools/export-world/node_modules
 godot/data/world/meshes/terrain.glb
 __pycache__/
 *.blend1
+godot/data/terrain/preview/

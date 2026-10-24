@@ -1,0 +1,488 @@
+{
+ "version": 1,
+ "seed": 7,
+ "px": 80.0,
+ "legend": {
+  "alluvium": {
+   "color": [
+    216,
+    207,
+    156
+   ],
+   "cn": "冲积层"
+  },
+  "loess": {
+   "color": [
+    224,
+    184,
+    112
+   ],
+   "cn": "黄土"
+  },
+  "metamorphic": {
+   "color": [
+    138,
+    143,
+    122
+   ],
+   "cn": "变质岩（板岩·片岩）"
+  },
+  "granite": {
+   "color": [
+    201,
+    196,
+    189
+   ],
+   "cn": "花岗岩"
+  },
+  "quartz_sandstone": {
+   "color": [
+    185,
+    169,
+    138
+   ],
+   "cn": "石英砂岩"
+  },
+  "redbed": {
+   "color": [
+    192,
+    88,
+    58
+   ],
+   "cn": "丹霞红层"
+  },
+  "limestone": {
+   "color": [
+    159,
+    179,
+    182
+   ],
+   "cn": "石灰岩"
+  },
+  "volcanic": {
+   "color": [
+    91,
+    79,
+    87
+   ],
+   "cn": "火山岩"
+  },
+  "lacustrine": {
+   "color": [
+    111,
+    127,
+    79
+   ],
+   "cn": "湖沼沉积"
+  }
+ },
+ "regions": [
+  {
+   "name": "云梦山 花岗岩核",
+   "rock": "granite",
+   "ellipse": [
+    -1500,
+    -800,
+    6500,
+    4000,
+    15
+   ],
+   "why": "The main ridge (主脉) of 云梦山 with 古剑门 on it: a granite batholith in the core of the fold belt — the hardest rock stands highest and breaks into joint-bounded sword-like spires (剑峰) and sheer walls: 黄山 / 华山 country for a sword sect. 飞练崖 and 迎仙松 are its cliff and its crag pine."
+  },
+  {
+   "name": "云梦山 西脉 火山岩",
+   "rock": "volcanic",
+   "ellipse": [
+    -14500,
+    2500,
+    8500,
+    6000,
+    10
+   ],
+   "why": "百巧院's 西脉: 'mountains on four sides' in the novel → an old caldera with welded tuff walls; hydrothermal ores and 地火 are what an artifact-refining sect settles on. A cinder-cone field on the rest; 天柱山 at the west end stands alone as an inselberg (kept as the demo's landmark)."
+  },
+  {
+   "name": "笋石林 · 灵眼 喀斯特",
+   "rock": "limestone",
+   "ellipse": [
+    -5800,
+    3800,
+    3300,
+    2300,
+    20
+   ],
+   "why": "A limestone belt between the granite core and the volcanic west: 笋石林's stone shoots are a 石林 (Shilin-type) pinnacle karst, and the novel puts 灵眼之树 inside a vast stalactite cavern ('石窟长宽数百丈') — the round basin at 灵眼之树 is read as the 天坑 (collapse doline) that opens into it."
+  },
+  {
+   "name": "云梦山 东脉 石英砂岩",
+   "rock": "quartz_sandstone",
+   "ellipse": [
+    13800,
+    -500,
+    7000,
+    4800,
+    10
+   ],
+   "why": "落云宗's 东脉 (天泉/火云/白凤/幻石/锁烟/隐剑): thick horizontal quartz-sandstone beds cut by two joint sets — the 张家界 peak forest, pillars standing out of the cloud sea. 子母峰 (韩立's abode) is a mother-and-child pair of pillars; 听云亭 sits on a col of the plateau."
+  },
+  {
+   "name": "绿踪沼泽 地堑",
+   "rock": "lacustrine",
+   "ellipse": [
+    4700,
+    1900,
+    2000,
+    1500,
+    0
+   ],
+   "why": "The swamp on the 古剑门–落云宗 border (canon, with miasma): a graben dropped between two faults, poorly drained, filled with lake and swamp mud. 地脉灵眼 sits on its eastern fault — spirit veins follow deep faults."
+  },
+  {
+   "name": "南山 喀斯特",
+   "rock": "limestone",
+   "ellipse": [
+    19500,
+    11800,
+    13500,
+    5200,
+    5
+   ],
+   "why": "The range south of 韵州城: a limestone platform — 峰丛 cones on the uplands, 峰林 towers on the 韵州 plain at the water table (the Guilin–Yangshuo picture round a city)."
+  },
+  {
+   "name": "封日城 花岗岩岬",
+   "rock": "granite",
+   "ellipse": [
+    35700,
+    -13900,
+    2800,
+    3200,
+    0
+   ],
+   "why": "The 闵州 headland that 封日城 guards: a granite headland, sea cliffs and stacks (崂山-like)."
+  },
+  {
+   "name": "东海岸 喀斯特",
+   "rock": "limestone",
+   "ellipse": [
+    82000,
+    -20300,
+    4500,
+    3800,
+    0
+   ],
+   "why": "Coastal limestone hills west of 水影宗: towers at sea level, the drowned ones become stacks (下龙湾-like)."
+  },
+  {
+   "name": "水影宗 喀斯特湖",
+   "rock": "limestone",
+   "ellipse": [
+    89000,
+    -22500,
+    5500,
+    5500,
+    0
+   ],
+   "why": "水影宗 by the sea: a karst lake ringed by towers (the demo's natKarst sect, kept)."
+  },
+  {
+   "name": "倪航斋 黄土",
+   "rock": "loess",
+   "ellipse": [
+    96500,
+    -8500,
+    7000,
+    6500,
+    20
+   ],
+   "why": "倪航斋's 乾土功 country: loess tablelands (塬) and gullies draped over the eastern range (the demo's natLoess)."
+  },
+  {
+   "name": "鸾鸣宗 丹霞盆地",
+   "rock": "redbed",
+   "ellipse": [
+    70700,
+    6300,
+    9000,
+    6000,
+    -10
+   ],
+   "why": "鸾鸣宗 on the eastern plain: a red-bed basin with Danxia hills — 丹 'cinnabar', 霞 'rosy cloud': red walls for a phoenix (鸾) sect. Uplift edits raise the hills the operator steps into mesas."
+  },
+  {
+   "name": "七灵岛 火山岛弧",
+   "rock": "volcanic",
+   "ellipse": [
+    29500,
+    -49500,
+    13500,
+    7500,
+    0
+   ],
+   "why": "七灵岛 and 灵鳌/灵龟/灵凤: newly risen islands south of 大漩涡 → a young volcanic island group; 灵龟 a caldera ring."
+  }
+ ],
+ "structures": {
+  "folds": [
+   {
+    "name": "云梦褶皱带",
+    "ellipse": [
+     -1500,
+     500,
+     26000,
+     10000,
+     15
+    ],
+    "strike": 15,
+    "dip": 35,
+    "bed": 300,
+    "wave": 9000,
+    "amp": 300,
+    "contrast": 0.6,
+    "note": "ENE-striking fold belt (the demo's relief.trend = 15°): strike ridges, trellis drainage"
+   },
+   {
+    "name": "东山褶皱带",
+    "ellipse": [
+     94000,
+     -15000,
+     9500,
+     14500,
+     30
+    ],
+    "strike": 30,
+    "dip": 40,
+    "bed": 260,
+    "wave": 8000,
+    "amp": 250,
+    "contrast": 0.6
+   }
+  ],
+  "faults": [
+   {
+    "name": "绿踪西缘断层",
+    "pts": [
+     [
+      3300,
+      300
+     ],
+     [
+      3500,
+      1800
+     ],
+     [
+      3300,
+      3400
+     ]
+    ],
+    "up": "W",
+    "throw": 0.35,
+    "width": 260,
+    "reach": 4000,
+    "tip": 700,
+    "note": "the graben is only as long as the swamp basin, so the ridge south of it — 落云宗's dragon vein — is not dropped"
+   },
+   {
+    "name": "绿踪东缘断层",
+    "pts": [
+     [
+      6300,
+      300
+     ],
+     [
+      6100,
+      2000
+     ],
+     [
+      6400,
+      3400
+     ]
+    ],
+    "up": "E",
+    "throw": 0.35,
+    "width": 260,
+    "reach": 4000,
+    "tip": 700
+   },
+   {
+    "name": "飞练断崖",
+    "pts": [
+     [
+      -7200,
+      -1200
+     ],
+     [
+      -4200,
+      -1750
+     ],
+     [
+      -1300,
+      -2050
+     ]
+    ],
+    "up": "N",
+    "throw": 0.4,
+    "width": 200,
+    "reach": 3500,
+    "note": "the south-facing scarp 飞练崖's falls drop from"
+   },
+   {
+    "name": "云梦北缘断层",
+    "pts": [
+     [
+      -26000,
+      -6800
+     ],
+     [
+      -9000,
+      -7700
+     ],
+     [
+      8000,
+      -6600
+     ],
+     [
+      23000,
+      -6200
+     ]
+    ],
+    "up": "S",
+    "throw": 0.3,
+    "reach": 9000
+   },
+   {
+    "name": "东山山前断层",
+    "pts": [
+     [
+      85000,
+      -30000
+     ],
+     [
+      85800,
+      -16000
+     ],
+     [
+      86800,
+      -3000
+     ]
+    ],
+    "up": "E",
+    "throw": 0.3,
+    "reach": 8000
+   }
+  ],
+  "volcanoes": [
+   {
+    "name": "百巧院 古破火山口",
+    "x": -10819,
+    "z": 3174,
+    "r": 3800,
+    "h": 260,
+    "kind": "caldera",
+    "floor": 0.35
+   },
+   {
+    "name": "灵鳌岛",
+    "x": 33316,
+    "z": -43580,
+    "r": 1000,
+    "h": 290
+   },
+   {
+    "name": "灵凤岛",
+    "x": 27329,
+    "z": -54613,
+    "r": 800,
+    "h": 380
+   },
+   {
+    "name": "灵龟岛",
+    "x": 35280,
+    "z": -53254,
+    "r": 1000,
+    "h": 170,
+    "kind": "caldera",
+    "floor": 0.2
+   },
+   {
+    "name": "七灵岛 主岛",
+    "x": 30014,
+    "z": -48695,
+    "r": 650,
+    "h": 240
+   }
+  ],
+  "uplift": [
+   {
+    "name": "云梦东脉 龙脉",
+    "pts": [
+     [
+      -630,
+      -3140
+     ],
+     [
+      -19,
+      677
+     ],
+     [
+      1000,
+      4380
+     ],
+     [
+      3000,
+      4140
+     ],
+     [
+      5000,
+      4860
+     ],
+     [
+      7000,
+      4860
+     ],
+     [
+      8000,
+      1340
+     ],
+     [
+      10000,
+      1620
+     ],
+     [
+      11477,
+      -658
+     ]
+    ],
+    "width": 900,
+    "du": 0.3,
+    "note": "落云宗's dragon vein: from the 祖山 above 古剑门 down the 主脉, round the south of 绿踪沼泽 (the saddle at x 5000 is its 过峡) and up to the 东脉. Without it the solve's rivers cut the divide (fengshui.py: col −156 丈)"
+   },
+   {
+    "name": "鸾鸣丹霞丘",
+    "x": 70700,
+    "z": 6300,
+    "r": 5500,
+    "du": 0.5,
+    "note": "Danxia relief 100–300 m (r3 S3/S29) → 30–90 丈 real, ×2 for the walls of a phoenix sect"
+   },
+   {
+    "x": 64000,
+    "z": 9000,
+    "r": 2500,
+    "du": 0.35
+   },
+   {
+    "x": 76500,
+    "z": 3000,
+    "r": 2600,
+    "du": 0.35
+   }
+  ],
+  "glacier": {
+   "ela": 650,
+   "note": "a Pleistocene snow line below today's (the demo's snowLine 820): cirques and short troughs on 云梦's top"
+  }
+ },
+ "operators": {},
+ "lithology": {}
+}
