@@ -94,7 +94,10 @@ def sculpt(world, plan, steps=24, preserve=True, operators=True, log=print):
 
     # 4. back to the fixed ground
     h = h * (1 - pres) + H0 * pres
-    h = np.where(wet, H0, h)
+    # the banks: the engine cuts the ground away per pixel where the height crosses the water level, so the land must
+    # meet every river and shore at the exported height and only rise away from it (else rivers break into triangles)
+    bank = smoothstep(2 * cell, 6 * cell, -sd)          # exactly the export within two cells of water, then the sculpt
+    h = np.where(wet, H0, H0 + (h - H0) * bank)
     h = np.where(~wet & (H0 >= 0), np.maximum(h, 0.0), h)
     cap = 1250.0
     h = np.where(h > 900, 900 + (cap - 900) * np.tanh((h - 900) / (cap - 900)), h)

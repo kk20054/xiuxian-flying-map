@@ -1,0 +1,111 @@
+{
+ "w": 3296,
+ "h": 2005,
+ "cell": 40.0,
+ "x0": -29630.07604777057,
+ "z0": -63537.25647604883,
+ "max": 1077.0,
+ "min": -26.0,
+ "raw": "height_f16.bin",
+ "png": "height.png",
+ "encoding": "height_f16.bin: IEEE half LE, row-major W×H, 丈; height.png: uint16, h = v/65535·max (≥ 0 only)",
+ "source": "tools/terrain/sculpt.py",
+ "plan": "tools/terrain/plan",
+ "steps": 24,
+ "solver": {
+  "K0": 0.04003285914994791,
+  "dt": 13.221961762515019,
+  "steps": 24
+ },
+ "litho": {
+  "file": "lithology.png",
+  "encoding": "8-bit id per height sample",
+  "ids": {
+   "alluvium": 0,
+   "loess": 1,
+   "metamorphic": 2,
+   "granite": 3,
+   "quartz_sandstone": 4,
+   "redbed": 5,
+   "limestone": 6,
+   "volcanic": 7,
+   "lacustrine": 8
+  },
+  "colors": {
+   "alluvium": [
+    216,
+    207,
+    156
+   ],
+   "loess": [
+    224,
+    184,
+    112
+   ],
+   "metamorphic": [
+    138,
+    143,
+    122
+   ],
+   "granite": [
+    201,
+    196,
+    189
+   ],
+   "quartz_sandstone": [
+    185,
+    169,
+    138
+   ],
+   "redbed": [
+    192,
+    88,
+    58
+   ],
+   "limestone": [
+    159,
+    179,
+    182
+   ],
+   "volcanic": [
+    91,
+    79,
+    87
+   ],
+   "lacustrine": [
+    111,
+    127,
+    79
+   ]
+  }
+ },
+ "rocks": {
+  "file": "rocks.bin",
+  "count": 2327,
+  "layout": "float32 LE × 8: x, y (ground), z, radius, height, kind, yaw, var",
+  "kinds": [
+   "karst_tower",
+   "sandstone_pillar",
+   "stone_blade",
+   "sea_stack",
+   "granite_spire",
+   "basalt_column",
+   "danxia_butte"
+  ],
+  "per_kind": {
+   "karst_tower": 442,
+   "sandstone_pillar": 1852,
+   "stone_blade": 0,
+   "sea_stack": 15,
+   "granite_spire": 8,
+   "basalt_column": 0,
+   "danxia_butte": 10
+  }
+ },
+ "layers": {
+  "redness": "layers/redness.png",
+  "karst_form": "layers/karst_form.png",
+  "pillar_stage": "layers/pillar_stage.png",
+  "glacier": "layers/glacier.png"
+ }
+}
