@@ -39,6 +39,12 @@ func _ready() -> void:
 	World.progress.emit(0.82, "运模型")
 	await props.build()
 	terrain.apply_ground(props.facet_ground)   # the sects' fine ground paints the same biome ground as the range round it
+	if World.terrain_dir != "":
+		var rocks := Node3D.new()
+		rocks.name = "Rocks"
+		rocks.set_script(preload("res://scripts/world/rocks.gd"))
+		$World.add_child(rocks)
+		print("XY rocks: ", rocks.build(World.terrain_dir + "rocks.bin", props.facet))
 	World.progress.emit(0.9, "种树")
 	await trees.build()
 	Cfg.changed.connect(_on_cfg)

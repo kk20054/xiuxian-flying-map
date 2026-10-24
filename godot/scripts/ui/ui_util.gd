@@ -35,7 +35,10 @@ static func serif(weight := 400) -> Font:
 
 static func _font(path: String) -> Font:
 	if not _fonts.has(path):
-		_fonts[path] = load(path)
+		var f: FontFile = load(path)
+		# the CJK subsets lack the UI's symbols (⌂ ✦ ▮ ◩ ⋰ ● △ ◆ ·): a small DejaVu Sans subset fills them in
+		f.fallbacks = [load("res://fonts/DejaVuSans-symbols.ttf")]
+		_fonts[path] = f
 	return _fonts[path]
 
 

@@ -17,7 +17,9 @@ meant as the base you extend with Blender assets — see [01 pipeline & Blender]
 2. Press F5. The world data in `godot/data/world` is read at runtime (the folder has a `.gdignore`, so the editor does
    not try to import 180 MB of rasters and meshes).
 3. Command-line flags (after `--`): `--skip-intro`, `--no-autoquality`, `--shots=<dir>` (scripted walkthrough that saves
-   PNGs and quits — the same states as `docs/screenshots`), `--dump-sun` (writes the sun bake to `user://t_sun.png`).
+   PNGs and quits — the same states as `docs/screenshots`), `--dump-sun` (writes the sun bake to `user://t_sun.png`),
+   `--terrain=res://data/terrain` (fly over a geologically re-sculpted terrain made by `tools/terrain/sculpt.py`, with its
+   rock instances — see [docs/terrain](../terrain/README.md)), `--tour=<dir>` (one screenshot per landform region).
 
 ```bash
 godot --path godot -- --skip-intro
@@ -54,6 +56,8 @@ godot/
 │  ├─ world/props.gd          sect / city / landmark GLBs via GLTFDocument + facet ink material
 │  ├─ world/trees.gd          1.4 M trees → MultiMesh per (2600-丈 chunk × kind), parsed on a thread, thinned by altitude
 │  ├─ world/tree_kit.gd       the 9 low-poly tree kinds (stand-ins for Blender / asset-library trees)
+│  ├─ world/rocks.gd          --terrain's rock instances (karst towers, sandstone pillars, stacks…) as MultiMeshes
+│  ├─ world/rock_kit.gd       the procedural faceted rock meshes per kind (facet ink layout)
 │  ├─ world/cloud_sea.gd      the cloud sea's top surface where the plan has cloud
 │  ├─ world/sun_bake.gd       t_sun: shadow / cloud-sea shadow / sky openness, baked once on the GPU
 │  ├─ world/map_plane.gd      the painted 舆图 plane + map_overlay.gd (roads, villages, cities painted once)
@@ -95,6 +99,10 @@ godot/
 | debug panel (13) | `debug_panel.gd` | ✅ main groups; no pick mode |
 | auto quality (14) | `main.gd` | ✅ via `scaling_3d_scale` |
 
+Beyond the demo: `--terrain=…` loads a re-sculpted heightfield (per-rock erosion, karst, Danxia, pillars, granite,
+loess, volcanoes, glacial troughs), tints bare rock by its type (`t_litho`) and stands ~2 300 rock instances on it —
+[docs/terrain](../terrain/README.md).
+
 The ✗ rows are where the asset-driven upgrade goes — [03 upgrade roadmap](03-upgrade-roadmap.md) has a plan for each.
 
 ## Godot techniques used (and why)
@@ -128,8 +136,9 @@ The ✗ rows are where the asset-driven upgrade goes — [03 upgrade roadmap](03
   the patch's own height (`World.t_patch_h`, a Texture2DArray) is above the plain.
 - **Data outside the import system.** `data/world/.gdignore` + `Image.load_from_file` / `FileAccess` / `GLTFDocument`
   at runtime: no 180 MB import step, and the GLB facets are not welded by the importer (welding would break the
-  barycentric ink). For an exported game, add `data/world/*` to the export's non-resource include filter (or drop the
-  `.gdignore` and import the GLBs with "Generate LODs" off).
+  barycentric ink). An export skips `.gdignore`'d folders even when the include filter matches them, so the project
+  ships an editor export plugin (`addons/world_data_export`, enabled) that adds `data/world` and `data/terrain` to the
+  pack as raw files — [01 · Shipping an exported build](01-pipeline-and-blender.md#shipping-an-exported-build).
 - **Heights as raw half floats.** Godot's PNG loader strips 16-bit PNGs to 8 bits, so heights are read from
   `height_f16.bin` (IEEE half → `Image.FORMAT_RH`). The 16-bit PNGs are there for Blender / Terrain3D.
 - **1.4 M trees in seconds.** Parsing and bucketing run on a `Thread`; MultiMesh buffers are written as one

@@ -1,6 +1,6 @@
 extends Node
 ## Generates the UI theme and every scene of the port from code, so they are valid and editable in the Godot editor:
-##   godot --headless --path godot --script res://tools/build_scenes.gd
+##   godot --headless --path godot res://tools/build_scenes.tscn   (a scene, so the autoloads run)
 ## Re-run after changing the look here; or edit the saved .tscn/.tres in the editor and stop using this script.
 ## All values come from the demo's CSS (index.html L9–204).
 

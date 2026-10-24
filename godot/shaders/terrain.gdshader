@@ -37,6 +37,22 @@ void vertex() {
 	VERTEX = (inverse(MODEL_MATRIX) * vec4(wp, 1.0)).xyz;
 }
 
+// a re-sculpted terrain's rock map (tools/terrain: World --terrain=…): 8-bit rock id per height sample
+global uniform sampler2D t_litho : filter_nearest, repeat_disable;
+global uniform bool litho_on;
+
+// bare-rock colour per id (alluvium, loess, metamorphic, granite, quartz sandstone, red beds, limestone, volcanic,
+// lacustrine) and how strongly it shows where the rock is bare; display-space, muted for the 青绿 palette
+vec4 rock_col(int id) {
+	if (id == 1) return vec4(0.78, 0.68, 0.5, 0.75);
+	if (id == 3) return vec4(0.76, 0.76, 0.74, 0.8);
+	if (id == 4) return vec4(0.7, 0.65, 0.55, 0.75);
+	if (id == 5) return vec4(0.71, 0.4, 0.3, 0.85);
+	if (id == 6) return vec4(0.62, 0.67, 0.66, 0.65);
+	if (id == 7) return vec4(0.43, 0.41, 0.43, 0.7);
+	return vec4(0.0);
+}
+
 void fragment() {
 	vec3 wp = v_wp;
 	// a sect's patch GLB draws its ground wherever the patch has relief; the plain round its hills is still ours, and
@@ -81,9 +97,19 @@ void fragment() {
 	float wood_p = smoothstep(0.04, 0.42, gr.r + wn * 0.26);
 	base = mix(base, wood_col(xz), wood_p * 0.92 * (1.0 - mk));
 	base = season_ground(base, wp, Ns);
+	if (litho_on) {
+		// where the slope is too steep for soil the rock shows its own colour (Ns is smoothed over 80 丈, so a one-cell
+		// cliff reads ~40°); red beds and loess colour their own soil, so they show through on gentle ground too
+		int id = int(texture(t_litho, height_uv(xz)).r * 255.0 + 0.5);
+		vec4 rc = rock_col(id);
+		float floor_k = id == 5 ? 0.5 : (id == 1 ? 0.45 : 0.0);
+		float bare = max(smoothstep(0.93, 0.7, Ns.y), floor_k) * smoothstep(2.0, 20.0, h);
+		base = mix(base, rc.rgb * (0.92 + 0.16 * mott), rc.a * bare);
+	}
 
 	vec3 col;
 	float plain_k = 1.0 - smoothstep(4.0, 30.0, h);
+	if (litho_on) plain_k *= smoothstep(0.86, 0.97, Ns.y);   // a sculpted plain has relief (fans, terraces, low mesas): shade its slopes
 	vec3 lit = ao_mul(tone_col(base, t), s.b) + vec3(0.016, 0.02, 0.018) * N.y;
 	lit /= mix(1.0, max(toon.z * 0.96, 0.5), 1.0 - smoothstep(40.0, 420.0, wp.y));   // the low foot lit as the plain (L4760–4763)
 	// flat ground takes the lit tone it faces up into, the ranges' shadows fall across it (PLAINS_FS L5257–5258)

@@ -8,6 +8,11 @@ signal ready_world
 
 const DIR := "res://data/world/"
 
+## A re-sculpted terrain (tools/terrain/sculpt.py output, e.g. `-- --terrain=res://data/terrain`): its heights replace the
+## exported ones (same grid), its rock map becomes t_litho, its rocks.bin feeds rocks.gd. Empty = the exported land.
+var terrain_dir := ""
+var t_litho: ImageTexture
+
 var meta: Dictionary = {}
 var rect := Rect2()             # x0, z0, width, depth (丈)
 var cell := 40.0                # heightfield spacing
@@ -51,6 +56,7 @@ func load_all() -> void:
 
 	# heights: raw IEEE half floats (Godot strips 16-bit PNGs to 8 bits, so the raw file is what we read)
 	var himg := _half_image(H.raw.file, nx, nz)
+	_terrain_override(himg)
 	var cpu: Image = himg.duplicate()
 	cpu.convert(Image.FORMAT_RF)
 	heights = cpu.get_data().to_float32_array()
@@ -235,8 +241,30 @@ func _bilerp(H: PackedFloat32Array, w: int, h: int, fx: float, fz: float) -> flo
 
 
 func _half_image(file: String, w: int, h: int) -> Image:
-	var bytes := FileAccess.get_file_as_bytes(DIR + file)
+	var bytes := FileAccess.get_file_as_bytes(file if file.contains("/") else DIR + file)
 	return Image.create_from_data(w, h, false, Image.FORMAT_RH, bytes)
+
+
+## --terrain=<dir>: swap in a re-sculpted heightfield (same grid as the export) and its rock map.
+func _terrain_override(himg: Image) -> void:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--terrain="):
+			terrain_dir = a.substr(10).trim_suffix("/") + "/"
+	if terrain_dir == "":
+		return
+	var info = JSON.parse_string(FileAccess.get_file_as_string(terrain_dir + "terrain.json"))
+	if not info is Dictionary or int(info.get("w", 0)) != nx or int(info.get("h", 0)) != nz:
+		push_error("World: %s is not a terrain for this world (needs %d×%d, see tools/terrain/sculpt.py)" % [terrain_dir, nx, nz])
+		terrain_dir = ""
+		return
+	himg.copy_from(_half_image(terrain_dir + "height_f16.bin", nx, nz))
+	var lit := Image.load_from_file(terrain_dir + "lithology.png")
+	if lit:
+		lit.convert(Image.FORMAT_R8)
+		t_litho = ImageTexture.create_from_image(lit)
+		RenderingServer.global_shader_parameter_set("t_litho", t_litho)
+		RenderingServer.global_shader_parameter_set("litho_on", true)
+	print("World: terrain from ", terrain_dir)
 
 
 func _png(file: String) -> Image:

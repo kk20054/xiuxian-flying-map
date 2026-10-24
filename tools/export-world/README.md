@@ -28,14 +28,13 @@ Needs a machine where Chromium can start (SwiftShader software WebGL is fine; it
 ## Known issues in the shipped export (fixed in the exporter; re-export to clear)
 
 The data in `godot/data/world` was written before these exporter fixes. What could be repaired exactly by hand was
-(listed in `meta.json → repaired`): `sect_shuiying_surroundings.glb` taken out of `meta.meshes.files` (the file is
-still on disk and can be deleted), `meta.eco`, `meta.water.sd.centres`, the darkened tile-edge lines of
+(listed in `meta.json → repaired`): `sect_shuiying_surroundings.glb` taken out of `meta.meshes.files` and deleted, `meta.eco`, `meta.water.sd.centres`, the darkened tile-edge lines of
 `mountain_color.png` (restored to within one colour level) and `layout.json → sites[].look`. Still in the shipped
 files until the next `npm run export`:
 
-- **`sect_shuiying_surroundings.glb`** holds only exact copies of `sect_shuiying.glb` and `sect_shuiying_ground.glb`
-  (水影宗's mirror images, buildMirrors L5842–5853, share their geometry and reflect only in their shader; 127 k
-  triangles). Unlisted now, so neither `props.gd` nor `import_world.py` loads it.
+- **`sect_shuiying_surroundings.glb`** (deleted) held only exact copies of `sect_shuiying.glb` and
+  `sect_shuiying_ground.glb` (水影宗's mirror images, buildMirrors L5842–5853, share their geometry and reflect only in
+  their shader; 127 k triangles). A re-export no longer writes it.
 - **Per-frame-posed meshes at their unposed place.** `?test` never runs a frame, so 天柱山's nine floating stones
   (updateLore L11308–11312, nodes 10–18 of `sect_gujian_surroundings.glb`) sit at the world origin, buried, and so do
   nodes 7–8 (two small pieces with no transform, most likely 水影宗's two 灵舟, which updateSects L8403 places). The

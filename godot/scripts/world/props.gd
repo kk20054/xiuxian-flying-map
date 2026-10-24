@@ -4,8 +4,8 @@ extends Node3D
 ## the landmarks (props.glb). Loaded at runtime with GLTFDocument (data/world is .gdignore'd, so no import step and no
 ## importer welding the facet corners), then every surface gets the facet ink shader.
 ##
-## To replace them with Blender models: keep the same vertex layout (see facet.gdshader) or give your meshes any
-## material you like — the scene only needs MeshInstance3Ds at world positions.
+## To replace them with Blender models: bake the ink layout with tools/blender/bake_ink_layout.py (COLOR + UV2, see
+## facet.gdshader) to get the facet ink; meshes without COLOR + UV2 keep their own glTF materials.
 
 signal loaded_one(name: String)
 
@@ -45,6 +45,18 @@ func build() -> void:
 		var root := doc.generate_scene(state)
 		if root == null:
 			continue
+		# GLTFDocument stores positions as 16 bits over each mesh's AABB (up to 2 丈 off on the world-spanning meshes):
+		# rebuild the meshes from the uncompressed arrays
+		var exact := {}
+		for gm: GLTFMesh in state.get_meshes():
+			var am := ArrayMesh.new()
+			for si in gm.mesh.get_surface_count():
+				am.add_surface_from_arrays(gm.mesh.get_surface_primitive_type(si), gm.mesh.get_surface_arrays(si))
+				am.surface_set_material(si, gm.mesh.get_surface_material(si))
+			exact[gm.mesh.get_mesh()] = am
+		for mi: MeshInstance3D in root.find_children("*", "MeshInstance3D", true, false):
+			if exact.has(mi.mesh):
+				mi.mesh = exact[mi.mesh]
 		var ground: bool = String(f.file).ends_with("_ground.glb")
 		root.name = String(f.file).get_file().get_basename()
 		_apply(root, facet_ground if ground else facet)
@@ -57,7 +69,11 @@ func _apply(n: Node, mat: Material, xf := Transform3D.IDENTITY) -> void:
 	if n is Node3D:
 		xf = xf * n.transform
 	if n is MeshInstance3D:
-		n.material_override = mat
+		# the facet ink needs the baked layout (COLOR + UV2); anything else keeps the material it came with
+		var am := (n as MeshInstance3D).mesh as ArrayMesh
+		var need := Mesh.ARRAY_FORMAT_COLOR | Mesh.ARRAY_FORMAT_TEX_UV2
+		if am != null and am.get_surface_count() > 0 and (am.surface_get_format(0) & need) == need:
+			n.material_override = mat
 		n.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		# room for the relief slider: the shader lifts everything above y = 0 (a 1000-丈 sect rises 1000 at relief 2)
 		var top: float = (xf * (n as MeshInstance3D).get_aabb()).end.y

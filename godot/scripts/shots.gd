@@ -4,12 +4,22 @@ extends Node
 ## Run: godot --path godot -- --shots=/tmp/shots --skip-intro
 
 var dir := ""
+var tour := false
+
+## `-- --tour=<dir>`: a terrain tour instead — one shot over each landform region (compare `--terrain=…` runs with the
+## exported land). [place id, altitude 丈, camera offset south 丈]
+const TOUR := [["yunmeng", 2600.0, 2600.0], ["gujian", 1500.0, 1200.0], ["luoyun", 1650.0, 1500.0], ["zimu", 1300.0, 900.0],
+	["baiqiao", 2200.0, 2000.0], ["sunshi", 1500.0, 1200.0], ["lingyan", 1600.0, 1300.0], ["swamp", 1800.0, 1600.0],
+	["yunzhoucheng", 2600.0, 5200.0], ["minzhou", 2200.0, 2000.0], ["luanming", 2400.0, 2600.0], ["nihang", 2400.0, 2400.0],
+	["shuiying", 2400.0, 2600.0], ["qiling", 3200.0, 3000.0]]
 
 
 func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--shots="):
 			dir = a.substr(8)
+		elif a.begins_with("--tour="):
+			dir = a.substr(7); tour = true
 	if dir == "":
 		queue_free()
 		return
@@ -17,6 +27,14 @@ func _ready() -> void:
 	while Game.mode == Game.Mode.LOADING:
 		await get_tree().process_frame
 	var d := UIUtil.director()
+	if tour:
+		d.finish_intro()
+		for t in TOUR:
+			if World.by_id.has(t[0]):
+				await _fly(d, t[0], t[1], t[2], 2.0)
+				await _shot("tour_" + t[0])
+		get_tree().quit()
+		return
 	await _wait(1.0)
 	await _shot("01_intro")
 	d.finish_intro()

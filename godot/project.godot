@@ -30,6 +30,10 @@ window/vsync/vsync_mode=1
 theme/custom="res://ui/theme/ink_theme.tres"
 theme/default_font_multichannel_signed_distance_field=false
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/world_data_export/plugin.cfg")
+
 [input]
 
 fly_fwd={
@@ -224,4 +228,12 @@ t_biome={
 t_sun={
 "type": "sampler2D",
 "value": ""
+}
+t_litho={
+"type": "sampler2D",
+"value": ""
+}
+litho_on={
+"type": "bool",
+"value": false
 }

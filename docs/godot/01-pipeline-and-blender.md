@@ -142,7 +142,8 @@ editor then imports the PNGs and GLBs and the export holds only their `.ctex` / 
 
 What works (tested the same way, then the pack run with `godot --main-pack game.pck` from an empty folder:
 `FileAccess`, `Image.load_from_file` and `GLTFDocument` all read the files) is an editor export plugin that adds the raw
-files to the pack. `godot/addons/world_data_export/plugin.cfg`:
+files to the pack. The project ships it, enabled (`godot/addons/world_data_export/`; it also packs `data/terrain`, the
+re-sculpted terrain, without its `preview/`). Its essentials, `plugin.cfg`:
 
 ```ini
 [plugin]
