@@ -127,6 +127,6 @@ The ✗ rows are where the asset-driven upgrade goes — [03 upgrade roadmap](03
 |---|---|---|
 | flight | ![](../screenshots/02_flight_yunmeng.png) | ![](../screenshots/godot/02_flight_yunmeng.png) |
 | card at 古剑门 | ![](../screenshots/05_info_card.png) | ![](../screenshots/godot/05_info_card.png) |
-| 舆图 | ![](../screenshots/06_map.png) | ![](../screenshots/godot/06b_map_home.png) |
+| 舆图 | ![](../screenshots/06b_map_home.png) | ![](../screenshots/godot/06b_map_home.png) |
 
 (The port's shots are rendered with Mesa llvmpipe through the Compatibility renderer under Xvfb.)
