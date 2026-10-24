@@ -12,9 +12,10 @@ What it builds (all from godot/data/world, written by tools/export-world):
   Places       an empty per place (sect, city, mountain…) named after it, with the place id as a custom property
   Paths        roads and rivers as curves
   Trees        one point per tree with attributes kind / colour / yaw / scale, instanced by a Geometry Nodes modifier
-               from the collection "XY Tree Kinds" (9 children, in kind order: pine, broadleaf, tall, 黄山松, willow,
-               blossom, spirit, lotus, reeds). Replace those children with your asset-library trees and the whole
-               forest updates — this is the hook for high-fidelity forests.
+               from the collection "XY Tree Kinds" (9 children 0_pine, 1_broadleaf, 2_tall, 3_huangshan_pine (黄山松),
+               4_willow, 5_blossom, 6_spirit, 7_lotus, 8_reeds). Replace those children with your asset-library trees and
+               the whole forest updates — this is the hook for high-fidelity forests. Collection Info hands the children
+               out in alphabetical order of their names, so keep the kind's prefix on a replacement (0_SM_Pine...).
 
 Scale: --scale is Blender units per 丈. The default 0.1 puts the world at the *model* scale of the asset pack: the demo
 places pack models at 10 丈 per metre (PACK_M, L667), so at 0.1 a 1-m model in the pack is 1 Blender unit, i.e. your
@@ -142,6 +143,8 @@ def build_terrain(a, meta, R, root):
     plain = np.array([0.616, 0.69, 0.541], dtype=np.float32)
     k = np.clip((Y - 1.0) / 13.0, 0.0, 1.0)[..., None] * (mc[mj, mi, 3:4] > 0.5)
     col = plain * (1 - k) + col * k
+    # the ramp and `plain` are display-space sRGB (meta.mountainColor.encoding); a FLOAT_COLOR attribute holds scene-linear
+    col = np.where(col <= 0.04045, col / 12.92, ((col + 0.055) / 1.055) ** 2.4).astype(np.float32)
     attr = me.color_attributes.new("Col", "FLOAT_COLOR", "POINT")
     rgba = np.concatenate([col.reshape(-1, 3), np.ones((rows * cols, 1), dtype=np.float32)], axis=1)
     attr.data.foreach_set("color", rgba.ravel())
@@ -225,20 +228,27 @@ def build_paths(a, R, root):
         cu = bpy.data.curves.new("XY " + kind, "CURVE"); cu.dimensions = "3D"
         n = 0
         for r in P[kind]:
-            pts = [p for p in r["pts"] if R[0] <= p[0] <= R[2] and R[1] <= p[1] <= R[3]]
-            if len(pts) < 2:
-                continue
-            sp = cu.splines.new("POLY"); sp.points.add(len(pts) - 1)
-            for i, p in enumerate(pts):
-                y = p[2] if len(p) > 2 else 1.0
-                sp.points[i].co = (*to_bl(p[0], y, p[1], s), 1.0)
-            n += 1
+            # one spline per run of points inside the region: a path that leaves and comes back is not joined by a chord
+            runs = [[]]
+            for p in r["pts"]:
+                if R[0] <= p[0] <= R[2] and R[1] <= p[1] <= R[3]:
+                    runs[-1].append(p)
+                elif runs[-1]:
+                    runs.append([])
+            for pts in runs:
+                if len(pts) < 2:
+                    continue
+                sp = cu.splines.new("POLY"); sp.points.add(len(pts) - 1)
+                for i, p in enumerate(pts):
+                    y = p[2] if len(p) > 2 else 1.0
+                    sp.points[i].co = (*to_bl(p[0], y, p[1], s), 1.0)
+                n += 1
         if n:
             link(bpy.data.objects.new("XY " + kind, cu), coll)
 
 
 def tree_kinds_collection(root, s):
-    """Nine placeholder trees (cones / ico blobs), in kind order — replace the children with real assets."""
+    """Nine placeholder trees (cones / ico blobs) named 0_pine … 8_reeds: replace them with real assets, keep the prefix."""
     coll = bpy.data.collections.get("XY Tree Kinds")
     if coll:
         return coll
@@ -312,8 +322,9 @@ def build_trees(a, meta, R, root):
     L.new(kind_a.outputs["Attribute"], iop.inputs["Instance Index"])
     L.new(eul.outputs["Rotation"], iop.inputs["Rotation"])
     L.new(scale_a.outputs["Attribute"], iop.inputs["Scale"])
-    L.new(iop.outputs["Instances"], go.inputs[0])
-    real.mute = True   # unmute to make the forest real geometry (heavy)
+    L.new(iop.outputs["Instances"], real.inputs["Geometry"])
+    L.new(real.outputs["Geometry"], go.inputs[0])
+    real.mute = True   # muted it passes the instances through; unmute to make the forest real geometry (heavy)
     mod = ob.modifiers.new("XY Forest", "NODES"); mod.node_group = ng
     print("trees:", len(verts))
 

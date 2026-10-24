@@ -10,6 +10,8 @@ writes the layout facet.gdshader reads:
                  of the edge opposite corner C
     UV  (TEXCOORD_0)  barycentric (x, y) of the corner: A = (1, 0), B = (0, 1), C = (0, 0)
     UV1 (TEXCOORD_1)  ink weights of the edges opposite corners A and B
+The UVs are given in glTF / Godot UV space (what the GLB holds and Godot reads). Blender's glTF exporter writes every UV as
+(u, 1 - v), so the Blender UV layers hold them pre-flipped: A = (1, 1), B = (0, 0), C = (0, 1), UV1 = (opp A, 1 - opp B).
 Ink weight of an edge: 1.0 if it is marked Freestyle or Sharp, or the faces meet at more than --angle degrees, or it is a
 boundary (an outline); 0.0 on flat interior edges (quad diagonals, coplanar splits). The demo uses 0.35–0.9 by part
 (roof ridges strong, wall panels light): paint a float face attribute "ink" (0..1) to scale it per face.
@@ -36,6 +38,14 @@ def to_srgb(c):
     return [12.92 * x if x <= 0.0031308 else 1.055 * x ** (1 / 2.4) - 0.055 for x in c]
 
 
+def freestyle_marks(me):
+    """Indices of the Freestyle-marked edges: a boolean edge attribute in Blender 4.3+ / 5.x, MeshEdge.use_freestyle_mark before."""
+    a = me.attributes.get("freestyle_edge")
+    if a is not None and a.domain == "EDGE":
+        return {i for i, d in enumerate(a.data) if d.value}
+    return {e.index for e in me.edges if getattr(e, "use_freestyle_mark", False)}
+
+
 def face_colour(ob, bm, f, col_layer):
     if col_layer is not None:
         c = [0.0, 0.0, 0.0]
@@ -56,17 +66,22 @@ def bake(ob, angle_deg):
     me = ob.data
     bm = bmesh.new()
     bm.from_mesh(me)
+    bm.edges.ensure_lookup_table()
+    marked = {bm.edges[i] for i in freestyle_marks(me)}       # (the original edges survive the triangulation)
     bmesh.ops.triangulate(bm, faces=bm.faces[:])
     bm.normal_update()
     thr = math.radians(angle_deg)
-    fs_layer = bm.edges.layers.int.get("freestyle_edge")
-    col_layer = bm.loops.layers.float_color.get("Col") or bm.loops.layers.color.get("Col")
+    col_layer = bm.loops.layers.float_color.get("Col")
+    # a BYTE_COLOR "Col" reads back through bmesh as its stored sRGB bytes / 255: already display-space, no to_srgb
+    col_byte = col_layer is None and bm.loops.layers.color.get("Col") is not None
+    if col_byte:
+        col_layer = bm.loops.layers.color.get("Col")
     ink_layer = bm.faces.layers.float.get("ink")
 
     def edge_ink(e):
         if len(e.link_faces) < 2:
             return 1.0
-        if not e.smooth or (fs_layer is not None and e[fs_layer]):
+        if not e.smooth or e in marked:
             return 1.0
         a = e.link_faces[0].normal.angle(e.link_faces[1].normal, 0.0)
         return 1.0 if a > thr else 0.0
@@ -81,7 +96,8 @@ def bake(ob, angle_deg):
             a_, b_ = f.loops[(i + 1) % 3].vert, f.loops[(i + 2) % 3].vert
             e = next(e for e in f.edges if set(e.verts) == {a_, b_})
             opp.append(edge_ink(e) * (f[ink_layer] if ink_layer is not None else 1.0))
-        tris.append((v, to_srgb(face_colour(ob, bm, f, col_layer)), opp))
+        c = face_colour(ob, bm, f, col_layer)
+        tris.append((v, c if col_byte else to_srgb(c), opp))
     bm.free()
 
     new = bpy.data.meshes.new(me.name + "_ink")
@@ -93,12 +109,12 @@ def bake(ob, angle_deg):
     uv0 = new.uv_layers.new(name="UVMap")
     uv1 = new.uv_layers.new(name="UVMap.001")
     col = new.color_attributes.new("Col", "FLOAT_COLOR", "CORNER")
-    bary = [(1.0, 0.0), (0.0, 1.0), (0.0, 0.0)]
+    bary = [(1.0, 1.0), (0.0, 0.0), (0.0, 1.0)]          # A (1, 0), B (0, 1), C (0, 0) once the exporter flips v
     for t, (_, c, opp) in enumerate(tris):
         for i in range(3):
             li = 3 * t + i
             uv0.data[li].uv = bary[i]
-            uv1.data[li].uv = (opp[0], opp[1])
+            uv1.data[li].uv = (opp[0], 1.0 - opp[1])
             col.data[li].color = (c[0], c[1], c[2], opp[2])
     new.materials.clear()
     for slot in ob.material_slots:
