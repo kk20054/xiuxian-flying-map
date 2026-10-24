@@ -16,6 +16,7 @@
 //   water_tex.png        RGBA8, the demo's packed water texture (R shore distance, GB flow, A sea) — what its water shader samples
 //   water_mask.png       8-bit, water coverage (sea, rivers, lakes, moats) over the world rect
 //   water_sd.png         16-bit, signed distance to the shore (+ in water): d = (v - 32768) / 8 丈, half the mask's resolution
+//                        (each pixel the mean of a 2×2 block of mask texels; centres in meta.water.sd.centres)
 //   sea_depth.png        8-bit, 0 inland water .. 255 open sea (the water sheet sinks from water.depth to water.seaDepth)
 //   biome.png            8-bit biome id per cell (meta.biome.names), biome_preview.png the same in the demo's debug colours
 //   ground.png           RGBA: R woods, G fields, B bare ground of yards/lanes, A the lie of the fields
@@ -23,9 +24,11 @@
 //   paths.json           roads, rivers, streams (polylines [x, z, (y)]), bridges, villages
 //   layout.json          sect sites, landmarks, peaks, pools, falls, moats, clusters
 //   trees.bin            8 bytes per tree: uint16 x, z over the rect, uint8 kind, colour, yaw, scale (meta.trees)
-//   eco.bin              (--eco) float32 × 7 per ground plant card: model id, x, y, z, scale, tint, 1  (meta.eco.names)
-//   meshes/*.glb         the procedural sect and city meshes and landmarks (vertex layout below); --terrain-mesh adds
-//                        meshes/terrain.glb, the demo's own faceted terrain tiles (finest level, ~1.5M triangles, indexed)
+//   eco.bin              (--eco) float32 × 10 per ground plant card (WORLD.ecoGround, an EcoList, L854–863: meadows, verges,
+//                        village gardens; not the eco trees): model id (meta.eco.names), x, y, z, scale, tint r, g, b, grey, ground
+//   meshes/*.glb         the procedural sect and city meshes and landmarks (vertex layout below), listed in meta.meshes.files;
+//                        --terrain-mesh adds meshes/terrain.glb (meta.meshes.terrain, not in files), the demo's own faceted
+//                        terrain tiles (finest level, ~1.5M triangles, indexed)
 //
 // Vertex layout of the exported facet meshes (so the ink-line shader survives the trip through glTF):
 //   POSITION, NORMAL (flat), COLOR_0.rgb = face colour, COLOR_0.a = ink weight of the edge opposite corner C,
@@ -114,9 +117,10 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
     hmax = Math.ceil(hmax + 1);
     const q16 = (H) => { const o = new Uint16Array(H.length); for (let i = 0; i < H.length; i++) o[i] = Math.round((Math.max(0, H[i]) / hmax) * 65535); return o; };
     window.__h16 = q16(W.H); window.__p16 = W.patches.map((P) => q16(P.H));
-    // shore distance at half the mask's resolution, as 16-bit (+32768 bias, 1/8 丈 steps — the demo's own quantum)
-    const mw = W.maskW >> 1, mh = W.maskH >> 1, sd = new Uint16Array(mw * mh);
-    for (let j = 0; j < mh; j++) for (let i = 0; i < mw; i++) sd[j * mw + i] = Math.max(0, Math.min(65535, W.sd[(j * 2) * W.maskW + i * 2] + 32768));
+    // shore distance at half the mask's resolution, as 16-bit (+32768 bias, 1/8 丈 steps — the demo's own quantum): the mean of
+    // each 2×2 block, so a pixel's centre is the block's centre (the mask is 2801 high: the last mask row is left out)
+    const mw = W.maskW >> 1, mh = W.maskH >> 1, sd = new Uint16Array(mw * mh), MW = W.maskW;
+    for (let j = 0; j < mh; j++) for (let i = 0; i < mw; i++) { const o = j * 2 * MW + i * 2; sd[j * mw + i] = Math.max(0, Math.min(65535, Math.round((W.sd[o] + W.sd[o + 1] + W.sd[o + MW] + W.sd[o + MW + 1]) / 4) + 32768)); }
     window.__sd16 = sd;
     window.__biome = W.biome.id instanceof Uint8Array ? W.biome.id : Uint8Array.from(W.biome.id);
     const prev = document.createElement('canvas'); window.__biomePrev = Y.biomeMap(1);
@@ -126,15 +130,18 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
       layout: { S: L.S, k: L.k, origin: L.origin, note: 'world = (basemap_px - origin) * k; basemap px are the 1490x812 云梦山 screenshot of selfmate 人界舆图' },
       height: { file: 'height.png', w: W.nx, h: W.nz, cell: W.g, x0: W.rect.x0, z0: W.rect.z0, max: hmax, encoding: 'uint16 grey, h = v / 65535 * max; sample (i, j) sits at (x0 + i*cell, z0 + j*cell)' },
       patches: W.patches.map((P, k) => ({ file: `height_patch_${k}.png`, w: P.nx, h: P.nz, cell: P.g, x0: P.x0, z0: P.z0, x1: P.x1, z1: P.z1 })),
-      water: { mask: { file: 'water_mask.png', w: W.maskW, h: W.maskH }, sd: { file: 'water_sd.png', w: mw, h: mh, encoding: 'uint16, d = (v - 32768) / 8 丈, + inside water' }, seaDepth: { file: 'sea_depth.png', w: W.seaLo.w, h: W.seaLo.h }, depth: Y.CONFIG.water.depth, seaDepthMax: Y.CONFIG.water.seaDepth, note: 'pixel centres: x = rect.x0 + (i + 0.5) / w * (rect.x1 - rect.x0)' },
+      water: { mask: { file: 'water_mask.png', w: W.maskW, h: W.maskH }, sd: { file: 'water_sd.png', w: mw, h: mh, encoding: 'uint16, d = (v - 32768) / 8 丈, + inside water', centres: 'pixel (i, j) = mean of mask texels 2i..2i+1, 2j..2j+1: x = rect.x0 + (2i + 1) / mask.w * (rect.x1 - rect.x0), z likewise with mask.h' }, seaDepth: { file: 'sea_depth.png', w: W.seaLo.w, h: W.seaLo.h }, depth: Y.CONFIG.water.depth, seaDepthMax: Y.CONFIG.water.seaDepth, note: 'pixel centres: x = rect.x0 + (i + 0.5) / w * (rect.x1 - rect.x0)' },
       biome: { file: 'biome.png', w: W.biome.w, h: W.biome.h, names: ['海', '海滩', '河滩', '沼泽', '花海', '草甸', '农田', '村镇', '阔叶林', '针叶林', '竹林', '崖壁', '高山', '灵地', '宗门', '谷地', '荒原'], colors: ['#3d6f8e', '#e2d3a2', '#bfc9a0', '#5b6b3a', '#e6a1c4', '#9fcf6a', '#d8c26a', '#b07a55', '#3f7d3a', '#2f5b44', '#7fb36a', '#8a8a86', '#eef2f4', '#8fd6d0', '#c94f3d', '#5fae4e', '#d6c08a'], stats: W.stats.biome },
       ground: { file: 'ground.png', w: W.ground.w, h: W.ground.h, channels: 'R woods, G fields, B bare ground (yards, lanes), A the lie of the fields' },
       trees: { file: 'trees.bin', stride: 7, fields: ['x', 'y', 'z', 'scale', 'kind', 'colour', 'yaw'], count: window.__keepTrees ? window.__keepTrees.length / 7 : 0 },
-      eco: { stride: 7, fields: ['model', 'x', 'y', 'z', 'scale', 'tint', 'flag'], count: window.__keepEco ? window.__keepEco.length / 7 : 0 },
+      // WORLD.ecoGround is an EcoList (L854–863): ten floats a card in .a, .length = the number of cards
+      eco: { stride: 10, fields: ['model', 'x', 'y', 'z', 'scale', 'tintR', 'tintG', 'tintB', 'tintGrey', 'ground'], tint: 'r, g, b multiply, grey = how far toward grey (L850)', count: window.__keepEco ? window.__keepEco.length : 0 },
       config: strip(Y.CONFIG),
       stats: strip(W.stats),
     };
   });
+  // the cards' model ids index the demo's ECO_NAMES (L816–824), which is not on the test hook: read it from the source
+  { const m = fs.readFileSync(path.join(DEMO, 'index.html'), 'utf8').match(/const ECO_NAMES = \[([\s\S]*?)\];/); if (m) meta.eco.names = m[1].match(/'[^']*'/g).map((q) => q.slice(1, -1)); }
   // places, paths, layout: plain JSON
   const extra = await page.evaluate(() => {
     const Y = window.__ym, W = Y.WORLD, r1 = (v) => Math.round(v * 10) / 10;
@@ -152,8 +159,8 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
       layout: { sects: strip(Y.dev.sects()), marks: strip(Y.dev.marks()), peaks: strip(W.peaks.slice(0, 4000)), pools: strip(W.pools), falls: strip(W.falls), moats: strip(W.moats), clusters: strip(W.clusters), mainPeak: strip(W.mainPeak), pillar: strip(W.pillar), vortex: strip(W.vortex) },
     };
   });
-  // the sect sites (centre, radius, look, cloud-sea top) and the cloud sea's planned density grid (07c)
-  extra.layout.sites = await page.evaluate(() => window.__ym.WORLD.sites.map((S) => ({ id: S.id, x: Math.round(S.x * 10) / 10, z: Math.round(S.z * 10) / 10, R: S.R, look: S.look, cloud: S.cloud, base: S.base })));
+  // the sect sites (centre, radius, look, cloud-sea top) and the cloud sea's planned density grid (07c); the look is the def's (L8361)
+  extra.layout.sites = await page.evaluate(() => window.__ym.WORLD.sites.map((S) => ({ id: S.id, x: Math.round(S.x * 10) / 10, z: Math.round(S.z * 10) / 10, R: S.R, look: S.def && S.def.look, cloud: S.cloud })));
   json('places.json', extra.places); json('paths.json', extra.paths); json('layout.json', extra.layout);
   const cs = await page.evaluate(() => { const P = window.__ym.WORLD.cloudSea; window.__cs = P.data; return { w: P.w, h: P.h, c: P.c }; });
   meta.cloudSea = { file: 'cloud_sea.png', w: cs.w, h: cs.h, cell: cs.c, encoding: '8-bit planned density over the world rect (0 = open sky, 255 = full sea)' };
@@ -172,7 +179,8 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
       for (let v = 0; v < a.position.count; v++) {
         const i = Math.round((P[v * 3] - R.x0) / g), j = Math.round((P[v * 3 + 2] - R.z0) / g);
         if (i < 0 || j < 0 || i >= nx || j >= nz) continue;
-        const k = (j * nx + i) * 4; if (out[k + 3] && P[v * 3 + 1] < -30) continue;   // skirt vertices (sunk 70, darker) never overwrite
+        // skirt vertices (70 under their grid vertex, col × 0.8, L5086–5090) never write: measured against the tile's own Y() (L5055)
+        const h = W.H[j * nx + i], y = h > 0 ? h : h < -5 ? h : -1.5, k = (j * nx + i) * 4; if (P[v * 3 + 1] < y - 30) continue;
         out[k] = C[v * 3]; out[k + 1] = C[v * 3 + 1]; out[k + 2] = C[v * 3 + 2]; out[k + 3] = 255; n++;
       }
     });
@@ -221,10 +229,13 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
     meta.trees = { file: 'trees.bin', count: meta.trees.count, bytesPerTree: 8, layout: 'uint16 x, uint16 z (0..65535 over rect), uint8 kind, uint8 colour, uint8 yaw (v/256*2π), uint8 scale (v/255*scaleMax), little-endian', scaleMax: q.smax, kinds: q.kinds };
     write('trees.bin', Buffer.from((await pull('window.__treeQ', Uint8Array)).buffer));
   }
-  if (ECO && meta.eco.count) { meta.eco.file = 'eco.bin'; write('eco.bin', Buffer.from((await pull('Float32Array.from(window.__keepEco)', Float32Array)).buffer)); }
+  if (ECO && meta.eco.count) { meta.eco.file = 'eco.bin'; write('eco.bin', Buffer.from((await pull('window.__keepEco.a.subarray(0, window.__keepEco.n * 10)', Float32Array)).buffer)); }
 
   if (MESHES) {
     console.log('exporting meshes...');
+    // ?test never runs the render loop (L14923): one frame places what is posed per frame (天柱山's floating stones, updateLore
+    // L11308–11312; the boats, updateSects L8403) and brings every world matrix up to date (wheels hang under positioned groups)
+    await page.evaluate(() => { try { window.__ym.render(1); } catch (e) { console.log('YM export: render(1) failed: ' + e); } });
     // (in the page) turn each facet mesh into a plain glTF mesh with the vertex layout described at the top, and export GLB
     await page.evaluate((t) => { window.__terrainMesh = t; }, TERRAIN_MESH);
     const list = await page.evaluate(async () => {
@@ -248,7 +259,7 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
         e.setAttribute('color', new THREE.BufferAttribute(col, 4, true)); e.setAttribute('uv', new THREE.BufferAttribute(uv0, 2, true)); e.setAttribute('uv1', new THREE.BufferAttribute(uv1, 2, true));
         e.computeVertexNormals();   // unindexed: these are the flat facet normals
         const m = new THREE.Mesh(e, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, name: 'facet' }));
-        m.name = name; src.updateMatrixWorld(); m.applyMatrix4(src.matrixWorld);
+        m.name = name; src.updateWorldMatrix(true, false); m.applyMatrix4(src.matrixWorld);
         return m;
       };
       // a terrain tile (04: one shared vertex buffer, three index buffers for the detail levels) → indexed glTF, finest level only
@@ -260,16 +271,21 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
         e.setAttribute('position', new THREE.BufferAttribute(new Float32Array(a.position.array), 3)); e.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
         e.setAttribute('color', new THREE.BufferAttribute(col, 4, true)); e.setIndex(new THREE.BufferAttribute(Uint32Array.from(src.geometry.index.array), 1));
         const m = new THREE.Mesh(e, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, name: 'terrain' }));
-        src.updateMatrixWorld(); m.applyMatrix4(src.matrixWorld); m.name = 'tile'; return m;
+        src.updateWorldMatrix(true, false); m.applyMatrix4(src.matrixWorld); m.name = 'tile'; return m;
       };
       // the scene is not on the test hook, but every terrain chunk hangs off it
       let scene = Y.LAND.chunks[0]; while (scene.parent) scene = scene.parent;
       const city = new Set(Y.CITY.meshes || []), props = new Set(Y.PROPS.meshes || []), land = new Set([...(Y.LAND.chunks || []), Y.LAND.plains, Y.LAND.banks]);
       const groups = {}, sects = Y.dev.sects(), tiles = new Map();
-      const nearest = (o, max) => { const b = o.geometry.boundingSphere || (o.geometry.computeBoundingSphere(), o.geometry.boundingSphere); let best = null, bd = max; for (const id in sects) { const d = Math.hypot(b.center.x - sects[id].x, b.center.z - sects[id].z); if (d < bd) { bd = d; best = id; } } return best; };
+      // the sect nearest the mesh's bounding-sphere centre, in world space (the anim pieces are built at their own origin)
+      const nearest = (o, max) => { const b = o.geometry.boundingSphere || (o.geometry.computeBoundingSphere(), o.geometry.boundingSphere); o.updateWorldMatrix(true, false); const c = b.center.clone().applyMatrix4(o.matrixWorld); let best = null, bd = max; for (const id in sects) { const d = Math.hypot(c.x - sects[id].x, c.z - sects[id].z); if (d < bd) { bd = d; best = id; } } return best; };
       const add = (key, m) => { if (m) (groups[key] = groups[key] || []).push(m); };
+      const done = new Set();                                      // geometry + world matrix: nothing is exported twice
       scene.traverse((o) => {
         if (!o.isMesh || o.isInstancedMesh) return;
+        // 水影's mirrored world (buildMirrors L5842–5853): new meshes on the originals' geometry, reflected only by their MIRROR shader
+        if (o.material && o.material.defines && o.material.defines.MIRROR) return;
+        o.updateWorldMatrix(true, false); const dk = o.geometry.uuid + o.matrixWorld.elements.join(); if (done.has(dk)) return; done.add(dk);
         const a = o.geometry.attributes;
         if (land.has(o)) {                                         // the sects' fine ground patches (13 丈 grid, facet + ink) go with their sect
           if (a.bary && (Y.LAND.chunks || []).includes(o)) { const s = nearest(o, 8000); add('sect_' + (s || 'misc') + '_ground', facet(o, 'ground')); }
@@ -284,7 +300,7 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
         if (!key) { const s = nearest(o, props.has(o) ? 6000 : 4000); key = s ? 'sect_' + s + '_surroundings' : 'props'; }
         add(key, facet(o, o.name || key));
       });
-      if (window.__terrainMesh) for (const o of tiles.values()) add('terrain', tile(o));
+      if (window.__terrainMesh) for (const o of tiles.values()) add('terrain', tile(o));   // meta.meshes.terrain, not files: props.gd draws every file with the facet shader
       const exporter = new GLTFExporter();
       window.__glb = {};
       for (const key in groups) {
@@ -300,7 +316,8 @@ function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
     for (const g of list) {
       const file = `meshes/${g.key}.glb`;
       write(file, Buffer.from((await pull(`window.__glb[${JSON.stringify(g.key)}]`, Uint8Array)).buffer));
-      meta.meshes.files.push({ file, meshes: g.meshes, triangles: g.tris });
+      if (g.key === 'terrain') meta.meshes.terrain = { file, meshes: g.meshes, triangles: g.tris, layout: 'indexed; COLOR_0.rgb the ramp colour, NORMAL smooth; no barycentrics' };
+      else meta.meshes.files.push({ file, meshes: g.meshes, triangles: g.tris });
     }
   }
   json('meta.json', meta);
