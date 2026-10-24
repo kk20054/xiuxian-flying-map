@@ -31,7 +31,7 @@ To regenerate the UI scenes/theme after changing `tools/build_scenes.gd`: `godot
 
 WASD / arrows fly (north-up, the camera never turns) · Shift 疾遁 · Space / Q or wheel climb / descend · drag to grab the
 ground (fling on release) · E 落脚 near a sect · M 收图 / 御空 · `/` search on the map · Esc close · H hint · ` debug panel.
-Touch screens get the stick and the 疾 button.
+Touch screens get the stick, the 疾 button, one-finger drag and two-finger pinch (climb / descend, zoom on the 舆图).
 
 ## Project layout
 

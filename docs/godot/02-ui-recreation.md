@@ -63,6 +63,13 @@ CSS. The pixel-level spec of the original (positions, sizes, colours, fonts, tim
 | `transform: translate(-50%,-100%)` (tags anchored at the pin) | `position = screen − anchor_offset()` each frame after the camera moved |
 | `@media (pointer:coarse)` | `DisplayServer.is_touchscreen_available()` |
 | `@media (max-width:640px)` | `info_card.gd` / `intro_ui.gd` `_layout()` on `size_changed` |
+| `line-height: 1.85` | `LabelSettings.line_spacing = round(size × 1.85 − font.get_height(size))` (`info_card.gd → _gap`) — Godot adds the gap *between* lines, CSS sets the whole line box |
+| CJK line breaking (no `。、，` at a line start) | `autowrap_mode = AUTOWRAP_WORD_SMART` (ICU line breaks); `AUTOWRAP_ARBITRARY` breaks before punctuation |
+| `img { width:100%; height:auto }` | `TextureRect.expand_mode = EXPAND_FIT_HEIGHT_PROPORTIONAL` + `STRETCH_KEEP_ASPECT` (`EXPAND_FIT_WIDTH_PROPORTIONAL` collapses to 0 height inside a VBox) |
+| `pointer-events: none` (HUD, banner) | `mouse_filter = MOUSE_FILTER_IGNORE` on the whole subtree (`build_scenes.gd → _ignore_mouse`) |
+| wheel over a panel doesn't zoom the world | `mouse_force_pass_scroll_events = false` on panels (`_stop_wheel`); the director reads the wheel in `_unhandled_input` |
+| `:hover` / `:active` / `.on` | Button styles `hover` / `pressed` / `hover_pressed` set separately — `hover_pressed` falls back to `pressed`, so a toggled legend button looked "pressed" while hovered |
+| `input:focus` swallowing keys | the director ignores keys while a `LineEdit` has focus and calls `gui_release_focus()` on a click in the world |
 
 ## Restyling tips
 
