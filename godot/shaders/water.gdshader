@@ -53,7 +53,9 @@ void fragment() {
 	vec2 uv = world_uv(xz);
 	vec4 w = texture(t_water, uv);
 	float sd = (w.r * 255.0 - 128.0) * 2.0;
-	if (sd < -3.0 && uv.x > 0.0 && uv.x < 1.0 && uv.y > 0.0 && uv.y < 1.0) discard;   // under the land (the ground covers it anyway)
+	// under the land the ground covers it; near the shore it reaches in under the plain's cut edge, so a grazing view
+	// through a river never finds a gap below the bank (the earth banks, BANK_FS, are not ported)
+	if (sd < -3.2 * mix(inland_depth, sea_depth, w.a) && uv.x > 0.0 && uv.x < 1.0 && uv.y > 0.0 && uv.y < 1.0) discard;
 	float d = max(sd, 0.0);
 	vec2 flow = (w.gb * 255.0 - 128.0) / 127.0;
 	float sea = w.a;

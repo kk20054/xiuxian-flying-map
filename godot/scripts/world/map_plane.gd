@@ -1,7 +1,7 @@
 extends MeshInstance3D
 ## The painted 舆图 plane (demo buildMap2D L13250) and its overlay (paintMap L13273): one PlaneMesh three times the
-## world's size at y = 1, drawn over everything while map_k > 0; the roads, villages, posts, arrays and cities are
-## painted once into a SubViewport (MapOverlay) and sampled as t_over.
+## world's size at y = 1, drawn over everything while map_k > 0; the roads, streams, villages and cities are painted
+## once into a SubViewport (MapOverlay), read back and sampled as t_over.
 
 var mat: ShaderMaterial
 var overlay: SubViewport
@@ -33,7 +33,9 @@ func build() -> void:
 	add_child(overlay)
 	await RenderingServer.frame_post_draw
 	var img := overlay.get_texture().get_image()
-	img.generate_mipmaps()
+	overlay.queue_free()               # painted once: the 41-MB render target and ~31 000 canvas commands are not needed again
+	overlay = null
+	img.generate_mipmaps()             # (premultiplied, so the mips average correctly)
 	mat.set_shader_parameter("t_over", ImageTexture.create_from_image(img))
 
 

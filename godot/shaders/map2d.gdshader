@@ -59,10 +59,14 @@ void fragment() {
 		float dot_k = (1.0 - smoothstep(dr - fwidth(dc.x), dr + fwidth(dc.x), length(dfp))) * step(hash12(di + 7.7), 0.25 + 0.6 * gr.r) * step(0.1, gr.r);
 		dot_k *= 1.0 - smoothstep(0.5, 1.2, fwidth(dc.x));
 		plain = mix(plain, vec3(0.3, 0.42, 0.34), dot_k * 0.75);
-		// 5 · painted mist round the mountain feet
+		// 5 · painted mist at the feet of the ranges, on the plain only (MAP_FS L13193–13198: mixed into the plain before the
+		// ranges are laid over it, so the 石绿/石青 stay clear)
 		float hb = texture(t_height_blur, height_uv(qx)).r;
-		vec2 warp = vec2(fbm3(P * 0.0003), fbm3(P * 0.0003 + 5.2));
-		float cf = 0.7 * fbm3(P * 0.0006 + warp * 2.0) + 0.45 * smoothstep(2.0, 70.0, hb);
+		vec2 wq = P * 0.00048 + vec2(fbm3(P * 0.00028), fbm3(P * 0.00028 + 5.2)) * 1.8;
+		float cf = fbm3(wq) * 0.7 + smoothstep(2.0, 70.0, hb) * 0.45;
+		float cl = smoothstep(0.56, 0.7, cf), cedge = smoothstep(0.54, 0.57, cf) - smoothstep(0.57, 0.61, cf);
+		plain = mix(plain, vec3(0.93, 0.91, 0.84), cl * 0.6 * (1.0 - water));
+		plain = mix(plain, vec3(0.58, 0.62, 0.64), cedge * 0.3 * (1.0 - water));
 		// 6 · the ranges: two flat tones, hatching in shade, an ink terminator
 		float hs = hs_at(qx);
 		float stp = cell * 2.2;
@@ -81,23 +85,22 @@ void fragment() {
 		vec2 gdir = normalize(vec2(dx, dz) + vec2(1e-4));
 		float s_along = dot(P, vec2(-gdir.y, gdir.x));
 		float spacing = max(6.0 * fwidth(s_along), 2.0);
-		float hatch = (1.0 - smoothstep(0.15, 0.35, abs(fract(s_along / spacing) - 0.5) * 2.0)) * (1.0 - lit) * smoothstep(10.0, 50.0, h);
-		hatch *= step(0.45, vnoise(P * 0.01));
+		// hatching down the shaded flank, about six pixels apart, broken a little (L13222–13223)
+		float hatch = 1.0 - smoothstep(0.22, 0.34, abs(fract(s_along / spacing) - 0.5));
+		hatch *= (1.0 - lit) * smoothstep(10.0, 50.0, h) * smoothstep(0.25, 0.5, vnoise(P * 0.004 + gdir * 3.0));
 		rc = mix(rc, ink, hatch * 0.5);
 		rc = mix(rc, ink, (1.0 - smoothstep(0.0, 2.2 * tw, abs(tone - 0.5))) * 0.6 * smoothstep(12.0, 60.0, h));
 		float range_k = smoothstep(2.0, 8.0, h);
 		vec3 land = mix(plain, rc, range_k);
 		land = mix(land, ink, 0.55 * (1.0 - abs(2.0 * range_k - 1.0)) * step(0.05, range_k) * step(range_k, 0.95));
-		float mist_k = smoothstep(0.56, 0.7, cf) * (1.0 - water);
-		land = mix(land, vec3(0.93, 0.91, 0.84), 0.6 * mist_k);
-		land = mix(land, vec3(0.58, 0.62, 0.64), 0.3 * (1.0 - smoothstep(0.0, 0.02, abs(cf - 0.57))) * (1.0 - water));
 		// 7 · water over land, an ink shore line
 		c = mix(land, wcol, water);
 		float spx = max(fwidth(sd), 1e-3);
 		c = mix(c, ink, 0.6 * (1.0 - smoothstep(0.0, 1.8, abs(sd) / spx)));
-		// 8 · roads, villages, cities
+		// 8 · roads, villages, cities: the SubViewport stores them premultiplied (canvas blending onto a clear target), so
+		// "over" is c·(1 − a) + rgb — the demo's mix(c, ov.rgb, ov.a) on its straight-alpha canvas (L13237)
 		vec4 ov = texture(t_over, wuv);
-		c = mix(c, ov.rgb, ov.a);
+		c = c * (1.0 - ov.a) + ov.rgb;
 		c = mix(silk, c, ready_k);
 	} else {
 		c *= 0.97;

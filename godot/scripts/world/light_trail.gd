@@ -20,29 +20,31 @@ var pos := Vector3.ZERO
 
 func _ready() -> void:
 	var glow := Color(Cfg.g("light.glow", "#3fd9b0")); var core := Color(Cfg.g("light.core", "#e8fff6"))
-	halo = _quad(Vector3(glow.r, glow.g, glow.b), 3.2)
-	inner = _quad(Vector3(glow.r, glow.g, glow.b).lerp(Vector3(core.r, core.g, core.b), 0.45), 5.0)
-	head = _quad(Vector3(core.r, core.g, core.b), 6.0)
+	# drawn in the demo's renderOrder: trail 40 under halo 41, inner 42, head 44 (L12735, L12749)
+	halo = _quad(Vector3(glow.r, glow.g, glow.b), 3.2, 41)
+	inner = _quad(Vector3(glow.r, glow.g, glow.b).lerp(Vector3(core.r, core.g, core.b), 0.45), 5.0, 42)
+	head = _quad(Vector3(core.r, core.g, core.b), 6.0, 44)
 	trail = MeshInstance3D.new()
 	trail.mesh = ImmediateMesh.new()
 	trail_mat = ShaderMaterial.new()
 	trail_mat.shader = load("res://shaders/light_trail.gdshader")
 	trail_mat.set_shader_parameter("core", Vector3(core.r, core.g, core.b))
 	trail_mat.set_shader_parameter("glow", Vector3(glow.r, glow.g, glow.b))
+	trail_mat.render_priority = 40
 	trail.material_override = trail_mat
 	trail.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	trail.extra_cull_margin = 16384.0
-	trail.sorting_offset = 10.0
 	add_child(trail)
 
 
-func _quad(col: Vector3, fall: float) -> MeshInstance3D:
+func _quad(col: Vector3, fall: float, order: int) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	var q := QuadMesh.new()
-	q.size = Vector2(2, 2)
+	q.size = Vector2(1, 1)           # PlaneGeometry(1, 1) (L12733): the corners at ±0.5·size
 	mi.mesh = q
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/light_glow.gdshader")
+	m.render_priority = order
 	m.set_shader_parameter("col", col)
 	m.set_shader_parameter("fall", fall)
 	mi.material_override = m

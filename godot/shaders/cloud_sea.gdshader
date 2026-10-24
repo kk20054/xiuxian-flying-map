@@ -98,7 +98,7 @@ void fragment() {
 	for (int i = 0; i < 24; i++) {
 		if (i >= steps) break;
 		vec3 p = ro + rd * (ds * (float(i) + jit));
-		float g = height_at(p.xz) * relief;
+		float g = pillar_h(p.xz, height_at(p.xz)) * relief;   // tLand has the 天柱山 pillar in it (L5395)
 		float air = p.y - (g - 1.0);
 		if (air < 0.0) {     // in rock: the last step counts only for its fraction in air → a soft skirt on the cliffs
 			if (p_dn > 0.0) { float a = 1.0 - exp(-p_dn * sigma * ds * clamp(p_air / max(p_air - air, 1e-3), 0.0, 1.0)); acc += T * a * p_c; T *= 1.0 - a; }

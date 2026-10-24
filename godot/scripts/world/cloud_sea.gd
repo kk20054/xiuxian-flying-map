@@ -32,7 +32,8 @@ func build() -> void:
 	mat.set_shader_parameter("noise3", noise)
 	var sites: Array[Vector4] = []
 	for S in World.layout.get("sites", []):
-		sites.append(Vector4(S.x, S.z, float(S.R) * 1.6, float(S.cloud)))
+		if not S.get("noSea", false):          # 水影宗 has no sea of its own: it neither lifts nor veils (L12474)
+			sites.append(Vector4(S.x, S.z, float(S.R) * 1.6, float(S.cloud)))
 	while sites.size() < 6:
 		sites.append(Vector4(1e9, 1e9, 1.0, 0.0))
 	mat.set_shader_parameter("sites", sites)

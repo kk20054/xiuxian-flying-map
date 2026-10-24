@@ -11,12 +11,17 @@ static func sun_vector() -> Vector3:
 	return Vector3(sin(az) * cos(el), sin(el), -cos(az) * cos(el))       # azimuth clockwise from north; z points south
 
 
+## The flat tones (uToon, updateLand L5552): shadow, half, sun multipliers and the cast-shadow strength — no bake needed.
+func set_toon() -> void:
+	var c := Cfg.f("sun.contrast", 1.0)
+	RenderingServer.global_shader_parameter_set("toon", Vector4(1.0 - 0.44 * c, 1.0 - 0.16 * c, 1.0 + 0.1 * c, Cfg.f("sun.shadow", 0.85)))
+
+
 func bake() -> void:
 	var sun := sun_vector()
 	var rs := RenderingServer
 	rs.global_shader_parameter_set("sun_dir", sun)
-	var c := Cfg.f("sun.contrast", 1.0)
-	rs.global_shader_parameter_set("toon", Vector4(1.0 - 0.44 * c, 1.0 - 0.16 * c, 1.0 + 0.1 * c, Cfg.f("sun.shadow", 0.85)))
+	set_toon()
 	var w := maxi(16, int(World.nx * SCALE)); var h := maxi(16, int(World.nz * SCALE))
 	var vp := SubViewport.new()
 	vp.size = Vector2i(w, h)
@@ -34,7 +39,8 @@ func bake() -> void:
 	mat.set_shader_parameter("relief", Cfg.f("terrain.relief", 1.0))
 	var sites: Array[Vector4] = []
 	for S in World.layout.get("sites", []):
-		sites.append(Vector4(S.x, S.z, S.R, maxf(0.0, float(S.cloud) - Cfg.f("cloudSea.height", 175))))
+		if not S.get("noSea", false):          # a sect without a sea of its own lifts nothing (L5511)
+			sites.append(Vector4(S.x, S.z, S.R, maxf(0.0, float(S.cloud) - Cfg.f("cloudSea.height", 175))))
 	while sites.size() < 6:
 		sites.append(Vector4(1e9, 1e9, 1.0, 0.0))
 	mat.set_shader_parameter("sites", sites)

@@ -77,7 +77,7 @@ godot/
 | plains / biome ground (04) | `terrain.gdshader` (`biome_ground`) | ◐ meadow/sand/marsh/season/steppe; no flower dabs, terraces, ground detail tiles yet |
 | sun bake (04) | `sun_bake.gd` | ✅ same march |
 | sect fine patches (04) | `sect_*_ground.glb` + facet shader | ✅ (exported meshes) |
-| earth banks 土崖 (04) | — | ✗ (the ground dives under the water instead) |
+| earth banks 土崖 (04) | — | ✗ (the plain is cut per pixel at the shore; the water reaches in under the cut edge instead) |
 | water (05) | `water.gdshader` | ✅ steps, Gerstner shading, Fresnel, glints, shore ink ripples |
 | mirror water, upland lakes (05b/05c) | — | ✗ |
 | buildings, cities, landmarks (06, 06b–06e) | `props.gd` + exported GLBs | ✅ geometry & ink; ✗ animated parts, formation domes, lights |
@@ -106,10 +106,26 @@ The ✗ rows are where the asset-driven upgrade goes — [03 upgrade roadmap](03
   130 000-丈 view the way the bake does.
 - **Colour output on every renderer.** The demo does its maths on display-space values. Forward+/Mobile convert
   linear→sRGB at the output but Compatibility does not, so each shader ends with
-  `ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col);` — same picture on all three.
+  `ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col);` — the same opaque colours on all three.
+- **Known difference: translucent layers on Forward+/Mobile.** That conversion fixes opaque colours only. Blending
+  happens in the renderer's colour buffer: Compatibility blends the display (sRGB) values, exactly like the demo (no
+  colour management, index.html L14834–14840); Forward+/Mobile blend in their linear HDR buffer and encode afterwards,
+  i.e. `srgb(mix(lin(bg), lin(fg), a))` instead of `mix(bg, fg, a)`. Thin cloud, the sect veils and the cloud sea's
+  edges (`cloud_sea`), the depth ink lines (`post_ink`), the 遁光's glow and trail and the 舆图's ink-seep reveal
+  (`map2d`) therefore read lighter there: cloud 0.99 over ground 0.40 at a = 0.5 gives 0.695 in the demo and on
+  Compatibility, 0.770 on Forward+; ink 0.24 over 0.70 at a = 0.7 (`look.edgeInk`) gives 0.378 against 0.448, about a
+  quarter less contrast. Not fixed in the shaders: Forward+ takes a single screen copy before its transparent pass, so
+  the stacked layers (ink → cloud sea → glow) cannot each composite in display space through `hint_screen_texture`,
+  and solving the alpha per pixel needs the same copy and still fails for dark-over-light ink. For the demo's exact
+  translucency run the Compatibility renderer (`--rendering-method gl_compatibility`, or
+  `rendering/renderer/rendering_method`); a full fix would draw the translucent layers into an sRGB SubViewport and
+  composite it in `post_screen`.
 - **Terrain without building meshes.** Four grid meshes (64/32/16/8 segments + skirt) are shared by 1 664 chunk
-  instances; the vertex shader reads the half-float height texture. Visibility ranges (0–5200–10500–26000–∞) pick the LOD.
-  The sects' fine ground comes from their exported patch GLBs; the terrain shader discards inside the patch rects.
+  instances; the vertex shader reads the half-float height texture. Visibility ranges (0–5200–10500–26000–∞, no margins:
+  with fading off a margin is hysteresis and leaves bands where no level draws) pick the LOD. The plain stays at y = 0
+  and is cut away per pixel wherever there is water, as the demo's plain is. The sects' fine ground comes from their
+  exported patch GLBs, which exist only where a patch has relief; the terrain shader discards inside a patch only where
+  the patch's own height (`World.t_patch_h`, a Texture2DArray) is above the plain.
 - **Data outside the import system.** `data/world/.gdignore` + `Image.load_from_file` / `FileAccess` / `GLTFDocument`
   at runtime: no 180 MB import step, and the GLB facets are not welded by the importer (welding would break the
   barycentric ink). For an exported game, add `data/world/*` to the export's non-resource include filter (or drop the

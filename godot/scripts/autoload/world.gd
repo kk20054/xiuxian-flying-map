@@ -1,7 +1,7 @@
 extends Node
 ## The world the demo generated (exported by tools/export-world): heights, water, colours, places, roads and rivers.
 ## Loads once at startup, keeps CPU copies for sampling (hAt, groundClear — the flight needs them) and GPU textures
-## that every world shader reads through global shader uniforms (t_height, t_water, t_mcolor, t_ground, t_biome).
+## that every world shader reads through global shader uniforms (t_height, t_height_blur, t_water, t_mcolor, t_ground, t_biome).
 
 signal progress(k: float, label: String)
 signal ready_world
@@ -29,10 +29,10 @@ var t_water: ImageTexture
 var t_mcolor: ImageTexture
 var t_ground: ImageTexture
 var t_biome: ImageTexture
-var water_img: Image
-var mcolor_img: Image
+var t_patch_h: Texture2DArray   # the six patches' heights, one layer each (padded to the largest), texel (i, j) = patch vertex (i, j)
+var water_img: Image            # CPU copy for water_at while the terrain is built (release_boot_data drops it)
 
-# the six sects' detail patches cover their mountains with finer meshes (the GLBs): terrain chunks skip these rects
+# the six sects' detail patches cover their mountains with finer meshes (the GLBs): the terrain skips them where they have ground
 var patch_rects: Array[Rect2] = []
 
 
@@ -51,31 +51,44 @@ func load_all() -> void:
 
 	# heights: raw IEEE half floats (Godot strips 16-bit PNGs to 8 bits, so the raw file is what we read)
 	var himg := _half_image(H.raw.file, nx, nz)
-	t_height = ImageTexture.create_from_image(himg)
 	var cpu: Image = himg.duplicate()
 	cpu.convert(Image.FORMAT_RF)
 	heights = cpu.get_data().to_float32_array()
-	# the blurred heights (≈ the demo's tLand.g, a 5-cell box blur): shrink and grow back
-	var blur: Image = cpu.duplicate()
-	blur.resize(maxi(1, nx / 5), maxi(1, nz / 5), Image.INTERPOLATE_BILINEAR)
-	blur.resize(nx, nz, Image.INTERPOLATE_CUBIC)
-	blur.convert(Image.FORMAT_RH)
-	t_height_blur = ImageTexture.create_from_image(blur)
-	progress.emit(0.25, "展卷中 25%")
-	await get_tree().process_frame
 
+	# the sects' 13.3-丈 patches: CPU copies for h_at, and one texture array (a layer each) for the shaders that need the
+	# fine ground (terrain: where the patch GLB has ground; facet: the fine ground's smooth normal)
+	var layers: Array[Image] = []
+	var lw := 0; var lh := 0
+	for P in meta.patches:
+		lw = maxi(lw, int(P.w)); lh = maxi(lh, int(P.h))
 	for P in meta.patches:
 		var pimg := _half_image(P.raw, P.w, P.h)
+		var layer := Image.create_empty(lw, lh, false, Image.FORMAT_RH)
+		layer.blit_rect(pimg, Rect2i(0, 0, P.w, P.h), Vector2i.ZERO)
+		layers.append(layer)
 		pimg.convert(Image.FORMAT_RF)
-		patches.append({"x0": P.x0, "z0": P.z0, "x1": P.x1, "z1": P.z1, "cell": P.cell, "w": P.w, "h": P.h, "H": pimg.get_data().to_float32_array()})
+		var PH := pimg.get_data().to_float32_array()
+		patches.append({"x0": P.x0, "z0": P.z0, "x1": P.x1, "z1": P.z1, "cell": P.cell, "w": P.w, "h": P.h, "H": PH})
 		patch_rects.append(Rect2(P.x0, P.z0, P.x1 - P.x0, P.z1 - P.z0))
+		# fold the patch into the 40-丈 heights at the grid points inside it, as the demo's tLand does (L5393)
+		var sub := int(round(cell / float(P.cell)))
+		var i0 := int(round((float(P.x0) - rect.position.x) / cell)); var j0 := int(round((float(P.z0) - rect.position.y) / cell))
+		var i1 := i0 + (int(P.w) - 1) / sub; var j1 := j0 + (int(P.h) - 1) / sub
+		for j in range(j0 + 1, j1):
+			for i in range(i0 + 1, i1):
+				himg.set_pixel(i, j, Color(maxf(0.0, PH[(j - j0) * sub * int(P.w) + (i - i0) * sub]), 0, 0))
+	if not layers.is_empty():
+		t_patch_h = Texture2DArray.new()
+		t_patch_h.create_from_images(layers)
+	t_height = ImageTexture.create_from_image(himg)
+	progress.emit(0.25, "展卷中 25%")
+	await get_tree().process_frame
 
 	water_img = _png(meta.water.tex.file)
 	t_water = ImageTexture.create_from_image(water_img)
 	progress.emit(0.45, "展卷中 45%")
 	await get_tree().process_frame
-	mcolor_img = _png(meta.mountainColor.file)
-	t_mcolor = ImageTexture.create_from_image(mcolor_img)
+	t_mcolor = ImageTexture.create_from_image(_png(meta.mountainColor.file))
 	t_ground = ImageTexture.create_from_image(_png(meta.ground.file))
 	t_biome = ImageTexture.create_from_image(_png(meta.biome.file))
 	progress.emit(0.6, "展卷中 60%")
@@ -88,8 +101,21 @@ func load_all() -> void:
 		by_name[p.name] = p
 	paths = _json("paths.json")
 	layout = _json("layout.json")
+	_mark_no_sea()
 
 	var rs := RenderingServer
+	var PL = layout.get("pillar")
+	if PL is Dictionary and PL.has("x"):
+		rs.global_shader_parameter_set("pillar", Vector4(PL.x, PL.z, float(PL.get("h", 1300.0)), float(PL.get("r", 230.0))))
+	# the blurred heights (tLand.g): baked on the GPU; without a renderer (headless) a shrink-and-grow stand-in
+	t_height_blur = await _bake_blur(himg)
+	if t_height_blur == null:
+		var blur: Image = himg.duplicate()
+		blur.convert(Image.FORMAT_RF)
+		blur.resize(maxi(1, nx / 5), maxi(1, nz / 5), Image.INTERPOLATE_BILINEAR)
+		blur.resize(nx, nz, Image.INTERPOLATE_CUBIC)
+		blur.convert(Image.FORMAT_RH)
+		t_height_blur = ImageTexture.create_from_image(blur)
 	rs.global_shader_parameter_set("t_height", t_height)
 	rs.global_shader_parameter_set("t_height_blur", t_height_blur)
 	rs.global_shader_parameter_set("t_water", t_water)
@@ -128,16 +154,72 @@ func ground_clear(x: float, z: float, vx := 0.0, vz := 0.0) -> float:
 	return h * Cfg.f("terrain.relief", 1.0)
 
 
-## 0..1 water coverage and the shore distance (丈, + in water) at (x, z), from the demo's packed water texture.
+## The shore distance (丈, + in water) and the 0..1 sea factor at (x, z), from the demo's packed water texture — the same
+## order as land_common's water_at(). Only while booting: release_boot_data() drops the CPU image afterwards.
 func water_at(x: float, z: float) -> Vector2:
 	if water_img == null:
-		return Vector2.ZERO
+		return Vector2(254.0, 1.0)
 	var u := (x - rect.position.x) / rect.size.x
 	var v := (z - rect.position.y) / rect.size.y
 	if u < 0.0 or v < 0.0 or u >= 1.0 or v >= 1.0:
-		return Vector2(1.0, 254.0)
+		return Vector2(254.0, 1.0)
 	var c := water_img.get_pixel(int(u * water_img.get_width()), int(v * water_img.get_height()))
-	return Vector2(c.a, (c.r * 255.0 - 128.0) * 2.0)
+	return Vector2((c.r * 255.0 - 128.0) * 2.0, c.a)
+
+
+## The 52 MB water image is only sampled while the terrain chunks are built; the GPU keeps t_water.
+func release_boot_data() -> void:
+	water_img = null
+
+
+## The 11 × 11 box blur of the heights (height_blur.gdshader) in one GPU pass, read back as half floats. Null without a
+## renderer that draws (headless).
+func _bake_blur(himg: Image) -> ImageTexture:
+	var vp := SubViewport.new()
+	vp.size = Vector2i(nx, nz)
+	vp.use_hdr_2d = true            # a half-float target: the heights keep their precision
+	vp.transparent_bg = false
+	vp.disable_3d = true
+	vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+	var r := ColorRect.new()
+	r.size = Vector2(nx, nz)
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/height_blur.gdshader")
+	m.set_shader_parameter("heights", ImageTexture.create_from_image(himg))
+	m.set_shader_parameter("grid0", rect.position)
+	m.set_shader_parameter("cell", cell)
+	r.material = m
+	vp.add_child(r)
+	add_child(vp)
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var img := vp.get_texture().get_image()
+	vp.queue_free()
+	if img == null or img.is_empty() or img.get_size() != Vector2i(nx, nz):
+		return null
+	img.convert(Image.FORMAT_RH)
+	return ImageTexture.create_from_image(img)
+
+
+## A sect without a cloud sea of its own (demo SECTS.shuiying `sea: false` → S.noSea, L1541): its seaDens is 0 (L4161), so
+## the exported plan is empty over the site. Marks layout.sites[i].noSea for the cloud sea and the sun bake.
+func _mark_no_sea() -> void:
+	var CS: Dictionary = meta.get("cloudSea", {})
+	if not CS.has("file"):
+		return
+	var plan := _png(CS.file)
+	if plan == null:
+		return
+	for S in layout.get("sites", []):
+		var acc := 0.0; var n := 0
+		for j in range(-4, 5):
+			for i in range(-4, 5):
+				if Vector2(i, j).length() > 4.0:
+					continue
+				var uv := uv_of(float(S.x) + i * float(S.R) * 0.2, float(S.z) + j * float(S.R) * 0.2)
+				acc += plan.get_pixel(clampi(int(uv.x * plan.get_width()), 0, plan.get_width() - 1), clampi(int(uv.y * plan.get_height()), 0, plan.get_height() - 1)).r
+				n += 1
+		S.noSea = acc / maxf(1.0, n) < 0.02
 
 
 func uv_of(x: float, z: float) -> Vector2:

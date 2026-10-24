@@ -7,8 +7,10 @@ extends Node3D
 const CELLS := 64                       # cells per chunk side at full detail (64 × 40 丈 = 2560 丈)
 const LODS := [64, 32, 16, 8]           # segments per side
 const RANGES := [0.0, 5200.0, 10500.0, 26000.0, 0.0]
+const RELIEF_MAX := 2.0                 # the 山高倍数 slider's top: the bounds hold the ground at any relief
 
 var material: ShaderMaterial
+var ground_params := {}                 # the painted ground's inputs (ground_common.gdshaderinc), shared with the sects' fine ground
 var chunk_size := 2560.0
 var count := 0
 
@@ -23,6 +25,7 @@ func build() -> void:
 		pr.append(Vector4(1e9, 1e9, 1e9, 1e9))
 	material.set_shader_parameter("patches", pr)
 	material.set_shader_parameter("patch_count", World.patch_rects.size())
+	material.set_shader_parameter("t_patch_h", World.t_patch_h)
 	material.set_shader_parameter("intro_focus", World.start_pos)
 	material.set_shader_parameter("intro_scale", 9000.0 * float(World.meta.layout.S))
 	for k in ["soft", "footInk", "ridgeLight", "cun"]:
@@ -36,8 +39,16 @@ func build() -> void:
 		for t in [["t_bweights", B.weights.file], ["t_drift", B.drift.file], ["t_season", World.meta.season.file]]:
 			var img := Image.load_from_file(World.DIR + t[1])
 			if img:
-				material.set_shader_parameter(t[0], ImageTexture.create_from_image(img))
-		material.set_shader_parameter("biome_on", true)
+				ground_params[t[0]] = ImageTexture.create_from_image(img)
+		ground_params["biome_on"] = true
+	# woodCol's regions (uReg, buildLandTextures L5446): frost round 古剑门, jade round 落云宗, red and gold round 百巧院
+	var rr := Cfg.f("regions.radius", 1.0)
+	var reg: Array[Vector4] = []
+	for q in [["gujian", 1700.0, 3400.0], ["luoyun", 1600.0, 3200.0], ["baiqiao", 1900.0, 3800.0]]:
+		var S = World.layout.get("sects", {}).get(q[0])
+		reg.append(Vector4(S.x, S.z, q[1] * rr, q[2] * rr) if S is Dictionary else Vector4(1e9, 1e9, 1.0, 2.0))
+	ground_params["regions"] = reg
+	apply_ground(material)
 	chunk_size = CELLS * World.cell
 	var meshes := []
 	for segs in LODS:
@@ -58,22 +69,25 @@ func build() -> void:
 				mi.mesh = meshes[l]
 				mi.material_override = material
 				mi.position = centre
-				mi.custom_aabb = AABB(Vector3(-chunk_size * 0.5, -sea_floor_depth() - 80.0, -chunk_size * 0.5), Vector3(chunk_size, hmax + sea_floor_depth() + 100.0, chunk_size))
+				mi.custom_aabb = AABB(Vector3(-chunk_size * 0.5, -80.0, -chunk_size * 0.5), Vector3(chunk_size, hmax + 80.0, chunk_size))
 				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				# exactly complementary ranges: with fading off, a margin is hysteresis, and a chunk first seen inside the
+				# band would show neither level (updateTerrainLOD L5131 has no band either)
 				mi.visibility_range_begin = RANGES[l]
 				mi.visibility_range_end = RANGES[l + 1]
-				mi.visibility_range_begin_margin = 200.0 if l > 0 else 0.0
-				mi.visibility_range_end_margin = 200.0 if RANGES[l + 1] > 0.0 else 0.0
 				mi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
 				add_child(mi)
 			count += 1
 
 
-func sea_floor_depth() -> float:
-	return 26.0
+## Hand the painted ground's inputs to another material that includes ground_common.gdshaderinc.
+func apply_ground(m: ShaderMaterial) -> void:
+	for k in ground_params:
+		m.set_shader_parameter(k, ground_params[k])
 
 
-## The chunk's highest ground, or −1 when it is all open sea (sampled every 4 cells).
+## The chunk's highest ground (at the relief slider's top, with room for what the 4-cell sampling misses), or −1 when it
+## is all open sea: no land and nowhere within 120 丈 of a shore (a sample is at most 113 丈 from any point).
 func _chunk_max(x0: float, z0: float) -> float:
 	var hmax := 0.0
 	var land := false
@@ -84,11 +98,11 @@ func _chunk_max(x0: float, z0: float) -> float:
 		while x <= x0 + chunk_size:
 			var h := World.h_at(x, z)
 			hmax = maxf(hmax, h)
-			if h > 0.0 or World.water_at(x, z).x < 60.0:
+			if h > 0.0 or World.water_at(x, z).x < 120.0:
 				land = true
 			x += step
 		z += step
-	return hmax * Cfg.f("terrain.relief", 1.0) if land else -1.0
+	return (hmax + 80.0) * RELIEF_MAX if land else -1.0
 
 
 ## A flat grid of segs × segs quads centred on the origin, plus a skirt round its edge (UV2.x = 1 on the hanging ring).

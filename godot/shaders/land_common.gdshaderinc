@@ -23,6 +23,7 @@ global uniform vec4 world_rect;      // x0, z0, width, depth (丈)
 global uniform vec4 height_rect;     // the height texture's own rect (texel centres on grid points)
 global uniform vec4 light_pos;       // the 遁光: xyz, w = shown
 global uniform vec3 glow_col;
+global uniform vec4 pillar;          // 天柱山: x, z, h, r — a mesh, not in t_height; the sun bake and the cloud sea add it (pillar_h)
 global uniform sampler2D t_height : filter_linear, repeat_disable;       // R = height (丈), half float
 global uniform sampler2D t_height_blur : filter_linear, repeat_disable;  // R = height blurred over ~200 丈
 global uniform sampler2D t_water : filter_linear, repeat_disable;        // R shore distance (128 = shore, 2 丈/step), GB flow, A sea
@@ -43,6 +44,11 @@ vec2 height_uv(vec2 xz) { return (xz - height_rect.xy) / height_rect.zw; }
 float height_at(vec2 xz) { return max(texture(t_height, height_uv(xz)).r, 0.0); }
 float height_lod(vec2 xz) { return max(textureLod(t_height, height_uv(xz), 0.0).r, 0.0); }
 vec3 sun_at(vec2 xz) { return texture(t_sun, height_uv(xz)).rgb; }
+// the pillar of 天柱山 as the demo writes it into tLand (pillarH, L5395): (h + 120) inside 0.8 r, gone by 1.2 r
+float pillar_h(vec2 xz, float v) {
+	float d = length(xz - pillar.xy);
+	return d < pillar.w * 1.2 ? max(v, (pillar.z + 120.0) * (1.0 - smoothstep(pillar.w * 0.8, pillar.w * 1.2, d))) : v;
+}
 // shore distance in 丈 (+ in water) and the sea factor, from the demo's packed water texture
 vec2 water_at(vec2 xz) { vec4 w = texture(t_water, world_uv(xz)); return vec2((w.r * 255.0 - 128.0) * 2.0, w.a); }
 

@@ -1,6 +1,7 @@
 extends Control
-## The 舆图's linework, painted once (demo paintMap L13273–13305): streams, roads (main dashed), the 天道盟小国 border,
-## villages, post stations, towns, teleport arrays and the cities. Coordinates: world rect → this Control's pixels.
+## The 舆图's linework, painted once (demo paintMap L13273–13305): streams, roads (dashed), the 天道盟小国 border, villages
+## and the city glyphs. (The demo also marks post stations, 市镇 and arrays; the export does not carry those lists.)
+## Coordinates: world rect → this Control's pixels.
 
 func _w(x: float, z: float) -> Vector2:
 	var R := World.rect
@@ -17,14 +18,11 @@ func _poly(pts: Array) -> PackedVector2Array:
 func _draw() -> void:
 	var P: Dictionary = World.paths
 	var N := size.x   # world-proportional sizes (cities, the border label) scale with the canvas; line widths stay in pixels
+	# streams only: the rivers are the map shader's water already (paintMap strokes WORLD.streams and the roads, L13280)
 	for s in P.get("streams", []):
 		var pl := _poly(s.pts)
 		if pl.size() > 1:
 			draw_polyline(pl, Color(80 / 255.0, 118 / 255.0, 128 / 255.0, 0.85), 1.2, true)
-	for r in P.get("rivers", []):
-		var pl := _poly(r.pts)
-		if pl.size() > 1:
-			draw_polyline(pl, Color(80 / 255.0, 118 / 255.0, 128 / 255.0, 0.85), 2.0 if r.get("great", false) else 1.2, true)
 	var road_col := Color(122 / 255.0, 74 / 255.0, 46 / 255.0, 0.78)
 	for r in P.get("roads", []):
 		var pl := _poly(r.pts)
@@ -45,11 +43,20 @@ func _draw() -> void:
 		var c := _w(v.x, v.z)
 		draw_circle(c, 4.2, Color(214 / 255.0, 196 / 255.0, 160 / 255.0, 0.95))
 		draw_arc(c, 4.2, 0, TAU, 16, Color(110 / 255.0, 70 / 255.0, 44 / 255.0, 0.9), 1.2, true)
+	# the city glyphs on their plans (cityPlan → layout.moats: centre and half-width), at least N·0.005 (L13297–13298)
+	var R := World.rect
 	for p in World.places:
 		if p.cat != "city":
 			continue
 		var s := N * (0.008 if p.id == "minzhou" else 0.006)
 		var c := _w(p.x, p.z)
+		var best := 3000.0
+		for m in World.layout.get("moats", []):
+			var dd := Vector2(m.x - p.x, m.z - p.z).length()
+			if dd < best:
+				best = dd
+				c = _w(m.x, m.z)
+				s = maxf(N * 0.005, float(m.half) / R.size.x * N)
 		var r := Rect2(c - Vector2(s, s), Vector2(2 * s, 2 * s))
 		draw_rect(r, Color(230 / 255.0, 214 / 255.0, 180 / 255.0, 0.92))
 		draw_rect(r, Color(128 / 255.0, 58 / 255.0, 40 / 255.0, 0.95), false, 2.2)
@@ -57,9 +64,12 @@ func _draw() -> void:
 		draw_line(c - Vector2(0, s), c + Vector2(0, s), Color(128 / 255.0, 58 / 255.0, 40 / 255.0, 0.95), 1.1)
 
 
+## A dashed stroke (setLineDash): each dash is one polyline through the path's own points — drawing it piece by piece
+## would stack the antialiased ends of ~20 tiny segments per dash into an opaque, bolder line.
 func _dashed(pl: PackedVector2Array, col: Color, w: float, on: float, off: float) -> void:
 	var carry := 0.0
 	var drawing := true
+	var dash := PackedVector2Array()
 	for i in range(pl.size() - 1):
 		var a := pl[i]; var b := pl[i + 1]
 		var seg := a.distance_to(b)
@@ -68,9 +78,16 @@ func _dashed(pl: PackedVector2Array, col: Color, w: float, on: float, off: float
 			var left := (on if drawing else off) - carry
 			var step := minf(left, seg - t)
 			if drawing:
-				draw_line(a.lerp(b, t / seg), a.lerp(b, (t + step) / seg), col, w, true)
+				if dash.is_empty():
+					dash.append(a.lerp(b, t / seg))
+				dash.append(a.lerp(b, (t + step) / seg))
 			t += step
 			carry += step
 			if carry >= (on if drawing else off) - 1e-4:
 				carry = 0.0
+				if drawing and dash.size() > 1:
+					draw_polyline(dash, col, w, true)
+				dash.clear()
 				drawing = not drawing
+	if drawing and dash.size() > 1:
+		draw_polyline(dash, col, w, true)

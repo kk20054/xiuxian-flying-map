@@ -9,8 +9,14 @@ uniform vec3 sun = vec3(0.413, 0.643, 0.493);
 uniform float cloud_y = 175.0;
 uniform vec4 sites[6];             // x, z, R, the sect's cloud-sea top above cloud_y
 uniform float relief = 1.0;
+global uniform vec4 pillar;        // 天柱山 (x, z, h, r): in the demo's tLand (L5395), so it casts its long shadow
 
-float H(vec2 xz) { return max(texture(heights, (xz - rect.xy) / rect.zw).r, 0.0) * relief; }
+float H(vec2 xz) {
+	float v = max(texture(heights, (xz - rect.xy) / rect.zw).r, 0.0);
+	float d = length(xz - pillar.xy);
+	if (d < pillar.w * 1.2) v = max(v, (pillar.z + 120.0) * (1.0 - smoothstep(pillar.w * 0.8, pillar.w * 1.2, d)));
+	return v * relief;
+}
 
 void fragment() {
 	vec2 xz = rect.xy + UV * rect.zw;

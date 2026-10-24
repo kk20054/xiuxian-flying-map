@@ -4,16 +4,18 @@ extends Node3D
 ## Wind, colour slot, glow and snow are in tree.gdshader. The instance list comes from data/world/trees.bin.
 
 const CHUNK := 2600.0
-const FAR := 16000.0
+const RELIEF_MAX := 2.0         # the sliders' tops (山高倍数, 树木大小): the bounds hold the trees at any setting
+const SIZE_MAX := 2.5
+const PERIOD := 0.25            # update() walks the groups in slices: each is thinned again within 0.25 s at any frame rate
 # TREE_COLS (L6325)
 const COLS := ["#4e6d60", "#6a9573", "#b45a3e", "#c9a04c", "#52705f", "#77a884", "#c4d2d0", "#c6773b",
 	"#dfa9b0", "#e6e3d8", "#8fb27a", "#8ccfbe", "#5f8a5a", "#a8a274", "#3f5e52", "#86ad6c"]
 
 var material: ShaderMaterial
-var groups: Array = []          # [{mmi, n, centre}]
+var groups: Array = []          # [{mm, n, centre, shown}]
 var _thread: Thread
 var _buckets := {}
-var _tick := 0.0
+var _next := 0
 var count := 0
 
 
@@ -27,6 +29,7 @@ func build() -> void:
 	material.set_shader_parameter("cols", cols)
 	material.set_shader_parameter("size_k", Cfg.f("trees.size", 1.0))
 	material.set_shader_parameter("sway", Cfg.f("trees.sway", 1.0))
+	material.set_shader_parameter("soft_k", Cfg.f("terrain.soft", 0.85))
 	var meta: Dictionary = World.meta.get("trees", {})
 	if not meta.has("file"):
 		return
@@ -53,10 +56,14 @@ func build() -> void:
 		mmi.material_override = material
 		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mmi.position = Vector3.ZERO
-		mmi.custom_aabb = AABB(b.lo - Vector3(60, 0, 60), b.hi - b.lo + Vector3(120, 120, 120))
-		mmi.visibility_range_end = FAR
+		# the tallest kind (27 local units, crowns ≤ 11 across + sway) at the largest instance scale and 树木大小, on ground
+		# raised by 山高倍数; no distance limit (the demo culls trees by the frustum only: far groves keep a thinned sample,
+		# updateProps L6829)
+		var sk := float(meta.scaleMax) * SIZE_MAX
+		var pad := 14.0 * sk
+		mmi.custom_aabb = AABB(Vector3(b.lo.x - pad, -10.0, b.lo.z - pad), Vector3(b.hi.x - b.lo.x + 2.0 * pad, maxf(0.0, b.hi.y) * RELIEF_MAX + 28.0 * sk + 10.0, b.hi.z - b.lo.z + 2.0 * pad))
 		add_child(mmi)
-		groups.append({"mmi": mmi, "n": b.n, "centre": (b.lo + b.hi) * 0.5})
+		groups.append({"mm": mm, "n": b.n, "centre": (b.lo + b.hi) * 0.5, "shown": b.n})
 		count += b.n
 		i += 1
 		if i % 200 == 0:
@@ -113,14 +120,22 @@ func _parse(path: String, smax: float) -> Dictionary:
 	return out
 
 
-## Thin the woods with height and distance, as the demo does (k = (1400/A)^1.35, kd = (1.25A/d)^2).
+## Thin the woods with height and distance, as the demo does (updateProps L6826–6833: k = (1400/A)^1.35 · density,
+## kd = (1.25A/d)^2, never more than the group has). A rolling slice of the groups each frame (a fifteenth at 60 fps),
+## so no frame walks all ~3400.
 func update(alt: float, target: Vector3) -> void:
-	_tick -= get_process_delta_time()
-	if _tick > 0.0:
+	visible = Game.map_k < 0.995          # the 舆图 covers them (tree.gdshader discards there too)
+	if groups.is_empty() or not visible:
 		return
-	_tick = 0.25
-	var k := clampf(pow(1400.0 / maxf(alt, 1.0), 1.35), 0.07, 1.0) * Cfg.f("trees.density", 1.0)
-	for g in groups:
+	var k := clampf(pow(1400.0 / maxf(alt, 1.0), 1.35), 0.07, 1.0) * clampf(Cfg.f("trees.density", 1.0), 0.0, 2.0)
+	var N := groups.size()
+	var step := mini(N, ceili(N * clampf(get_process_delta_time() / PERIOD, 0.0, 1.0)))
+	for q in step:
+		var g: Dictionary = groups[(_next + q) % N]
 		var d := maxf(1.0, Vector2(g.centre.x - target.x, g.centre.z - target.z).length() - 1300.0)
 		var kd := clampf(pow(alt * 1.25 / d, 2.0), 0.12, 1.0)
-		g.mmi.multimesh.visible_instance_count = int(round(g.n * k * kd))
+		var n := mini(g.n, int(round(g.n * k * kd)))
+		if n != g.shown:
+			g.shown = n
+			g.mm.visible_instance_count = n
+	_next = (_next + step) % N

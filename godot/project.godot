@@ -105,6 +105,7 @@ textures/canvas_textures/default_texture_filter=1
 environment/defaults/default_clear_color=Color(0.863, 0.867, 0.839, 1)
 anti_aliasing/quality/msaa_3d=2
 rendering_device/fallback_to_opengl3=true
+limits/time/time_rollover_secs=86400.0
 
 [shader_globals]
 
@@ -191,6 +192,10 @@ light_pos={
 glow_col={
 "type": "vec3",
 "value": Vector3(0.25, 0.85, 0.69)
+}
+pillar={
+"type": "vec4",
+"value": Vector4(0, 0, 0, 0)
 }
 t_height={
 "type": "sampler2D",

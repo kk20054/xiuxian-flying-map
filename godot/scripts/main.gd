@@ -30,6 +30,7 @@ func _ready() -> void:
 	World.progress.emit(0.72, "展卷中 72%")
 	await sun_bake.bake()
 	terrain.build()
+	World.release_boot_data()
 	_build_water()
 	World.progress.emit(0.78, "展卷中 78%")
 	await get_tree().process_frame
@@ -37,6 +38,7 @@ func _ready() -> void:
 	await map_plane.build()
 	World.progress.emit(0.82, "运模型")
 	await props.build()
+	terrain.apply_ground(props.facet_ground)   # the sects' fine ground paints the same biome ground as the range round it
 	World.progress.emit(0.9, "种树")
 	await trees.build()
 	Cfg.changed.connect(_on_cfg)
@@ -128,14 +130,22 @@ func _sample_quality(dt: float) -> void:
 
 
 func _on_cfg(path: String, value) -> void:
-	if path.begins_with("sun.") or path == "terrain.relief" or path == "":
+	# the bake follows the sun's direction, the relief and the cloud-sea height (its G channel and the sects' lift: the demo
+	# re-bakes on azimuth / elevation / cloudSea.height, L5555); shadow strength and contrast are only the flat tones
+	if path in ["sun.azimuth", "sun.elevation", "terrain.relief", "cloudSea.height", ""]:
 		_rebake = 0.3
+	elif path in ["sun.shadow", "sun.contrast"]:
+		sun_bake.set_toon()
 	if path == "terrain.relief" or path == "":
 		RenderingServer.global_shader_parameter_set("relief", Cfg.f("terrain.relief", 1.0))
 	var tm: ShaderMaterial = terrain.material
 	var key := {"terrain.soft": "soft_k", "terrain.footInk": "foot_ink", "terrain.cun": "cun_k"}
 	if key.has(path):
+		# the land's uniforms (LU, L4229–4241) are shared by the ranges, the sects' fine ground and facets, and (soft) the trees
 		tm.set_shader_parameter(key[path], value)
+		props.facet.set_shader_parameter(key[path], value); props.facet_ground.set_shader_parameter(key[path], value)
+		if path == "terrain.soft":
+			trees.material.set_shader_parameter("soft_k", value)
 	if path == "terrain.creaseInk":
 		props.facet.set_shader_parameter("crease_ink", value); props.facet_ground.set_shader_parameter("crease_ink", value)
 	if path.begins_with("water."):
