@@ -2,14 +2,14 @@
 
 Source: `demo/index.html`. "L123" means line 123 of that file. Covered: L1–276 (HTML+CSS),
 L13143–13306 (sec 10 · 舆图 shader), L14078–15009 (sec 12–14), plus CONFIG (L311–447), POIS (L565–641), shared uniforms (L480–490),
-the intro shader chunk (L4252–4276) and updatePost (L13106–13140), where these sections depend on them.
+the intro shader chunk (GLSL_INTRO L4255–4276) and updatePost (L13106–13140), where these sections depend on them.
 
-Units: 1 world unit = 1 丈. +x = east, +z = south, +y = up (L310 comment). North is −z. Godot uses the same right-handed, Y-up axes
+Units: 1 world unit = 1 丈. +x = east, +z = south, +y = up (L312 comment). North is −z. Godot uses the same right-handed, Y-up axes
 with −Z as "forward", so **world coordinates carry over 1:1** (no axis flip needed). The camera always looks north (−z).
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
-## 0. Key derived numbers (computed from CONFIG + GEO, see computeLayout L360–398)
+## 0. Key derived numbers (computed from CONFIG + GEO, see computeLayout L394–434)
 
 | quantity | formula | value |
 |---|---|---|
@@ -20,7 +20,7 @@ with −Z as "forward", so **world coordinates carry over 1:1** (no axis flip ne
 | LAYOUT.rect (world) | GEO.frame x 60–2330, y −700–680 mapped | x0 −29 630, x1 102 167, z0 −63 537, z1 16 586 |
 | 落云宗 world pos | | (11 477, −658) |
 | startPos | luoyun + (−450, +1450) (L393) | (11 027, 792) |
-| MAP_HOME (L4089–4092) | cx=(x0+x1)/2 with x0 = 天柱山.x−2500, x1 = 倪航斋.x+4500; cz = −14000; view = max(7000,(x1−x0)/2/1.7) | cx ≈ 39 652, cz −14 000, view ≈ 36 077 |
+| MAP_HOME (L14089–14092) | cx=(x0+x1)/2 with x0 = 天柱山.x−2500, x1 = 倪航斋.x+4500; cz = −14000; view = max(7000,(x1−x0)/2/1.7) | cx ≈ 39 652, cz −14 000, view ≈ 36 077 |
 | travel times (debug table, mid altitude) | | 古剑↔落云 12 276 丈 62.0 s (boost 20.7 s); 古剑↔百巧 11 645 丈 58.8 s; 百巧↔落云 22 622 丈 114.3 s |
 | minor-label cutoff | 3400 × S | ≈ 8 400 (map view half-extent) |
 | selectPoi zoom-to | 2600 × S / 5200 × S | ≈ 6 424 / ≈ 12 847 |
@@ -41,7 +41,7 @@ terrain.relief: 1.0  (groundClear multiplies by it)
 ```
 `CONFIG_DEFAULT` is a deep JSON clone taken right after (used by debug "恢复默认" and the test API `layers`).
 
-Easing helpers (L463–466):
+Easing helpers (L451–455):
 ```
 smoothstep(a,b,x) = t*t*(3-2t), t = clamp((x-a)/(b-a),0,1)
 easeInOut(t) = t<.5 ? 4t³ : 1 - (-2t+2)³/2          // cubic in-out
@@ -522,7 +522,7 @@ Clear held state on `NOTIFICATION_APPLICATION_FOCUS_OUT`.
 
 ### 3.1 Altitude = zoom
 
-"Altitude" A is the camera height; everything scales with it ("高处飞得快、低处飞得细，屏幕上的快慢不变" L403): speed ∝ A, light height ∝ A, so on-screen speed is constant.
+"Altitude" A is the camera height; everything scales with it ("高处飞得快、低处飞得细，屏幕上的快慢不变" L319): speed ∝ A, light height ∝ A, so on-screen speed is constant.
 ```
 u = (Space) − (Q)
 if u: At *= exp(u · 0.95 · dt)                         // ≈ ×2.59 per second
@@ -595,7 +595,7 @@ quat = Euler(−p, 0, 0, 'YXZ')                          // pitch only, yaw = ro
 fov  = 40
 ```
 The optical axis hits the ground at `target.z − lead`, i.e. it frames a point 0.1·A north of the target ("look a little past the light, toward the ranges in the north").
-Why no rotation: the design treats the land as a painted scroll / map – north stays up in both flight and 舆图 so the two views register 1:1 and the fly↔map transition is a pure pitch-down + rise (L408 comment "镜头：永远朝北，不转向").
+Why no rotation: the design treats the land as a painted scroll / map – north stays up in both flight and 舆图 so the two views register 1:1 and the fly↔map transition is a pure pitch-down + rise (L324 comment "镜头：永远朝北，不转向").
 
 Camera rig per frame (L14217–14224):
 ```
@@ -824,7 +824,7 @@ Then `uReady = 1`.
 `?lite` → `look.pixelRatio = 0.5`. `?test` → no RAF loop (driven by `__ym.render`), no auto-quality.
 Godot: since colours are authored as sRGB and output untouched, either use the `Compatibility`/`Mobile` renderer with sRGB-correct `Color.html()` values and tonemap `Linear`, exposure 1, or mark shader colour uniforms `source_color`. Disable glow/SSAO etc. by default.
 
-### 6.2 boot() order (L14882–14929)
+### 6.2 boot() order (L14883–14932)
 
 1. applyPixelRatio; `#loading.on`; intro title visible.
 2. Load `hotspots.json` (2.5 s timeout) → applyHotspots (moves POIs/sects before generation).
@@ -837,7 +837,7 @@ Godot: since colours are authored as sRGB and output untouched, either use the `
 `startApp()` (L14590–14601): pos = startPos; clear = groundClear; A = At = 2700; target = pos; setupSilk, setupInput, buildLabels, buildHotspots; HUD hidden; introSetup; mode intro.
 Godot: run world generation in a `WorkerThreadPool` task or spread across frames with `await get_tree().process_frame`, updating a ProgressBar/Label "展卷中 N%".
 
-### 6.3 Main loop (renderFrame L14931–14969, loop L14970–14975)
+### 6.3 Main loop (renderFrame L14934–14967, loop L14968–14973)
 
 ```
 dt = min(0.05, (now − last)/1000)

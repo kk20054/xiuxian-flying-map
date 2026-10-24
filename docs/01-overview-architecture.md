@@ -55,12 +55,13 @@ then the intro plays.
 ## 2. The core idea: the map *is* the world
 
 1. **Geography comes from a reference map.** The coastline, the islands of 七灵岛, the two great rivers, the 天道盟 border
-   and 13 sect "pins" were traced from screenshots of the selfmate 人界舆图 and stored as flat arrays in `GEO` (L277–310),
-   in *base-map pixels* of one 1490×812 screenshot. Two 757×460 PNGs embedded as base64 give the **mountain density** and a
-   **hint** map (aridity, woods) — see [`img/density.png`](img/density.png), [`img/hint.png`](img/hint.png).
+   and 13 place "pins" (the six sects plus mountains, cities, 七灵岛 and the vortex, L286) were traced from screenshots of
+   the selfmate 人界舆图 and stored as flat arrays in `GEO` (L277–310), in *base-map pixels* of one 1490×812 screenshot.
+   Two 757×460 PNGs embedded as base64 give the **mountain density** and a **hint** map (aridity, woods) — see
+   [`img/density.png`](img/density.png), [`img/hint.png`](img/hint.png).
 2. **One scale ties it to time.** `CONFIG.layout` says "flying from 古剑门 to 落云宗 at cruising speed takes 62 s". With the
    cruise speed 0.12 × 1650 = 198 丈/s that fixes **k = 58.06 丈 per base-map pixel**; the origin is the centroid of the
-   three 云梦 sects. `world = (px − origin) · k` → a world of **131 800 × 80 100 丈** (L360–447).
+   three 云梦 sects. `world = (px − origin) · k` → a world of **131 800 × 80 100 丈** (`computeLayout`, L394–434).
 3. **The terrain is grown, not sculpted.** Mountains appear where the density map says, then a drainage model carves
    valleys (03a), rivers follow the drainage and the designed great rivers, roads are A*-routed between sect gates and
    cities through the valleys (03b), every sect gets a hand-tuned *landform* (sandstone pillars, granite needles, karst
@@ -105,7 +106,7 @@ flowchart LR
 
 ---
 
-## 4. Boot (L14882–14929) — what is generated, in order
+## 4. Boot (L14883–14932) — what is generated, in order
 
 Times from one boot (`meta.json → stats.t`, ms, software WebGL):
 
@@ -125,7 +126,7 @@ Times from one boot (`meta.json → stats.t`, ms, software WebGL):
 
 Then the map plane and its overlay are painted, the post chain is built, and `startApp()` starts the intro.
 
-## 5. The frame (renderFrame L14931)
+## 5. The frame (renderFrame L14934)
 
 ```
 dt = min(0.05, elapsed)

@@ -699,8 +699,11 @@ rgroup4/6, fence2/6/8 (+W/A season variants), plank1/2, flower cards).
   `DirectionalLight3D`.
 - Colour space: the source does all maths on display-space (sRGB) values and writes them raw. In Godot:
   (a) declare colour uniforms **without** `source_color` (so no sRGB→linear conversion), keep vertex colours as the
-  raw 0..1 values, do the maths, then at the end `ALBEDO = pow(col, vec3(2.2));` (or exact sRGB→linear) so Godot's
-  output conversion gives back the same display value; (b) Environment → Tonemap **Linear**, exposure 1, no glow/adjust.
+  raw 0..1 values, do the maths, then at the end `ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col);` (`to_linear` =
+  sRGB→linear, as in the port's `godot/shaders/land_common.gdshaderinc`). Forward+/Mobile convert linear→sRGB at the
+  output, so they need the `to_linear`; the Compatibility renderer does not convert (`OUTPUT_IS_SRGB` is true there),
+  and an unconditional `pow(col, 2.2)` comes out far too dark on it (0.5 → 0.216, measured on Godot 4.7.1);
+  (b) Environment → Tonemap **Linear**, exposure 1, no glow/adjust.
 - Shared uniforms: put the `LU` set into **global shader uniforms** (Project Settings → Shader Globals) —
   `global uniform vec3 sun_dir; global uniform vec4 toon; global uniform sampler2D t_sun; …` — the equivalent of
   `LU`'s one-object-per-uniform sharing. Update from GDScript with `RenderingServer.global_shader_parameter_set()`.
@@ -841,7 +844,7 @@ void fragment(){
   foot *= smoothstep(3.0, 24.0, texture(t_land, world_uv(v_wp.xz)).g);
   col = mix(col, ink_col, clamp(max(line, foot), 0.0, 1.0) * 0.82);
   col = haze_mix(col, v_wp, CAMERA_POSITION_WORLD);
-  ALBEDO = to_linear(col);
+  ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col);
 }
 ```
 Important: barycentric ink requires **non-indexed** (or at least unshared-corner) triangles — keep FacetBuf's triangle
@@ -1019,7 +1022,7 @@ void fragment(){
   float shoreInk = lineK*band*brk*smoothstep(2.5, 5.0, sp/px)*smoothstep(0.0, 1.2, d);
   col = mix(col, line_col, clamp(shoreInk*0.5*ripples, 0.0, 1.0));
   col = haze_mix(col, v_wp, cam);
-  ALBEDO = to_linear(col);
+  ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col);
 }
 ```
 Mesh: `PlaneMesh` world+18000, `subdivide_width 219, subdivide_depth 179` (≈220×180 segments). Vertex texture fetch
@@ -1103,7 +1106,8 @@ void fragment(){
   vec3 V = normalize(CAMERA_POSITION_WORLD - v_wp);
   col += base * pow(1.0 - abs(dot(Ns, V)), 3.0) * smoothstep(0.05, 0.6, dot(Ns, sun_dir)) * step(0.3, v_h) * 0.32 * cast_light(s.r);
   col = mix(col, base * 1.12 + vec3(0.05, 0.09, 0.08), v_glow * 0.55);
-  ALBEDO = to_linear(haze_mix(col, v_wp, CAMERA_POSITION_WORLD));
+  col = haze_mix(col, v_wp, CAMERA_POSITION_WORLD);
+  ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col);
 }
 ```
 (The source applies yaw/scale in the shader from `iPos/iData` because Three's InstancedBufferGeometry has no

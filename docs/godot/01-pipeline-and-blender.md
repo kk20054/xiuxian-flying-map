@@ -23,8 +23,8 @@ for when you want to change them.
 cd tools/export-world
 npm install                 # playwright 1.63, three 0.170.0 (same as the demo), pngjs; installs Chromium
 npm run export              # → godot/data/world (about 2–4 minutes; most of it is the demo booting)
-node export_world.js --eco            # also the 1.77 M Meadow ground cards (eco.bin)
-node export_world.js --terrain-mesh   # also meshes/terrain.glb: the demo's own faceted terrain tiles (≈ 80 MB)
+node export_world.js --eco            # also eco.bin: the 443 k ground-plant cards (meadows, verges, gardens; no eco trees)
+node export_world.js --terrain-mesh   # also meshes/terrain.glb (meta.meshes.terrain): the demo's own terrain tiles (≈ 80 MB)
 node export_world.js --out /some/dir --demo ../../demo
 ```
 It serves `demo/` on a local port, routes the jsDelivr three.js import to `node_modules/three` (works offline), keeps
@@ -54,6 +54,7 @@ All positions in 丈, +x east, +z south, +y up; the world rect is in `meta.json 
 | `paths.json` | JSON | roads (kind, width, pts), rivers (name, great), streams, bridges, villages | overlay | curves |
 | `layout.json` | JSON | sect sites (x, z, R, look, cloud top), landmarks, peaks, pillar, vortex, pools, falls, moats | `World.layout` | |
 | `trees.bin` | 8 B per tree | uint16 x, z over the rect · uint8 kind, colour slot, yaw/256·2π, scale/255·scaleMax | `trees.gd` (thread) | `import_world.py` (Geometry Nodes) |
+| `eco.bin` (`--eco`) | float32 × 10 per card | the ground-plant cards: model id (`meta.eco.names`), x, y, z, scale, tint r g b + grey, ground flag | — | scatter |
 | `meshes/sect_<id>.glb` | glTF | each sect's architecture (one merged mesh) | `props.gd` | glTF import |
 | `meshes/sect_<id>_ground.glb` | glTF | each sect's fine ground (13.3-丈 facets) | `props.gd` (ground ink) | |
 | `meshes/sect_<id>_surroundings.glb`, `cities.glb`, `props.glb` | glTF | landmarks near a sect, the two cities, everything else (spirit tree, 天柱山, settlements, roads' bridges…) | `props.gd` | |
@@ -83,9 +84,12 @@ Builds, in a collection **XY World**: `XY Terrain` (grid from the 40-丈 field �
 `Col` colour attribute from `mountain_color.png` and a vertex-colour material), `XY Water`, the GLBs touching the region
 (**XY Architecture**), an empty per place (**XY Places**, custom props `place_id`, `category`), roads/rivers/streams as
 curves (**XY Paths**), and **XY Trees**: one point per tree with `kind`, `colour`, `yaw`, `scale` attributes and a
-Geometry Nodes modifier *XY Forest* that instances from the collection **XY Tree Kinds** (9 placeholder children in kind
-order). **Replace those children with your asset-library trees** (keep the order, origin at the trunk foot) and the
-forest updates — unmute *Realize Instances* in the node group to bake it to geometry.
+Geometry Nodes modifier *XY Forest* that instances from the collection **XY Tree Kinds** (9 placeholder children
+`0_pine` … `8_reeds`). **Replace those children with your asset-library trees** (origin at the trunk foot) and the
+forest updates. Collection Info hands the children out in **alphabetical order of their names**, not in the collection's
+order, so keep the kind's prefix on each replacement (`0_SM_Pine`, `1_Oak_01`, …; tested in Blender 5.2: a child added
+as `Pine_asset` sorted last and every kind shifted by one). Unmute *Realize Instances* in the node group to bake the
+forest to geometry (muted, it passes the instances through).
 
 Verified with Blender 5.2 (bpy) on 落云宗: 283 × 283 patch terrain, sect ground + halls + cities GLBs, 4 443 trees —
 render: [`../screenshots/blender_import_luoyun.png`](../screenshots/blender_import_luoyun.png).
@@ -96,23 +100,93 @@ diorama; its mountains are ~1 000 丈 = 100 m at model scale.)
 
 **Axes.** Godot/demo (x, y up, z south) → Blender (x, −z, y) — the glTF importer's own conversion, so GLBs line up.
 
+**Colours.** The terrain's `Col` attribute is converted to scene-linear, so it shows the demo's colours. The imported
+GLBs keep their `COLOR_0` as stored (display-space sRGB, which Blender's glTF importer takes as linear), so they look
+lighter in Blender than in the demo or Godot — left that way so that re-exporting them gives back the same values.
+
 ### Give your own meshes the ink: `tools/blender/bake_ink_layout.py`
 
 ```bash
 blender hall.blend --background --python tools/blender/bake_ink_layout.py -- --angle 25 --out hall_ink.glb
 ```
-Triangulates, un-shares every corner, writes barycentrics + per-edge ink weights + face colours (converted to sRGB) in
-the layout above. Ink = 1 on boundary, Sharp or Freestyle-marked edges and where faces meet at more than `--angle`°,
-0 on flat diagonals; paint a float face attribute `ink` (0..1) to scale it per part (the demo uses ~0.9 on ridges and
-outlines, ~0.35 on panel seams).
+Triangulates, un-shares every corner, writes barycentrics + per-edge ink weights + face colours (converted to sRGB; a
+byte `Col` attribute is already sRGB) in the layout above. Ink = 1 on boundary, Sharp or Freestyle-marked edges and where
+faces meet at more than `--angle`°, 0 on flat diagonals; paint a float face attribute `ink` (0..1) to scale it per part
+(the demo uses ~0.9 on ridges and outlines, ~0.35 on panel seams). The layout is defined in glTF / Godot UV space:
+Blender's glTF exporter writes every UV as (u, 1 − v), so the script stores the UVs pre-flipped in Blender. To check a
+GLB, read it back (e.g. in Godot: `GLTFDocument` → the mesh's `ARRAY_TEX_UV`): every triangle's three corners must be
+(1, 0), (0, 1) and (0, 0), and a quad's flat diagonal must have ink 0.
 
 ### Exporting back to Godot
 
-- glTF 2.0 binary, +Y up (default), apply transforms, **merge vertices off** for ink-layout meshes.
-- Put a replacement sect at `godot/data/world/meshes/sect_<id>.glb` (world coordinates ×10 if you modelled at 0.1 BU/丈:
-  export with scale 10, or scale the root by 10 — Godot works in 丈).
+- glTF 2.0 binary, +Y up (both the defaults). Object transforms are kept as glTF node transforms and `props.gd` uses
+  them, so applying them is optional. Do not weld ink-layout meshes (no *Merge by Distance*): every triangle needs its
+  own three corners. (The exporter itself has no merge option; it only joins corners whose attributes are identical.)
+- Put a replacement sect at `godot/data/world/meshes/sect_<id>.glb` — in 丈, at world position. Blender's glTF exporter
+  has **no scale option**: if you imported at the default 0.1 BU/丈, `import_world.py` scaled the GLB roots *and their
+  locations* by 0.1, so before exporting select the roots and scale them ×10 about the world origin (pivot: 3D cursor at
+  the origin), or import with `--scale 1` and model in 丈 from the start. `bake_ink_layout.py` exports the scene at its
+  own scale, so do this before baking.
+- `props.gd` draws every GLB in `meta.meshes.files` with the facet ink shader (`material_override`), so a replacement
+  must carry the ink layout (run `bake_ink_layout.py`); its own glTF materials and textures are not used.
 - For assets you want the editor to import (materials, LODs, collisions): put them under `godot/assets/` instead (no
   `.gdignore`), import with *Generate LODs* only for non-ink meshes, and instance them in scenes.
+
+## Shipping an exported build
+
+`data/world` is kept out of the import system by its `.gdignore`, and an export skips a `.gdignore`'d folder **even
+when the preset's include filter matches it** (tested on Godot 4.7.1 with `--export-pack`: the pack held no
+`data/world` files, so `World.load_all()` finds no `meta.json`). Dropping the `.gdignore` does not help either: the
+editor then imports the PNGs and GLBs and the export holds only their `.ctex` / `.scn`, so `Image.load_from_file` and
+`GLTFDocument.append_from_file` on the `res://` paths fail in the build (the `.bin` / `.json` files would pass the filter).
+
+What works (tested the same way, then the pack run with `godot --main-pack game.pck` from an empty folder:
+`FileAccess`, `Image.load_from_file` and `GLTFDocument` all read the files) is an editor export plugin that adds the raw
+files to the pack. `godot/addons/world_data_export/plugin.cfg`:
+
+```ini
+[plugin]
+name="World data export"
+description="Packs res://data/world (.gdignore'd) into exported builds as raw files."
+author=""
+version="1.0"
+script="plugin.gd"
+```
+`godot/addons/world_data_export/plugin.gd`:
+```gdscript
+@tool
+extends EditorPlugin
+
+var _export: EditorExportPlugin
+
+
+func _enter_tree() -> void:
+	_export = WorldDataExport.new()
+	add_export_plugin(_export)
+
+
+func _exit_tree() -> void:
+	remove_export_plugin(_export)
+
+
+class WorldDataExport extends EditorExportPlugin:
+	func _get_name() -> String:
+		return "WorldDataExport"
+
+	func _export_begin(_features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
+		_add_dir("res://data/world/")
+
+	func _add_dir(dir: String) -> void:
+		for f in DirAccess.get_files_at(dir):
+			if f != ".gdignore":
+				add_file(dir + f, FileAccess.get_file_as_bytes(dir + f), false)
+		for d in DirAccess.get_directories_at(dir):
+			_add_dir(dir + d + "/")
+```
+Enable it (Project Settings → Plugins, or `[editor_plugins] enabled=PackedStringArray("res://addons/world_data_export/plugin.cfg")`
+in `project.godot`), then export as usual; `godot --headless --path godot --export-pack "<preset>" game.pck` needs no
+export templates. (Untested alternative: ship `data/world` next to the executable and make `World.DIR` — a `const` in
+`world.gd` today — point there when `OS.has_feature("editor")` is false; that keeps the 180 MB out of the pack.)
 
 ## Re-running everything
 

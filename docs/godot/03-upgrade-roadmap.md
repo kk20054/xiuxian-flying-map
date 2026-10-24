@@ -16,9 +16,9 @@ Asset library referenced throughout: [`kk20054/ThreeJS-Stylized-World-Assets`](h
 |---|---|
 | **47 % of the 1 415 963 trees are pines** (kind 0), 41 % broadleaf, 3.7 % bamboo, 3 % 黄山松, 2.5 % blossom, 1.8 % willow, 1.2 % reeds (measured from `trees.bin`) | the Meadow library has **birch and oak only** — no conifer, bamboo, willow, blossom or reed. Conifers are the single biggest asset gap. |
 | The demo's trees are **diorama-sized**: median scale 1.24 × ~22 = **27 丈** high. The asset pack is placed at **10 丈 per metre** (PACK_M), so a Meadow birch (9.5 m) would be 95 丈, an oak (13 m) 130 丈. | Either scale library trees to ~0.3–0.6 (keeps the miniature, painted read from 1650 丈) or keep them real-size and lower the density ×4–8. Decide per biome; see §1.3. |
-| Meadow trees are **4 k–17 k triangles** each (birch 4–10 k, oak 13–17 k). 1.4 M × 6 k = 8 billion. The demo's 5 248 pack instances alone were already **5.8 M triangles**. | Only a ring around the camera can be real meshes. Beyond it: impostors, then the stylised low-poly kinds, then nothing (the demo's own density curve). |
+| Meadow trees are **3.8 k–17 k triangles** each (birch 4–10 k, oak 3.8–17 k, the Ivy variants the heaviest). 1.4 M × 6 k = 8 billion. The demo's 5 248 pack instances alone were already **5.8 M triangles**. | Only a ring around the camera can be real meshes. Beyond it: impostors, then the stylised low-poly kinds, then nothing (the demo's own density curve). |
 | The demo already has **seasons**: a winter country round 古剑门/云梦山 (6 % of pines), an autumn country round 百巧院 (10 % of pines, 13 % of 黄山松) — `season.png` | Meadow ships **Summer / Autumn / Winter material variants** of every tree and bush: pick the variant from `season.png` per tree. |
-| The demo paints the ground with **5 tiles** (grass, dry, snow, cliff, mud) at 150 丈 per tile; Meadow ships **6 terrain layers** (Grass, DryGrass, Mud, MudSnow, Snow, Cliffs) with normal + mask maps | a direct 1 : 1 upgrade of the ground's detail, splatted by biome / season / slope (§3.2). |
+| The demo paints the ground with **5 tiles** (grass, dry, snow, cliff, mud) at 150 丈 per tile; Meadow ships **6 terrain layers** (Grass, DryGrass, Mud, MudSnow, Snow, Cliffs) with normal + mask maps (DryGrass and MudSnow: albedo only) | a direct 1 : 1 upgrade of the ground's detail, splatted by biome / season / slope (§3.2). |
 | Zoning: **59 % sea, 29 % meadow (草甸), 6 % broadleaf wood, 0.9 % conifer wood**, the rest small (bamboo, flower seas, marsh, farmland, towns, cliffs) — `meta.json → biome.stats` | meadow ground cover (grass/flowers) is the largest visible surface after water — worth GPU scatter (§1.5). |
 | The sects are **procedural FacetBuf kits** (~45 k triangles each) with a flat colour per face and ink on chosen edges; the Temple pack is a **metric modular kit** (2 m walls, 3×5 roofs, 5×5 foundations, red stairs, doors, lattices, bells, lanterns) | rebuild each sect hall-for-hall from the build sheets in [05](../05-sects-architecture-cities.md) §2, placed on the exported sect ground (§2). |
 | Colour maths in the demo is **display-space**; Godot's Compatibility renderer does not convert the output, Forward+ does (`OUTPUT_IS_SRGB`) | keep the `ALBEDO = OUTPUT_IS_SRGB ? col : to_linear(col)` ending in every new shader; convert Blender's linear colours with `to_srgb` when baking vertex colours (`bake_ink_layout.py` does). |
@@ -115,8 +115,11 @@ relative placement, looks, animated parts, lights). The workflow:
 3. Bring the demo's xianxia set-pieces as **shaders and scripts**, not meshes: the 护山大阵 dome (doc 05 §3.1 has the GLSL
    and a Godot translation), spirit lights (GPUParticles3D, §3.2), light columns and pulse rings (§3.3–3.5), the
    animated parts (spinners, bobbing islands, boats — doc 05 §4 + Appendix C GDScript sketches).
-4. Export the sect as one glTF (`sect_luoyun.glb`), run `bake_ink_layout.py` first if you want the crisp facet ink on
-   architecture, and drop it into `godot/data/world/meshes/` — `props.gd` loads it in place of the procedural one.
+4. Export the sect as one glTF (`sect_luoyun.glb`), run `bake_ink_layout.py` on it first, and drop it into
+   `godot/data/world/meshes/` — `props.gd` loads it in place of the procedural one. The bake is not optional today:
+   `props.gd` gives every listed GLB the facet ink shader (`material_override`), so an unbaked Temple-kit sect loses its
+   glTF materials and textures and shows pale halls with stray ink; keeping imported materials on meshes without the
+   layout needs a change in `props.gd`.
    Floating islands: model the rock undersides in Blender (the demo's tapered rings are in doc 04 §2).
 5. Budget: a hero sect can afford 300–800 k triangles if the rest of the world uses visibility ranges; merge static
    modules per building, keep LOD1 at ~30 % with `visibility_range_end ≈ 4 000 丈`.
@@ -138,8 +141,8 @@ Cities (封日城, 韵州城): the same kit for gate towers, walls (`SM_BigWall_
    so the painting stays in charge.
 3. **Earth banks 土崖 and shores.** Port `buildBanks` (marching squares on `water_sd.png`, doc 04 §2.6) instead of the
    current dive, and dress sea cliffs with Meadow `SM_Rock_01–07` scaled ×20–60.
-4. **Horizon.** `MEADOW_SM_Mountain_01–04` / `Hill_01–02` (800 m / 500 m, 9–14 k tris) as distant ranges outside the world
-   rect, tinted into the haze — the demo fades to mist there.
+4. **Horizon.** `MEADOW_SM_Mountain_01–04` (300–600 m high × 1.1–1.6 km, 9–14 k tris) / `Hill_01–02` (45–65 m high ×
+   0.5–1 km, 2–6 k tris) as distant ranges outside the world rect, tinted into the haze — the demo fades to mist there.
 5. **Roads and rivers in 3D.** `paths.json` has every road/river/stream polyline: build ribbon meshes (doc 04 §5.7) or
    Path3D + a custom extruder; stone bridges where `bridges` says (Temple `SM_Bridge`).
 
@@ -188,8 +191,9 @@ Auto-quality (`main.gd`) lowers `scaling_3d_scale` by ×0.8 below 48 fps; add a 
 - The intro reveal (`intro_mix`) is a simplified port; the demo's three colour seeds with wet fronts (doc 04 §1.9) give a
   much richer 先勾后染 — port it once the world is final.
 - The demo's places carry **long lore texts** (`body`, `note`, `lead`) — reuse them for quest/codex screens.
-- `tools/export-world` can export the demo's 1.77 M Meadow ground cards too (`--eco`), if you want to reuse its exact
-  flower placement.
+- `tools/export-world` can export the demo's 443 k Meadow ground cards too (`--eco`: meadows, verges, village gardens —
+  not the 1.33 M eco-tree cards, which live in a local list of `buildTrees`), if you want to reuse its exact flower
+  placement.
 - Watch float precision: the world spans 131 800 丈 from an origin near 落云宗; Godot single-precision is fine at 0.1 BU
   per 丈 in Blender and 1 unit per 丈 in Godot (≈ 0.008 丈 resolution at the far edge). If you go to metres at full
   scale (×3.33), consider a floating origin or Godot's double-precision build.

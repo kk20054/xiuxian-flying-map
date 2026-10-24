@@ -78,5 +78,8 @@ CSS. The pixel-level spec of the original (positions, sizes, colours, fonts, tim
 - New label style for a place category: `map_chrome.gd → _settings(cat)`.
 - Card layout: `info_card.gd → _fill()` builds the body from the place dictionary (fields: `type, ally, name, crumb,
   lead, body[], note, chips[]`) — `places.json` is the content, editable without code.
-- Fonts: the shipped TTFs are subsets (GB2312 level-1 + every character the demo uses). Replace them with the full Google
-  Fonts files if you add new text.
+- Fonts: the shipped TTFs are subsets (GB2312 level-1 + the characters the demo uses that the fonts have). Replace them
+  with the full Google Fonts files if you add new text. Some UI symbols are in neither font: Noto Serif SC lacks ⌂ (zoom
+  home), ✦ (秘境), ▮ (宗门), ◩ (势力), ⋰ (韩立行迹) and ● (the card's ally chip), 马善政 also △ ◆ ·. They render only
+  through the OS font fallback and show as boxes where there is none (Web export, minimal Linux): give the FontFiles a
+  symbol font (e.g. a DejaVu Sans subset) as `fallbacks`.
