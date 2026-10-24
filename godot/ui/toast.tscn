@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/toast.gd" id="1_bi8eh"]
+[ext_resource type="FontFile" path="res://fonts/NotoSerifSC-400.ttf" id="2_vdpfo"]
+
+[sub_resource type="FontVariation" id="FontVariation_8s2uj"]
+base_font = ExtResource("2_vdpfo")
+spacing_glyph = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_ywvj8"]
+font = SubResource("FontVariation_8s2uj")
+font_size = 13
+font_color = Color(0.92156863, 0.8980392, 0.83137256, 1)
+
+[node name="Toast" type="CanvasLayer" unique_id=537925645]
+layer = 30
+script = ExtResource("1_bi8eh")
+
+[node name="ToastPanel" type="PanelContainer" parent="." unique_id=1679423999]
+unique_name_in_owner = true
+offset_left = 600.0
+offset_top = 10.0
+offset_right = 600.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme_type_variation = &"ToastPanel"
+
+[node name="ToastLabel" type="Label" parent="ToastPanel" unique_id=378881201]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_ywvj8")

@@ -1,0 +1,137 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/intro_ui.gd" id="1_8k8jw"]
+[ext_resource type="FontFile" path="res://fonts/MaShanZheng-Regular.ttf" id="2_scu43"]
+[ext_resource type="FontFile" path="res://fonts/NotoSerifSC-400.ttf" id="3_g4cid"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_j68jg"]
+line_spacing = -2.52
+font = ExtResource("2_scu43")
+font_size = 14
+font_color = Color(0.9843137, 0.93333334, 0.8862745, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_3sa4d"]
+line_spacing = 1.84
+font = ExtResource("2_scu43")
+font_size = 88
+font_color = Color(0.14901961, 0.13725491, 0.12156863, 1)
+shadow_size = 18
+shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
+shadow_offset = Vector2(0, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_q4ks3"]
+line_spacing = 2.3
+font = ExtResource("3_g4cid")
+font_size = 15
+font_color = Color(0.3019608, 0.2784314, 0.24313726, 1)
+shadow_size = 10
+shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
+shadow_offset = Vector2(0, 0)
+
+[sub_resource type="FontVariation" id="FontVariation_nicl7"]
+base_font = ExtResource("3_g4cid")
+spacing_glyph = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_a08nu"]
+font = SubResource("FontVariation_nicl7")
+font_size = 12
+font_color = Color(0.3019608, 0.2784314, 0.24313726, 1)
+shadow_size = 8
+shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
+shadow_offset = Vector2(0, 0)
+
+[node name="Intro" type="CanvasLayer" unique_id=247830114]
+layer = 15
+script = ExtResource("1_8k8jw")
+
+[node name="IntroRoot" type="Control" parent="." unique_id=472325410]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Title" type="HBoxContainer" parent="IntroRoot" unique_id=1537019267]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 172.0
+offset_top = 81.0
+offset_right = 172.0
+offset_bottom = 81.0
+mouse_filter = 2
+theme_override_constants/separation = 18
+
+[node name="@VBoxContainer@122" type="VBoxContainer" parent="IntroRoot/Title" unique_id=278464949]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="@MarginContainer@123" type="MarginContainer" parent="IntroRoot/Title/@VBoxContainer@122" unique_id=1032234083]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 6
+
+[node name="@PanelContainer@124" type="PanelContainer" parent="IntroRoot/Title/@VBoxContainer@122/@MarginContainer@123" unique_id=363613507]
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Seal"
+
+[node name="@Label@125" type="Label" parent="IntroRoot/Title/@VBoxContainer@122/@MarginContainer@123/@PanelContainer@124" unique_id=1171854478]
+layout_mode = 2
+text = "人
+界"
+label_settings = SubResource("LabelSettings_j68jg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleText" type="Label" parent="IntroRoot/Title" unique_id=1690902573]
+unique_name_in_owner = true
+layout_mode = 2
+text = "云
+梦
+山"
+label_settings = SubResource("LabelSettings_3sa4d")
+
+[node name="@VBoxContainer@127" type="VBoxContainer" parent="IntroRoot/Title" unique_id=376094004]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="@MarginContainer@128" type="MarginContainer" parent="IntroRoot/Title/@VBoxContainer@127" unique_id=1175754411]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 18
+
+[node name="@Label@129" type="Label" parent="IntroRoot/Title/@VBoxContainer@127/@MarginContainer@128" unique_id=385589898]
+layout_mode = 2
+text = "凡
+人
+修
+仙
+传
+·
+溪
+国
+西
+部
+灵
+脉"
+label_settings = SubResource("LabelSettings_q4ks3")
+
+[node name="SkipLayer" type="CanvasLayer" parent="." unique_id=1262715684]
+unique_name_in_owner = true
+layer = 16
+
+[node name="Skip" type="Label" parent="SkipLayer" unique_id=2134535997]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "点击或按任意键跳过"
+label_settings = SubResource("LabelSettings_a08nu")
+horizontal_alignment = 1

@@ -1,0 +1,128 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/debug_panel.gd" id="1_pycgl"]
+[ext_resource type="FontFile" path="res://fonts/MaShanZheng-Regular.ttf" id="2_lq62m"]
+[ext_resource type="FontFile" path="res://fonts/NotoSerifSC-400.ttf" id="3_ju5ft"]
+
+[sub_resource type="FontVariation" id="FontVariation_8nu0m"]
+base_font = ExtResource("2_lq62m")
+spacing_glyph = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_55j33"]
+font = SubResource("FontVariation_8nu0m")
+font_size = 20
+font_color = Color(0.92156863, 0.8980392, 0.83137256, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_21to1"]
+base_font = ExtResource("3_ju5ft")
+spacing_glyph = 3
+
+[sub_resource type="LabelSettings" id="LabelSettings_wocbb"]
+font = SubResource("FontVariation_21to1")
+font_size = 11
+font_color = Color(0.6392157, 0.7019608, 0.6784314, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_bidfc"]
+line_spacing = 4.0
+font = ExtResource("3_ju5ft")
+font_size = 11
+font_color = Color(0.6392157, 0.7019608, 0.6784314, 1)
+
+[node name="Debug" type="CanvasLayer" unique_id=568330498]
+layer = 25
+script = ExtResource("1_pycgl")
+
+[node name="DebugRoot" type="PanelContainer" parent="." unique_id=516916934]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(330, 0)
+offset_left = 16.0
+offset_top = 78.0
+offset_right = 346.0
+offset_bottom = 838.0
+theme_type_variation = &"Chrome"
+
+[node name="@VBoxContainer@137" type="VBoxContainer" parent="DebugRoot" unique_id=282105219]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="@PanelContainer@138" type="PanelContainer" parent="DebugRoot/@VBoxContainer@137" unique_id=196842426]
+layout_mode = 2
+theme_type_variation = &"DebugHeader"
+
+[node name="@HBoxContainer@139" type="HBoxContainer" parent="DebugRoot/@VBoxContainer@137/@PanelContainer@138" unique_id=995246973]
+layout_mode = 2
+
+[node name="@Label@140" type="Label" parent="DebugRoot/@VBoxContainer@137/@PanelContainer@138/@HBoxContainer@139" unique_id=1754097419]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "调试面板"
+label_settings = SubResource("LabelSettings_55j33")
+
+[node name="Reset" type="Button" parent="DebugRoot/@VBoxContainer@137/@PanelContainer@138/@HBoxContainer@139" unique_id=229988851]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"SmallButton"
+text = "恢复默认"
+
+[node name="CloseDbg" type="Button" parent="DebugRoot/@VBoxContainer@137/@PanelContainer@138/@HBoxContainer@139" unique_id=2106333621]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"SmallButton"
+text = "×"
+
+[node name="@ScrollContainer@145" type="ScrollContainer" parent="DebugRoot/@VBoxContainer@137" unique_id=1236250205]
+custom_minimum_size = Vector2(0, 560)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="@MarginContainer@146" type="MarginContainer" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145" unique_id=1979541809]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 4
+
+[node name="@VBoxContainer@147" type="VBoxContainer" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146" unique_id=135036446]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Rows" type="VBoxContainer" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147" unique_id=1251365260]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="@Label@149" type="Label" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147" unique_id=822106474]
+layout_mode = 2
+text = "工具"
+label_settings = SubResource("LabelSettings_wocbb")
+
+[node name="@HBoxContainer@150" type="HBoxContainer" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147" unique_id=1149520566]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Export" type="Button" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147/@HBoxContainer@150" unique_id=663157133]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"SmallButton"
+text = "导出参数"
+
+[node name="CopyOut" type="Button" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147/@HBoxContainer@150" unique_id=575260718]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"SmallButton"
+text = "复制"
+
+[node name="Out" type="TextEdit" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147" unique_id=1015792721]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+wrap_mode = 1
+
+[node name="Stats" type="Label" parent="DebugRoot/@VBoxContainer@137/@ScrollContainer@145/@MarginContainer@146/@VBoxContainer@147" unique_id=21240388]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_bidfc")

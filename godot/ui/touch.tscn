@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/touch.gd" id="1_2p6pg"]
+
+[node name="Touch" type="CanvasLayer" unique_id=1384717429]
+layer = 6
+script = ExtResource("1_2p6pg")
+
+[node name="Pad" type="Panel" parent="." unique_id=450471032]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 26.0
+offset_top = -142.0
+offset_right = 142.0
+offset_bottom = -26.0
+theme_type_variation = &"PadPanel"
+
+[node name="Knob" type="Panel" parent="Pad" unique_id=878724015]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 35.0
+offset_top = 35.0
+offset_right = 81.0
+offset_bottom = 81.0
+mouse_filter = 2
+theme_type_variation = &"KnobPanel"
+
+[node name="Boost" type="Button" parent="." unique_id=1594304172]
+unique_name_in_owner = true
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -134.0
+offset_right = -26.0
+offset_bottom = -64.0
+theme_type_variation = &"BoostButton"
+text = "疾"

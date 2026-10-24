@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hotspot_tag.gd" id="1_mgeap"]
+[ext_resource type="FontFile" path="res://fonts/NotoSerifSC-700.ttf" id="2_v8ktw"]
+[ext_resource type="FontFile" path="res://fonts/NotoSerifSC-400.ttf" id="3_64ts3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_blyqh"]
+line_spacing = 1.0
+font = ExtResource("2_v8ktw")
+font_size = 14
+font_color = Color(0.95686275, 0.9647059, 0.972549, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_i1smt"]
+base_font = ExtResource("3_64ts3")
+spacing_glyph = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_yift6"]
+font = SubResource("FontVariation_i1smt")
+font_size = 12
+font_color = Color(0.95686275, 1, 0.9843137, 1)
+
+[node name="HotspotTag" type="VBoxContainer" unique_id=811709623]
+mouse_filter = 0
+theme_override_constants/separation = 3
+script = ExtResource("1_mgeap")
+
+[node name="Tag" type="PanelContainer" parent="." unique_id=615210859]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 1
+theme_type_variation = &"SectTag"
+
+[node name="TagLabel" type="Label" parent="Tag" unique_id=258266075]
+unique_name_in_owner = true
+layout_mode = 2
+text = "宗
+门"
+label_settings = SubResource("LabelSettings_blyqh")
+horizontal_alignment = 1
+
+[node name="Pin" type="Panel" parent="." unique_id=2040348746]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(9, 9)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 1
+theme_type_variation = &"Pin"
+
+[node name="@Control@5" type="Control" parent="." unique_id=1267450711]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Prompt" type="PanelContainer" parent="." unique_id=688167230]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_type_variation = &"PromptPill"
+
+[node name="@Label@7" type="Label" parent="Prompt" unique_id=1897245971]
+layout_mode = 2
+text = "按 E 落脚"
+label_settings = SubResource("LabelSettings_yift6")

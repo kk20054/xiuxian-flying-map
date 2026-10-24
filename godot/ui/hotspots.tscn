@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hotspots.gd" id="1_cw5cd"]
+
+[node name="Hotspots" type="CanvasLayer" unique_id=281308129]
+layer = 4
+script = ExtResource("1_cw5cd")
+
+[node name="HotRoot" type="Control" parent="." unique_id=708695390]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2

@@ -1,0 +1,1012 @@
+{
+ "units": "丈 (1 丈 ≈ 3.33 m). +x east, +z south, +y up. Origin: the centre of the 云梦 three sects.",
+ "rect": {
+  "x0": -29630.07604777057,
+  "x1": 102166.6697950234,
+  "z0": -63537.25647604883,
+  "z1": 16585.87535789639
+ },
+ "startPos": [
+  11026.574197470896,
+  791.9839414603542
+ ],
+ "layout": {
+  "S": 2.4706485301864087,
+  "k": 58.0602404593806,
+  "origin": [
+   570.3333333333334,
+   394.3333333333333
+  ],
+  "note": "world = (basemap_px - origin) * k; basemap px are the 1490x812 云梦山 screenshot of selfmate 人界舆图"
+ },
+ "height": {
+  "file": "height.png",
+  "w": 3296,
+  "h": 2005,
+  "cell": 40,
+  "x0": -29630.07604777057,
+  "z0": -63537.25647604883,
+  "max": 1104,
+  "encoding": "uint16 grey, h = v / 65535 * max; sample (i, j) sits at (x0 + i*cell, z0 + j*cell)",
+  "raw": {
+   "file": "height_f16.bin",
+   "format": "IEEE half, little-endian, row-major w×h, value = height in 丈 (Godot: Image.create_from_data(w, h, false, Image.FORMAT_RH, bytes))"
+  }
+ },
+ "patches": [
+  {
+   "file": "height_patch_0.png",
+   "w": 283,
+   "h": 283,
+   "cell": 13.333333333333334,
+   "x0": -2550.07604777057,
+   "z0": -4377.256476048831,
+   "x1": 1209.9239522294301,
+   "z1": -617.2564760488312,
+   "raw": "height_patch_0_f16.bin"
+  },
+  {
+   "file": "height_patch_1.png",
+   "w": 283,
+   "h": 283,
+   "cell": 13.333333333333334,
+   "x0": 9609.92395222943,
+   "z0": -2537.2564760488312,
+   "x1": 13369.92395222943,
+   "z1": 1222.7435239511688,
+   "raw": "height_patch_1_f16.bin"
+  },
+  {
+   "file": "height_patch_2.png",
+   "w": 283,
+   "h": 283,
+   "cell": 13.333333333333334,
+   "x0": -12710.07604777057,
+   "z0": 1302.7435239511688,
+   "x1": -8950.07604777057,
+   "z1": 5062.743523951169,
+   "raw": "height_patch_2_f16.bin"
+  },
+  {
+   "file": "height_patch_3.png",
+   "w": 268,
+   "h": 265,
+   "cell": 13.333333333333334,
+   "x0": 68929.92395222944,
+   "z0": 4582.743523951169,
+   "x1": 72489.92395222944,
+   "z1": 8102.743523951169,
+   "raw": "height_patch_3_f16.bin"
+  },
+  {
+   "file": "height_patch_4.png",
+   "w": 265,
+   "h": 265,
+   "cell": 13.333333333333334,
+   "x0": 94729.92395222944,
+   "z0": -10057.256476048831,
+   "x1": 98249.92395222944,
+   "z1": -6537.256476048831,
+   "raw": "height_patch_4_f16.bin"
+  },
+  {
+   "file": "height_patch_5.png",
+   "w": 265,
+   "h": 268,
+   "cell": 13.333333333333334,
+   "x0": 85769.92395222944,
+   "z0": -23457.25647604883,
+   "x1": 89289.92395222944,
+   "z1": -19897.25647604883,
+   "raw": "height_patch_5_f16.bin"
+  }
+ ],
+ "water": {
+  "mask": {
+   "file": "water_mask.png",
+   "w": 4608,
+   "h": 2801
+  },
+  "sd": {
+   "file": "water_sd.png",
+   "w": 2304,
+   "h": 1400,
+   "encoding": "uint16, d = (v - 32768) / 8 丈, + inside water"
+  },
+  "seaDepth": {
+   "file": "sea_depth.png",
+   "w": 768,
+   "h": 467
+  },
+  "depth": 7,
+  "seaDepthMax": 20,
+  "note": "pixel centres: x = rect.x0 + (i + 0.5) / w * (rect.x1 - rect.x0)",
+  "tex": {
+   "file": "water_tex.png",
+   "w": 4608,
+   "h": 2801,
+   "encoding": "the demo's own water texture: R shore distance (128 = shore, 2 丈 per step, > 128 in water), G/B drift/flow (128 = still), A sea factor"
+  }
+ },
+ "biome": {
+  "file": "biome.png",
+  "w": 1536,
+  "h": 934,
+  "names": [
+   "海",
+   "海滩",
+   "河滩",
+   "沼泽",
+   "花海",
+   "草甸",
+   "农田",
+   "村镇",
+   "阔叶林",
+   "针叶林",
+   "竹林",
+   "崖壁",
+   "高山",
+   "灵地",
+   "宗门",
+   "谷地",
+   "荒原"
+  ],
+  "colors": [
+   "#3d6f8e",
+   "#e2d3a2",
+   "#bfc9a0",
+   "#5b6b3a",
+   "#e6a1c4",
+   "#9fcf6a",
+   "#d8c26a",
+   "#b07a55",
+   "#3f7d3a",
+   "#2f5b44",
+   "#7fb36a",
+   "#8a8a86",
+   "#eef2f4",
+   "#8fd6d0",
+   "#c94f3d",
+   "#5fae4e",
+   "#d6c08a"
+  ],
+  "stats": {
+   "海": 59.3,
+   "海滩": 0.5,
+   "河滩": 0.7,
+   "沼泽": 0.1,
+   "花海": 0.3,
+   "草甸": 28.7,
+   "农田": 1.1,
+   "村镇": 0.1,
+   "阔叶林": 6.1,
+   "针叶林": 0.9,
+   "竹林": 0.2,
+   "崖壁": 0.7,
+   "高山": 0,
+   "灵地": 0,
+   "宗门": 0.3,
+   "谷地": 0.7,
+   "荒原": 0.6
+  },
+  "weights": {
+   "file": "biome_weights.png",
+   "w": 1536,
+   "h": 934,
+   "channels": "R flower field, G sand/pebbles, B marsh, A lushness"
+  },
+  "drift": {
+   "file": "flower_drift.png",
+   "w": 3072,
+   "h": 1868,
+   "channels": "rgb dominant flower colour, a drift"
+  }
+ },
+ "ground": {
+  "file": "ground.png",
+  "w": 1536,
+  "h": 934,
+  "channels": "R woods, G fields, B bare ground (yards, lanes), A the lie of the fields"
+ },
+ "trees": {
+  "file": "trees.bin",
+  "count": 1415963,
+  "bytesPerTree": 8,
+  "layout": "uint16 x, uint16 z (0..65535 over rect), uint8 kind, uint8 colour, uint8 yaw (v/256*2π), uint8 scale (v/255*scaleMax), little-endian",
+  "scaleMax": 2.5229244232177734,
+  "kinds": {
+   "0": 666635,
+   "1": 575850,
+   "2": 51765,
+   "3": 43089,
+   "4": 25384,
+   "5": 35459,
+   "6": 131,
+   "7": 1242,
+   "8": 16408
+  }
+ },
+ "eco": {
+  "stride": 7,
+  "fields": [
+   "model",
+   "x",
+   "y",
+   "z",
+   "scale",
+   "tint",
+   "flag"
+  ],
+  "count": 63319.71428571428
+ },
+ "config": {
+  "assets": {
+   "details": "details.json",
+   "hotspots": "hotspots.json",
+   "cloud": "cloud.png",
+   "formation": "formation.png",
+   "pack": "assets/ym_pack.json",
+   "ground": "assets/ground_{name}.jpg",
+   "eco": "assets/eco.json",
+   "ecoAlbedo": "assets/eco_albedo.webp",
+   "ecoNormal": "assets/eco_normal.webp"
+  },
+  "layout": {
+   "gujianLuoyunSec": 62,
+   "spacing": 1
+  },
+  "flight": {
+   "speed": 0.12,
+   "boostMul": 3,
+   "accel": 0.5,
+   "glide": 1.25,
+   "fling": 0.85,
+   "lightHeight": 0.24,
+   "bob": 1,
+   "dunIn": 0.22,
+   "dunOut": 0.55
+  },
+  "figure": {
+   "on": false,
+   "size": 1.5,
+   "lean": 30,
+   "boostLean": 66,
+   "bank": 22,
+   "fade": 0.22
+  },
+  "camera": {
+   "fov": 40,
+   "lookAhead": 0.6,
+   "follow": 0.3,
+   "pitchLow": 38,
+   "pitchMid": 45,
+   "pitchHigh": 54,
+   "pitchTop": 60,
+   "boostPull": 0.1,
+   "lead": 0.1
+  },
+  "zoom": {
+   "low": 950,
+   "mid": 1650,
+   "high": 8000,
+   "mapAt": 11000,
+   "start": 1650,
+   "wheel": 0.0013,
+   "keyRate": 0.95,
+   "ease": 0.28
+  },
+  "terrain": {
+   "relief": 1,
+   "grid": 40,
+   "peakHeight": 1,
+   "mainPeak": 580,
+   "pillar": 1300,
+   "siteDetail": 3,
+   "snowLine": 820,
+   "hills": 1,
+   "creaseInk": 0.75,
+   "footInk": 0.8,
+   "facetJitter": 0.32,
+   "soft": 0.85,
+   "cun": 1,
+   "strata": 1,
+   "lod": 1,
+   "ridgeLight": 1
+  },
+  "city": {
+   "beams": 1,
+   "terraces": 1
+  },
+  "life": {
+   "amount": 1,
+   "people": 1,
+   "traffic": 1,
+   "boats": 1,
+   "ships": 1,
+   "flyboats": 1,
+   "deer": 28,
+   "scale": 1.15,
+   "far": 3000,
+   "motes": 180
+  },
+  "relief": {
+   "cell": 100,
+   "iters": 5,
+   "m": 0.45,
+   "height": 540,
+   "cap": 950,
+   "maskLo": 0.1,
+   "maskHi": 0.62,
+   "front": 1.8,
+   "spine": 0.55,
+   "plain": 0.1,
+   "detail": 0.5,
+   "sectRise": 1.15,
+   "spurLow": 0.2,
+   "mainMassif": 0.6,
+   "trend": 15,
+   "rock": 0.55,
+   "grain": 0.18,
+   "soften": 6,
+   "streamArea": 150,
+   "riverArea": 420
+  },
+  "sects": {
+   "scale": 1,
+   "dome": 1,
+   "flow": 1,
+   "ripple": 1,
+   "clouds": 1,
+   "glow": 1,
+   "cloudGap": 14,
+   "ringSpin": 1,
+   "cloudFall": 0.5,
+   "cloudSink": 240,
+   "floorBack": -20,
+   "floorFront": -70,
+   "crestUp": 85,
+   "spurs": 6,
+   "leanK": 1.3,
+   "foot": 0.34,
+   "rockMix": 0.35
+  },
+  "regions": {
+   "snow": 1,
+   "maple": 1,
+   "radius": 1
+  },
+  "cloudSea": {
+   "amount": 1,
+   "height": 175,
+   "billow": 1,
+   "speed": 1,
+   "spread": 1,
+   "thick": 150,
+   "density": 1,
+   "steps": 9,
+   "valley": 75,
+   "hollow": 1,
+   "hollowLo": 30,
+   "hollowHi": 150
+  },
+  "water": {
+   "depth": 7,
+   "seaDepth": 20,
+   "ripples": 1,
+   "waves": 1,
+   "flow": 1,
+   "seaMotion": 1.8,
+   "steps": 4,
+   "maskSize": 4608
+  },
+  "trees": {
+   "density": 1,
+   "size": 1,
+   "sway": 1
+  },
+  "eco": {
+   "trees": 1,
+   "ground": 1,
+   "winter": [
+    4600,
+    7000
+   ],
+   "autumn": [
+    5800,
+    9200
+   ],
+   "spirit": 1,
+   "lowPines": 1,
+   "meadows": 1,
+   "verges": 1
+  },
+  "ground": {
+   "rivers": 1,
+   "forests": 1,
+   "farms": 1,
+   "roads": 1,
+   "streams": 1
+  },
+  "lore": {
+   "amount": 1,
+   "flyers": 8,
+   "flyerSpeed": 340
+  },
+  "palette": {
+   "ink": "#363d41",
+   "azurite": "#3f5866",
+   "azuriteLit": "#5d7f8d",
+   "malachite": "#6c9b97",
+   "malachiteDeep": "#527f7b",
+   "ochre": "#a88969",
+   "ochreDeep": "#8b6c4f",
+   "plains": "#b6bd99",
+   "plainsGreen": "#9db08a",
+   "waterLight": "#a8d4cd",
+   "water": "#73b1bc",
+   "waterDeep": "#3f7c97",
+   "mist": "#e6e2dd",
+   "pine": "#4e6d63",
+   "tree": "#6f9a86",
+   "maple": "#a65a42",
+   "ginkgo": "#b39560",
+   "frostPine": "#8fa8a6",
+   "bamboo": "#6f9f88",
+   "snow": "#e9eeee",
+   "rockRed": "#b45c3f",
+   "rockPale": "#cdc8b7"
+  },
+  "sun": {
+   "azimuth": 140,
+   "elevation": 40,
+   "shadow": 0.85,
+   "contrast": 1,
+   "ao": 0.5
+  },
+  "light": {
+   "core": "#e8fff6",
+   "glow": "#3fd9b0",
+   "size": 1,
+   "tail": 1,
+   "breath": 0.08,
+   "intensity": 0.85,
+   "shadow": 0.32,
+   "speedLines": 0.6
+  },
+  "clouds": {
+   "amount": 1,
+   "speed": 1,
+   "banks": 1,
+   "mist": 0.5,
+   "nearEvery": 10,
+   "nearOpacity": 0.5,
+   "shadows": 0.16,
+   "wall": 1
+  },
+  "mirror": {
+   "wobble": 1.6
+  },
+  "look": {
+   "tiltShift": 1,
+   "focusBand": 0.18,
+   "paper": 0.24,
+   "vignette": 0.38,
+   "edgeFade": 0.05,
+   "detail": 1,
+   "pixelRatio": 1,
+   "haze": 0.5,
+   "edgeInk": 0.7,
+   "ground": 1
+  },
+  "cinema": {
+   "grade": 1,
+   "valleyMist": 0.8,
+   "shafts": 1,
+   "cirrus": 1,
+   "warmth": 0.6,
+   "vignette": 0.35,
+   "region": 1
+  },
+  "intro": {
+   "duration": 4.6,
+   "ink": [
+    0.05,
+    1.35
+   ],
+   "wash": [
+    1,
+    3.05
+   ],
+   "clouds": [
+    2.7,
+    3.8
+   ],
+   "lightIn": [
+    3.35,
+    4.55
+   ],
+   "title": [
+    0.15,
+    3.3
+   ],
+   "startAlt": 2700
+  },
+  "hotspot": {
+   "radius": 700,
+   "labelMaxAlt": 4200,
+   "prompt": "按 E 落脚"
+  },
+  "map": {
+   "fov": 20,
+   "minView": 2400,
+   "maxView": 42000
+  }
+ },
+ "stats": {
+  "t": {
+   "geo": 74,
+   "coast": 115,
+   "plan": 8,
+   "relief": 2886,
+   "landform": 2248,
+   "height": 2529,
+   "patch": 1427,
+   "rivers": 271,
+   "mask": 390,
+   "field": 1408,
+   "marsh": 289,
+   "carve": 243,
+   "roads": 1431,
+   "ground": 660,
+   "biome": 3176,
+   "trees": 3754,
+   "ecoGround": 2780,
+   "clouds": 1644,
+   "ltex": 1036,
+   "lsun": 80,
+   "lmesh": 5782,
+   "lbank": 555,
+   "land": 7452,
+   "pack": 17,
+   "props": 6809
+  },
+  "mem": {
+   "geo": 22,
+   "coast": 22,
+   "plan": 22,
+   "relief": 22,
+   "landform": 22,
+   "height": 22,
+   "patch": 22,
+   "rivers": 22,
+   "mask": 22,
+   "field": 22,
+   "marsh": 22,
+   "carve": 22,
+   "roads": 22,
+   "ground": 22,
+   "biome": 22,
+   "trees": 22,
+   "ecoGround": 22,
+   "clouds": 22,
+   "ltex": 22,
+   "lsun": 22,
+   "lmesh": 22,
+   "lbank": 22,
+   "water": 22,
+   "props": 22,
+   "life": 22
+  },
+  "reliefMs": 2885,
+  "reliefMax": 1033,
+  "activeBlocks": 16044,
+  "blocks": 103412,
+  "heightMs": 9432,
+  "streams": 153,
+  "rivers": 82,
+  "marsh": {
+   "water": 19
+  },
+  "seaCliffVerts": 77,
+  "roads": 64,
+  "villages": 53,
+  "roadside": 169,
+  "bridges": 33,
+  "biome": {
+   "海": 59.3,
+   "海滩": 0.5,
+   "河滩": 0.7,
+   "沼泽": 0.1,
+   "花海": 0.3,
+   "草甸": 28.7,
+   "农田": 1.1,
+   "村镇": 0.1,
+   "阔叶林": 6.1,
+   "针叶林": 0.9,
+   "竹林": 0.2,
+   "崖壁": 0.7,
+   "高山": 0,
+   "灵地": 0,
+   "宗门": 0.3,
+   "谷地": 0.7,
+   "荒原": 0.6
+  },
+  "trees": 1415963,
+  "forestTrees": 1352948,
+  "ecoGround": {
+   "all": 443238,
+   "meadow": 310329,
+   "verge": 129299
+  },
+  "totalMs": 25332,
+  "mountainTris": 1450684,
+  "siteTris": 742540,
+  "landMeshes": 267,
+  "bankTris": 118680,
+  "isleFit": {
+   "luoyun": [
+    "herbs:-8,-61,+0"
+   ],
+   "luanming": []
+  },
+  "nihangRej": {
+   "slope": 4,
+   "taken": 4,
+   "low": 0
+  },
+  "nihangVillage": {
+   "houses": 18,
+   "yards": 8,
+   "beacons": 3
+  },
+  "travertine": {
+   "shuiying": 46
+  },
+  "sectTris": 260663,
+  "sectPaths": 67,
+  "cityTris": 229461,
+  "cityPaths": 65,
+  "towns": 6,
+  "meadowProps": {
+   "fences": 1565,
+   "boardwalk": 160,
+   "rocks": 1210,
+   "logs": 491
+  },
+  "pack": {
+   "instances": 5248,
+   "tris": 5818704,
+   "meshes": 1667,
+   "models": 46
+  },
+  "packBy": {
+   "stoneLamp2": [
+    96,
+    "55k"
+   ],
+   "rockT1": [
+    46,
+    "75k"
+   ],
+   "rock5": [
+    11,
+    "26k"
+   ],
+   "rock6": [
+    9,
+    "4k"
+   ],
+   "rock1": [
+    12,
+    "38k"
+   ],
+   "templeBase1": [
+    3,
+    "0k"
+   ],
+   "lilies": [
+    40,
+    "44k"
+   ],
+   "liliesB": [
+    32,
+    "38k"
+   ],
+   "liliesC": [
+    32,
+    "9k"
+   ],
+   "rockT2": [
+    8,
+    "16k"
+   ],
+   "bridge": [
+    4,
+    "21k"
+   ],
+   "temple": [
+    7,
+    "68k"
+   ],
+   "lanternC": [
+    18,
+    "14k"
+   ],
+   "mush5": [
+    16,
+    "19k"
+   ],
+   "mush7": [
+    16,
+    "26k"
+   ],
+   "mush12": [
+    16,
+    "16k"
+   ],
+   "log2": [
+    233,
+    "504k"
+   ],
+   "log1": [
+    152,
+    "604k"
+   ],
+   "stump1": [
+    137,
+    "221k"
+   ],
+   "treeOrange": [
+    17,
+    "151k"
+   ],
+   "maple": [
+    5,
+    "93k"
+   ],
+   "pillarCluster": [
+    6,
+    "5k"
+   ],
+   "statue": [
+    2,
+    "4k"
+   ],
+   "column": [
+    4,
+    "6k"
+   ],
+   "rock3": [
+    4,
+    "13k"
+   ],
+   "fence6": [
+    265,
+    "514k"
+   ],
+   "fence2": [
+    840,
+    "800k"
+   ],
+   "fence8": [
+    695,
+    "1289k"
+   ],
+   "fence8A": [
+    30,
+    "56k"
+   ],
+   "plank1": [
+    80,
+    "108k"
+   ],
+   "plank2": [
+    80,
+    "95k"
+   ],
+   "rgroup4": [
+    398,
+    "238k"
+   ],
+   "rock9": [
+    135,
+    "33k"
+   ],
+   "rgroup6": [
+    290,
+    "78k"
+   ],
+   "rock7": [
+    200,
+    "70k"
+   ],
+   "rock11": [
+    104,
+    "10k"
+   ],
+   "rgroup6W": [
+    6,
+    "2k"
+   ],
+   "rgroup4W": [
+    5,
+    "3k"
+   ],
+   "rock7W": [
+    3,
+    "1k"
+   ],
+   "rock2": [
+    31,
+    "113k"
+   ],
+   "rock4": [
+    31,
+    "98k"
+   ],
+   "rock2A": [
+    3,
+    "11k"
+   ],
+   "rock4A": [
+    4,
+    "13k"
+   ],
+   "stump2": [
+    103,
+    "202k"
+   ],
+   "log1W": [
+    4,
+    "16k"
+   ],
+   "stump1W": [
+    2,
+    "3k"
+   ]
+  },
+  "lore": {
+   "arrays": 0,
+   "caves": 34,
+   "herbs": 70,
+   "pagodas": 5
+  },
+  "ecoTrees": 1328034,
+  "eco": {
+   "cards": 1774686,
+   "meshes": 1431
+  },
+  "roadTris": 61470,
+  "streamTris": 26668,
+  "uplands": 70,
+  "settleTris": 77666,
+  "mirror": {
+   "site": "shuiying",
+   "meshes": 23,
+   "tex": 30415
+  },
+  "glows": 1444,
+  "cloudSeaTris": 240146,
+  "shafts": 16,
+  "life": {
+   "routes": 532,
+   "walker": 2193,
+   "cart": 299,
+   "rider": 204,
+   "sampan": 378,
+   "junk": 49,
+   "flyboat": 22,
+   "deer": 28
+  }
+ },
+ "cloudSea": {
+  "file": "cloud_sea.png",
+  "w": 1648,
+  "h": 1002,
+  "cell": 80,
+  "encoding": "8-bit planned density over the world rect (0 = open sky, 255 = full sea)"
+ },
+ "mountainColor": {
+  "file": "mountain_color.png",
+  "w": 3296,
+  "h": 2005,
+  "cell": 40,
+  "encoding": "RGBA8 on the height grid: rgb = the demo facetColor ramp (display-space sRGB), a = 255 where mountains are"
+ },
+ "season": {
+  "file": "season.png",
+  "w": 768,
+  "h": 467,
+  "channels": "R winter, G autumn, B spirit land, A dry steppe"
+ },
+ "meshes": {
+  "vertexLayout": "COLOR_0.rgb face colour, COLOR_0.a ink weight of edge opposite corner C, TEXCOORD_0 barycentric (x,y), TEXCOORD_1 ink weights of edges opposite A,B",
+  "files": [
+   {
+    "file": "meshes/sect_gujian_ground.glb",
+    "meshes": 1,
+    "triangles": 159048
+   },
+   {
+    "file": "meshes/sect_luoyun_ground.glb",
+    "meshes": 1,
+    "triangles": 159048
+   },
+   {
+    "file": "meshes/sect_baiqiao_ground.glb",
+    "meshes": 1,
+    "triangles": 159048
+   },
+   {
+    "file": "meshes/sect_luanming_ground.glb",
+    "meshes": 1,
+    "triangles": 44864
+   },
+   {
+    "file": "meshes/sect_nihang_ground.glb",
+    "meshes": 1,
+    "triangles": 135514
+   },
+   {
+    "file": "meshes/sect_shuiying_ground.glb",
+    "meshes": 1,
+    "triangles": 85018
+   },
+   {
+    "file": "meshes/sect_gujian.glb",
+    "meshes": 1,
+    "triangles": 43930
+   },
+   {
+    "file": "meshes/sect_luoyun.glb",
+    "meshes": 1,
+    "triangles": 53734
+   },
+   {
+    "file": "meshes/sect_baiqiao.glb",
+    "meshes": 1,
+    "triangles": 43526
+   },
+   {
+    "file": "meshes/sect_luanming.glb",
+    "meshes": 1,
+    "triangles": 46677
+   },
+   {
+    "file": "meshes/sect_nihang.glb",
+    "meshes": 1,
+    "triangles": 30334
+   },
+   {
+    "file": "meshes/sect_shuiying.glb",
+    "meshes": 1,
+    "triangles": 42462
+   },
+   {
+    "file": "meshes/sect_gujian_surroundings.glb",
+    "meshes": 19,
+    "triangles": 1637
+   },
+   {
+    "file": "meshes/cities.glb",
+    "meshes": 4,
+    "triangles": 229461
+   },
+   {
+    "file": "meshes/props.glb",
+    "meshes": 3,
+    "triangles": 95806
+   },
+   {
+    "file": "meshes/sect_baiqiao_surroundings.glb",
+    "meshes": 1,
+    "triangles": 1754
+   },
+   {
+    "file": "meshes/sect_shuiying_surroundings.glb",
+    "meshes": 2,
+    "triangles": 127480
+   }
+  ]
+ }
+}

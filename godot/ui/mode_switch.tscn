@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/mode_switch.gd" id="1_nmhej"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gfe6j"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.06666667, 0.12156863, 0.11372549, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.47058824, 0.627451, 0.5882353, 0.22)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[node name="ModeSwitch" type="CanvasLayer" unique_id=1238549017]
+layer = 20
+script = ExtResource("1_nmhej")
+
+[node name="Switch" type="PanelContainer" parent="." unique_id=1524505989]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -16.0
+offset_top = 16.0
+offset_right = -16.0
+grow_horizontal = 0
+theme_type_variation = &"ChromePad"
+theme_override_styles/panel = SubResource("StyleBoxFlat_gfe6j")
+
+[node name="@HBoxContainer@133" type="HBoxContainer" parent="Switch" unique_id=118644112]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SegFly" type="Button" parent="Switch/@HBoxContainer@133" unique_id=1668289182]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"ModeSegOn"
+text = "御空"
+
+[node name="SegMap" type="Button" parent="Switch/@HBoxContainer@133" unique_id=234296990]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"ModeSeg"
+text = "收图"

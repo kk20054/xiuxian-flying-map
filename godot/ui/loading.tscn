@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/loading.gd" id="1_og8k8"]
+[ext_resource type="FontFile" path="res://fonts/NotoSerifSC-400.ttf" id="2_uku2u"]
+
+[sub_resource type="FontVariation" id="FontVariation_w2lu3"]
+base_font = ExtResource("2_uku2u")
+spacing_glyph = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_nl7dj"]
+font = SubResource("FontVariation_w2lu3")
+font_size = 12
+font_color = Color(0.3019608, 0.2784314, 0.24313726, 1)
+shadow_size = 6
+shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
+shadow_offset = Vector2(0, 0)
+
+[node name="Loading" type="CanvasLayer" unique_id=1802878129]
+layer = 31
+script = ExtResource("1_og8k8")
+
+[node name="LoadingRoot" type="HBoxContainer" parent="." unique_id=2104204995]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -16.0
+offset_top = 70.0
+offset_right = -16.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Spinner" type="Control" parent="LoadingRoot" unique_id=821547002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+
+[node name="LoadingLabel" type="Label" parent="LoadingRoot" unique_id=975546166]
+unique_name_in_owner = true
+layout_mode = 2
+text = "展卷中"
+label_settings = SubResource("LabelSettings_nl7dj")
