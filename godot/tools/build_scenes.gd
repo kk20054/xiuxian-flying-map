@@ -44,7 +44,7 @@ func _button(name: String, normal: StyleBox, hover: StyleBox, font: Font, size: 
 	theme.set_stylebox("normal", name, normal)
 	theme.set_stylebox("hover", name, hover)
 	theme.set_stylebox("pressed", name, pressed if pressed else hover)
-	theme.set_stylebox("hover_pressed", name, pressed if pressed else hover)
+	theme.set_stylebox("hover_pressed", name, hover)
 	theme.set_stylebox("disabled", name, normal)
 	var f := StyleBoxFlat.new(); f.draw_center = false; f.set_border_width_all(2); f.border_color = U.JADE_HI; f.set_corner_radius_all(normal.corner_radius_top_left if normal is StyleBoxFlat else 8); f.expand_margin_left = 2; f.expand_margin_right = 2; f.expand_margin_top = 2; f.expand_margin_bottom = 2
 	theme.set_stylebox("focus", name, f)
@@ -101,7 +101,7 @@ func _theme() -> void:
 	# buttons
 	var clear := _sb(Color(0, 0, 0, 0), 8, 0, Color(0, 0, 0, 0), Vector4(12, 8, 12, 8))
 	var hov := _sb(U.CHROME_2, 8, 0, Color(0, 0, 0, 0), Vector4(12, 8, 12, 8))
-	_button("LegendButton", clear, hov, U.serif(400), 15, U.CHROME_TEXT)
+	_button("LegendButton", clear, hov, U.serif(400), 15, U.CHROME_TEXT, Color(0, 0, 0, 0), clear)   # on = transparent; off = opacity .42
 	var zc := _sb(Color(0, 0, 0, 0), 8); var zh := _sb(U.CHROME_2, 8)
 	_button("ZoomButton", zc, zh, U.serif(400), 20, U.CHROME_TEXT)
 	var rc := _sb(Color(0, 0, 0, 0), 8, 0, Color(0, 0, 0, 0), Vector4(10, 8, 10, 8)); var rh := _sb(U.CHROME_2, 8, 0, Color(0, 0, 0, 0), Vector4(10, 8, 10, 8))
@@ -173,6 +173,20 @@ func _set_owner_rec(n: Node, owner: Node) -> void:
 		_set_owner_rec(c, owner)
 
 
+## CSS pointer-events:none for a whole subtree (the HUD): nothing in it may swallow clicks meant for the 3D view
+func _ignore_mouse(n: Node) -> void:
+	if n is Control:
+		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for c in n.get_children():
+		_ignore_mouse(c)
+
+
+## A wheel over a panel scrolls the panel and stops there (the demo's wheel listener is on the canvas only)
+func _stop_wheel(c: Control) -> Control:
+	c.mouse_force_pass_scroll_events = false
+	return c
+
+
 func _label(text: String, s: LabelSettings) -> Label:
 	var l := Label.new()
 	l.text = text
@@ -214,6 +228,7 @@ func _seal(parent: Node, text: String, size: int, font_size: int, variation := "
 	var s := PanelContainer.new()
 	s.theme_type_variation = variation
 	s.custom_minimum_size = Vector2(size, size)
+	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER        # #brand / #mtop align-items:center: the seal stays square
 	s.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_add(parent, s)
 	var l := _label(U.vertical(text), U.ls(U.brush(), font_size, Color("#fbeee2")))
@@ -299,6 +314,7 @@ func _hud() -> Node:
 	_add(arow, _label(" 丈", U.ls(U.spaced(U.serif(400), 12, 0.08), 12, U.INK_SOFT, glow8, 6)), "AltBand")
 	var spd := _label("遁速 0", U.ls(U.spaced(U.serif(400), 12, 0.08), 12, U.INK_SOFT, glow8, 6)); spd.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_add(ro, spd, "Spd")
+	_ignore_mouse(root)
 	return c
 
 
@@ -344,10 +360,9 @@ func _map_chrome() -> Node:
 	var top := HBoxContainer.new(); top.position = Vector2(16, 16); top.add_theme_constant_override("separation", 10); top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_add(root, top, "MTop")
 	_seal(top, "人界", 46, 19, "Seal46")
-	var sv := VBoxContainer.new(); sv.add_theme_constant_override("separation", 6); sv.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_add(top, sv)
 	var search := PanelContainer.new(); search.theme_type_variation = "Chrome"; search.custom_minimum_size = Vector2(360, 46)
-	_add(sv, search, "Search")
+	search.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_add(top, _stop_wheel(search), "Search")
 	var sm := MarginContainer.new(); sm.add_theme_constant_override("margin_left", 12); sm.add_theme_constant_override("margin_right", 12)
 	_add(search, sm)
 	var sh := HBoxContainer.new(); sh.add_theme_constant_override("separation", 8)
@@ -360,7 +375,8 @@ func _map_chrome() -> Node:
 	_add(sh, kb, "Kbd")
 	_add(kb, _label("/", U.ls(U.serif(400), 12, U.CHROME_DIM)))
 	var res := PanelContainer.new(); res.theme_type_variation = "ChromePad"; res.custom_minimum_size = Vector2(360, 0)
-	_add(sv, res, "Results")
+	res.position = Vector2(16 + 46 + 10, 16 + 52)
+	_add(root, _stop_wheel(res), "Results")
 	var rl := VBoxContainer.new(); rl.add_theme_constant_override("separation", 2)
 	_add(res, rl, "ResultList")
 	# legend bottom-left
@@ -368,13 +384,13 @@ func _map_chrome() -> Node:
 	lg.add_theme_constant_override("separation", 10); lg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_add(root, lg, "MLegend")
 	var g1 := PanelContainer.new(); g1.theme_type_variation = "ChromePad"
-	_add(lg, g1)
+	_add(lg, _stop_wheel(g1))
 	var g1h := HBoxContainer.new(); g1h.add_theme_constant_override("separation", 2)
 	_add(g1, g1h)
 	var bt := _legend_button(g1h, "韩立行迹", "⋰", "", "BtnTrail")
 	bt.button_pressed = false; bt.modulate.a = 0.42
 	var g2 := PanelContainer.new(); g2.theme_type_variation = "ChromePad"
-	_add(lg, g2)
+	_add(lg, _stop_wheel(g2))
 	var g2h := HBoxContainer.new(); g2h.add_theme_constant_override("separation", 2)
 	_add(g2, g2h, "LegendButtons")
 	for e in [["宗门", "▮", "sect"], ["城池", "◆", "city"], ["秘境", "✦", "secret"], ["山川", "△", "mount"], ["势力", "◩", "force"]]:
@@ -382,7 +398,7 @@ func _map_chrome() -> Node:
 	# zoom bottom-right
 	var zp := PanelContainer.new(); zp.theme_type_variation = "ChromePad"; zp.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT); zp.grow_horizontal = Control.GROW_DIRECTION_BEGIN; zp.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	zp.offset_right = -16; zp.offset_bottom = -16; zp.offset_left = -16; zp.offset_top = -16
-	_add(root, zp, "MZoom")
+	_add(root, _stop_wheel(zp), "MZoom")
 	var zv := VBoxContainer.new(); zv.add_theme_constant_override("separation", 2)
 	_add(zp, zv)
 	for z in [["+", "ZIn", 20], ["−", "ZOut", 20], ["⌂", "ZHome", 15]]:
@@ -401,7 +417,7 @@ func _map_chrome() -> Node:
 func _info_card() -> Node:
 	var c := _layer("InfoCard", 22, "res://scripts/ui/info_card.gd")
 	var card := PanelContainer.new(); card.theme_type_variation = "Chrome"; card.size = Vector2(420, 700); card.position = Vector2(1004, 78)
-	_add(c, card, "Card")
+	_add(c, _stop_wheel(card), "Card")
 	var v := VBoxContainer.new(); v.add_theme_constant_override("separation", 0)
 	_add(card, v)
 	var sc := ScrollContainer.new(); sc.size_flags_vertical = Control.SIZE_EXPAND_FILL; sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -462,7 +478,7 @@ func _mode_switch() -> Node:
 	p.offset_right = -16; p.offset_top = 16; p.offset_left = -16
 	var shadow: StyleBoxFlat = theme.get_stylebox("panel", "ChromePad").duplicate(); shadow.shadow_size = 10; shadow.shadow_offset = Vector2(0, 6); shadow.shadow_color = Color(0, 0, 0, 0.25)
 	p.add_theme_stylebox_override("panel", shadow)
-	_add(c, p, "Switch")
+	_add(c, _stop_wheel(p), "Switch")
 	var h := HBoxContainer.new(); h.add_theme_constant_override("separation", 2)
 	_add(p, h)
 	var f := Button.new(); f.theme_type_variation = "ModeSegOn"; f.text = "御空"; f.focus_mode = Control.FOCUS_NONE
@@ -475,7 +491,7 @@ func _mode_switch() -> Node:
 func _debug() -> Node:
 	var c := _layer("Debug", 25, "res://scripts/ui/debug_panel.gd")
 	var p := PanelContainer.new(); p.theme_type_variation = "Chrome"; p.position = Vector2(16, 78); p.custom_minimum_size = Vector2(330, 0); p.size = Vector2(330, 760)
-	_add(c, p, "DebugRoot")
+	_add(c, _stop_wheel(p), "DebugRoot")
 	var v := VBoxContainer.new(); v.add_theme_constant_override("separation", 0)
 	_add(p, v)
 	var head := PanelContainer.new(); head.theme_type_variation = "DebugHeader"
@@ -488,7 +504,7 @@ func _debug() -> Node:
 	_add(hh, rb, "Reset")
 	var xb := Button.new(); xb.theme_type_variation = "SmallButton"; xb.text = "×"
 	_add(hh, xb, "CloseDbg")
-	var sc := ScrollContainer.new(); sc.custom_minimum_size = Vector2(0, 560); sc.size_flags_vertical = Control.SIZE_EXPAND_FILL; sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var sc := ScrollContainer.new(); sc.custom_minimum_size = Vector2(0, 120); sc.size_flags_vertical = Control.SIZE_EXPAND_FILL; sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_add(v, sc)
 	var m := MarginContainer.new(); m.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for k in ["margin_left", "margin_right"]: m.add_theme_constant_override(k, 14)
@@ -593,7 +609,7 @@ func _main() -> Node:
 	_add(m, shots, "Shots")
 	shots.unique_name_in_owner = false
 	for s in ["hotspots", "hud", "touch", "map_chrome", "intro", "mode_switch", "info_card", "debug_panel", "toast", "loading"]:
-		var inst: Node = load("res://ui/%s.tscn" % s).instantiate()
+		var inst: Node = load("res://ui/%s.tscn" % s).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 		m.add_child(inst)
 		inst.owner = m
 	# unique names only matter inside each scene; keep the main scene's paths plain

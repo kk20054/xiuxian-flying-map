@@ -15,11 +15,11 @@ shadow_size = 6
 shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
 shadow_offset = Vector2(0, 0)
 
-[node name="Loading" type="CanvasLayer" unique_id=1802878129]
+[node name="Loading" type="CanvasLayer" unique_id=575531690]
 layer = 31
 script = ExtResource("1_og8k8")
 
-[node name="LoadingRoot" type="HBoxContainer" parent="." unique_id=2104204995]
+[node name="LoadingRoot" type="HBoxContainer" parent="." unique_id=1491516452]
 unique_name_in_owner = true
 anchors_preset = 1
 anchor_left = 1.0
@@ -32,14 +32,14 @@ mouse_filter = 2
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="Spinner" type="Control" parent="LoadingRoot" unique_id=821547002]
+[node name="Spinner" type="Control" parent="LoadingRoot" unique_id=1399675360]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 
-[node name="LoadingLabel" type="Label" parent="LoadingRoot" unique_id=975546166]
+[node name="LoadingLabel" type="Label" parent="LoadingRoot" unique_id=1730722649]
 unique_name_in_owner = true
 layout_mode = 2
 text = "展卷中"

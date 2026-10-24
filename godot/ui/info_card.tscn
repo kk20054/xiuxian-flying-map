@@ -2,29 +2,30 @@
 
 [ext_resource type="Script" path="res://scripts/ui/info_card.gd" id="1_t16rl"]
 
-[node name="InfoCard" type="CanvasLayer" unique_id=920937692]
+[node name="InfoCard" type="CanvasLayer" unique_id=589135803]
 layer = 22
 script = ExtResource("1_t16rl")
 
-[node name="Card" type="PanelContainer" parent="." unique_id=2028073265]
+[node name="Card" type="PanelContainer" parent="." unique_id=2015520481]
 unique_name_in_owner = true
 offset_left = 1004.0
 offset_top = 78.0
 offset_right = 1424.0
 offset_bottom = 778.0
+mouse_force_pass_scroll_events = false
 theme_type_variation = &"Chrome"
 
-[node name="@VBoxContainer@106" type="VBoxContainer" parent="Card" unique_id=366667790]
+[node name="@VBoxContainer@105" type="VBoxContainer" parent="Card" unique_id=1317804625]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Scroll" type="ScrollContainer" parent="Card/@VBoxContainer@106" unique_id=213683579]
+[node name="Scroll" type="ScrollContainer" parent="Card/@VBoxContainer@105" unique_id=1887218010]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="@MarginContainer@110" type="MarginContainer" parent="Card/@VBoxContainer@106/Scroll" unique_id=1346605540]
+[node name="@MarginContainer@109" type="MarginContainer" parent="Card/@VBoxContainer@105/Scroll" unique_id=978145508]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 24
@@ -32,33 +33,33 @@ theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 12
 
-[node name="Body" type="VBoxContainer" parent="Card/@VBoxContainer@106/Scroll/@MarginContainer@110" unique_id=519997655]
+[node name="Body" type="VBoxContainer" parent="Card/@VBoxContainer@105/Scroll/@MarginContainer@109" unique_id=634746321]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="@PanelContainer@112" type="PanelContainer" parent="Card/@VBoxContainer@106" unique_id=1951640823]
+[node name="@PanelContainer@111" type="PanelContainer" parent="Card/@VBoxContainer@105" unique_id=2012170378]
 layout_mode = 2
 theme_type_variation = &"CardFooter"
 
-[node name="@HBoxContainer@113" type="HBoxContainer" parent="Card/@VBoxContainer@106/@PanelContainer@112" unique_id=1036682529]
+[node name="@HBoxContainer@112" type="HBoxContainer" parent="Card/@VBoxContainer@105/@PanelContainer@111" unique_id=513340850]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Go" type="Button" parent="Card/@VBoxContainer@106/@PanelContainer@112/@HBoxContainer@113" unique_id=678939594]
+[node name="Go" type="Button" parent="Card/@VBoxContainer@105/@PanelContainer@111/@HBoxContainer@112" unique_id=422923300]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"GoButton"
 text = "御空前往"
 
-[node name="Copy" type="Button" parent="Card/@VBoxContainer@106/@PanelContainer@112/@HBoxContainer@113" unique_id=955722620]
+[node name="Copy" type="Button" parent="Card/@VBoxContainer@105/@PanelContainer@111/@HBoxContainer@112" unique_id=1333467195]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FooterButton"
 text = "复制地名"
 
-[node name="@MarginContainer@116" type="MarginContainer" parent="Card" unique_id=1616924727]
+[node name="@MarginContainer@115" type="MarginContainer" parent="Card" unique_id=57254149]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
@@ -66,7 +67,7 @@ mouse_filter = 2
 theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 14
 
-[node name="Close" type="Button" parent="Card/@MarginContainer@116" unique_id=1562370440]
+[node name="Close" type="Button" parent="Card/@MarginContainer@115" unique_id=364382857]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2

@@ -1,55 +1,45 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_qkpxi"]
-[ext_resource type="Shader" path="res://shaders/post_ink.gdshader" id="2_5q0nq"]
-[ext_resource type="Script" path="res://scripts/director.gd" id="3_dgi5k"]
-[ext_resource type="Script" path="res://scripts/world/sun_bake.gd" id="4_j8jky"]
-[ext_resource type="Script" path="res://scripts/world/terrain.gd" id="5_kmb1v"]
-[ext_resource type="Script" path="res://scripts/world/props.gd" id="6_fuf3a"]
-[ext_resource type="Script" path="res://scripts/world/trees.gd" id="7_pibwh"]
-[ext_resource type="Script" path="res://scripts/world/cloud_sea.gd" id="8_c6pm6"]
-[ext_resource type="Script" path="res://scripts/world/map_plane.gd" id="9_5he1u"]
-[ext_resource type="Script" path="res://scripts/world/light_trail.gd" id="10_5poiv"]
-[ext_resource type="Shader" path="res://shaders/post_screen.gdshader" id="11_2cjbq"]
-[ext_resource type="Script" path="res://scripts/shots.gd" id="12_chjal"]
-[ext_resource type="PackedScene" path="res://ui/hotspots.tscn" id="13_cjqg0"]
-[ext_resource type="Script" path="res://scripts/ui/hotspots.gd" id="14_vchkt"]
-[ext_resource type="PackedScene" path="res://ui/hud.tscn" id="15_txyw0"]
-[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="16_vc5cj"]
-[ext_resource type="PackedScene" path="res://ui/touch.tscn" id="17_nvyfr"]
-[ext_resource type="Script" path="res://scripts/ui/touch.gd" id="18_ty1g6"]
-[ext_resource type="PackedScene" path="res://ui/map_chrome.tscn" id="19_j2jfr"]
-[ext_resource type="Script" path="res://scripts/ui/map_chrome.gd" id="20_bjg73"]
-[ext_resource type="PackedScene" path="res://ui/intro.tscn" id="21_bu4jf"]
-[ext_resource type="Script" path="res://scripts/ui/intro_ui.gd" id="22_o7ddy"]
-[ext_resource type="PackedScene" path="res://ui/mode_switch.tscn" id="23_0loja"]
-[ext_resource type="Script" path="res://scripts/ui/mode_switch.gd" id="24_ids8r"]
-[ext_resource type="PackedScene" path="res://ui/info_card.tscn" id="25_dnhof"]
-[ext_resource type="Script" path="res://scripts/ui/info_card.gd" id="26_1v6qk"]
-[ext_resource type="PackedScene" path="res://ui/debug_panel.tscn" id="27_augu2"]
-[ext_resource type="Script" path="res://scripts/ui/debug_panel.gd" id="28_tm6hj"]
-[ext_resource type="PackedScene" path="res://ui/toast.tscn" id="29_kf5aa"]
-[ext_resource type="Script" path="res://scripts/ui/toast.gd" id="30_t5ykj"]
-[ext_resource type="PackedScene" path="res://ui/loading.tscn" id="31_e755i"]
-[ext_resource type="Script" path="res://scripts/ui/loading.gd" id="32_ro3en"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_jscy8"]
+[ext_resource type="Shader" path="res://shaders/post_ink.gdshader" id="2_pm3ni"]
+[ext_resource type="Script" path="res://scripts/director.gd" id="3_y6deb"]
+[ext_resource type="Script" path="res://scripts/world/sun_bake.gd" id="4_og1vs"]
+[ext_resource type="Script" path="res://scripts/world/terrain.gd" id="5_2wyq8"]
+[ext_resource type="Script" path="res://scripts/world/props.gd" id="6_vxglm"]
+[ext_resource type="Script" path="res://scripts/world/trees.gd" id="7_2f3dj"]
+[ext_resource type="Script" path="res://scripts/world/cloud_sea.gd" id="8_yq6so"]
+[ext_resource type="Script" path="res://scripts/world/map_plane.gd" id="9_fv21b"]
+[ext_resource type="Script" path="res://scripts/world/light_trail.gd" id="10_tel4y"]
+[ext_resource type="Shader" path="res://shaders/post_screen.gdshader" id="11_qkpxi"]
+[ext_resource type="Script" path="res://scripts/shots.gd" id="12_5q0nq"]
+[ext_resource type="PackedScene" path="res://ui/hotspots.tscn" id="13_dgi5k"]
+[ext_resource type="PackedScene" path="res://ui/hud.tscn" id="14_j8jky"]
+[ext_resource type="PackedScene" path="res://ui/touch.tscn" id="15_kmb1v"]
+[ext_resource type="PackedScene" path="res://ui/map_chrome.tscn" id="16_fuf3a"]
+[ext_resource type="PackedScene" path="res://ui/intro.tscn" id="17_pibwh"]
+[ext_resource type="PackedScene" path="res://ui/mode_switch.tscn" id="18_c6pm6"]
+[ext_resource type="PackedScene" path="res://ui/info_card.tscn" id="19_5he1u"]
+[ext_resource type="PackedScene" path="res://ui/debug_panel.tscn" id="20_5poiv"]
+[ext_resource type="PackedScene" path="res://ui/toast.tscn" id="21_2cjbq"]
+[ext_resource type="PackedScene" path="res://ui/loading.tscn" id="22_chjal"]
 
-[sub_resource type="Environment" id="Environment_od4ux"]
+[sub_resource type="Environment" id="Environment_cjqg0"]
 background_mode = 1
 background_color = Color(0.8627451, 0.8666667, 0.8392157, 1)
 ambient_light_source = 1
 reflected_light_source = 1
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xhfw6"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vchkt"]
 render_priority = -100
-shader = ExtResource("2_5q0nq")
+shader = ExtResource("2_pm3ni")
 shader_parameter/strength = null
 shader_parameter/ink = null
 shader_parameter/cam_far = null
 
-[sub_resource type="QuadMesh" id="QuadMesh_1epgm"]
+[sub_resource type="QuadMesh" id="QuadMesh_txyw0"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_152kg"]
-shader = ExtResource("11_2cjbq")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vc5cj"]
+shader = ExtResource("11_qkpxi")
 shader_parameter/tilt = null
 shader_parameter/focus = null
 shader_parameter/band = null
@@ -62,109 +52,89 @@ shader_parameter/vig = null
 shader_parameter/paper = null
 shader_parameter/css_vignette = null
 
-[node name="Main" type="Node3D" unique_id=71641578]
-script = ExtResource("1_qkpxi")
+[node name="Main" type="Node3D" unique_id=1768714065]
+script = ExtResource("1_jscy8")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1530029755]
-environment = SubResource("Environment_od4ux")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1619681668]
+environment = SubResource("Environment_cjqg0")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1302240306]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1157083957]
 current = true
 fov = 40.0
 near = 5.0
 far = 200000.0
 
-[node name="InkEdge" type="MeshInstance3D" parent="Camera3D" unique_id=172110972]
+[node name="InkEdge" type="MeshInstance3D" parent="Camera3D" unique_id=106569166]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
-material_override = SubResource("ShaderMaterial_xhfw6")
+material_override = SubResource("ShaderMaterial_vchkt")
 extra_cull_margin = 16384.0
-mesh = SubResource("QuadMesh_1epgm")
+mesh = SubResource("QuadMesh_txyw0")
 
-[node name="Director" type="Node" parent="." unique_id=642930841]
-script = ExtResource("3_dgi5k")
+[node name="Director" type="Node" parent="." unique_id=892459676]
+script = ExtResource("3_y6deb")
 camera_path = NodePath("../Camera3D")
 light_path = NodePath("../World/Light")
 
-[node name="SunBake" type="Node" parent="." unique_id=2030246209]
-script = ExtResource("4_j8jky")
+[node name="SunBake" type="Node" parent="." unique_id=304221909]
+script = ExtResource("4_og1vs")
 
-[node name="World" type="Node3D" parent="." unique_id=1994179562]
+[node name="World" type="Node3D" parent="." unique_id=67461544]
 
-[node name="Terrain" type="Node3D" parent="World" unique_id=158014420]
+[node name="Terrain" type="Node3D" parent="World" unique_id=704689152]
 unique_name_in_owner = true
-script = ExtResource("5_kmb1v")
+script = ExtResource("5_2wyq8")
 
-[node name="Water" type="MeshInstance3D" parent="World" unique_id=1299303399]
+[node name="Water" type="MeshInstance3D" parent="World" unique_id=234358496]
 unique_name_in_owner = true
 
-[node name="Props" type="Node3D" parent="World" unique_id=1610647832]
+[node name="Props" type="Node3D" parent="World" unique_id=1769774736]
 unique_name_in_owner = true
-script = ExtResource("6_fuf3a")
+script = ExtResource("6_vxglm")
 
-[node name="Trees" type="Node3D" parent="World" unique_id=1667819156]
+[node name="Trees" type="Node3D" parent="World" unique_id=1436624675]
 unique_name_in_owner = true
-script = ExtResource("7_pibwh")
+script = ExtResource("7_2f3dj")
 
-[node name="CloudSea" type="MeshInstance3D" parent="World" unique_id=55047385]
+[node name="CloudSea" type="MeshInstance3D" parent="World" unique_id=2117203176]
 unique_name_in_owner = true
-script = ExtResource("8_c6pm6")
+script = ExtResource("8_yq6so")
 
-[node name="MapPlane" type="MeshInstance3D" parent="World" unique_id=372600826]
+[node name="MapPlane" type="MeshInstance3D" parent="World" unique_id=2071046373]
 unique_name_in_owner = true
-script = ExtResource("9_5he1u")
+script = ExtResource("9_fv21b")
 
-[node name="Light" type="Node3D" parent="World" unique_id=2020557901]
+[node name="Light" type="Node3D" parent="World" unique_id=1053392353]
 unique_name_in_owner = true
-script = ExtResource("10_5poiv")
+script = ExtResource("10_tel4y")
 
-[node name="Post" type="CanvasLayer" parent="." unique_id=2079845381]
+[node name="Post" type="CanvasLayer" parent="." unique_id=2074460255]
 
-[node name="Screen" type="ColorRect" parent="Post" unique_id=1549243886]
-material = SubResource("ShaderMaterial_152kg")
+[node name="Screen" type="ColorRect" parent="Post" unique_id=1510091355]
+material = SubResource("ShaderMaterial_vc5cj")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Shots" type="Node" parent="." unique_id=1229170690]
-script = ExtResource("12_chjal")
+[node name="Shots" type="Node" parent="." unique_id=1623029558]
+script = ExtResource("12_5q0nq")
 
-[node name="Hotspots" type="CanvasLayer" parent="." unique_id=281308129 instance=ExtResource("13_cjqg0")]
-layer = 4
-script = ExtResource("14_vchkt")
+[node name="Hotspots" parent="." unique_id=2066734407 instance=ExtResource("13_dgi5k")]
 
-[node name="Hud" type="CanvasLayer" parent="." unique_id=780166259 instance=ExtResource("15_txyw0")]
-layer = 5
-script = ExtResource("16_vc5cj")
+[node name="Hud" parent="." unique_id=487951772 instance=ExtResource("14_j8jky")]
 
-[node name="Touch" type="CanvasLayer" parent="." unique_id=1384717429 instance=ExtResource("17_nvyfr")]
-layer = 6
-script = ExtResource("18_ty1g6")
+[node name="Touch" parent="." unique_id=537512006 instance=ExtResource("15_kmb1v")]
 
-[node name="MapChrome" type="CanvasLayer" parent="." unique_id=799331012 instance=ExtResource("19_j2jfr")]
-layer = 10
-script = ExtResource("20_bjg73")
+[node name="MapChrome" parent="." unique_id=801398334 instance=ExtResource("16_fuf3a")]
 
-[node name="Intro" type="CanvasLayer" parent="." unique_id=247830114 instance=ExtResource("21_bu4jf")]
-layer = 15
-script = ExtResource("22_o7ddy")
+[node name="Intro" parent="." unique_id=1175776152 instance=ExtResource("17_pibwh")]
 
-[node name="ModeSwitch" type="CanvasLayer" parent="." unique_id=1238549017 instance=ExtResource("23_0loja")]
-layer = 20
-script = ExtResource("24_ids8r")
+[node name="ModeSwitch" parent="." unique_id=339271406 instance=ExtResource("18_c6pm6")]
 
-[node name="InfoCard" type="CanvasLayer" parent="." unique_id=920937692 instance=ExtResource("25_dnhof")]
-layer = 22
-script = ExtResource("26_1v6qk")
+[node name="InfoCard" parent="." unique_id=589135803 instance=ExtResource("19_5he1u")]
 
-[node name="Debug" type="CanvasLayer" parent="." unique_id=568330498 instance=ExtResource("27_augu2")]
-layer = 25
-script = ExtResource("28_tm6hj")
+[node name="Debug" parent="." unique_id=1992022643 instance=ExtResource("20_5poiv")]
 
-[node name="Toast" type="CanvasLayer" parent="." unique_id=537925645 instance=ExtResource("29_kf5aa")]
-layer = 30
-script = ExtResource("30_t5ykj")
+[node name="Toast" parent="." unique_id=541575633 instance=ExtResource("21_2cjbq")]
 
-[node name="Loading" type="CanvasLayer" parent="." unique_id=1802878129 instance=ExtResource("31_e755i")]
-layer = 31
-script = ExtResource("32_ro3en")
+[node name="Loading" parent="." unique_id=575531690 instance=ExtResource("22_chjal")]

@@ -28,9 +28,9 @@ func _ready() -> void:
 func _layout() -> void:
 	var vp := card.get_viewport_rect().size
 	var w := minf(420.0, vp.x - 32.0)
-	if vp.x <= 640.0:
-		card.position = Vector2(16, vp.y * 0.38 - 16)
-		card.size = Vector2(vp.x - 32, vp.y * 0.62)
+	if vp.x <= 640.0:                      # bottom sheet: top auto, height 62vh — width and right edge as on desktop
+		card.size = Vector2(w, vp.y * 0.62)
+		card.position = Vector2(vp.x - 16 - w, vp.y * 0.38 - 16)
 	else:
 		card.position = Vector2(vp.x - 16 - w, 78)
 		card.size = Vector2(w, vp.y - 78 - 16)
@@ -89,21 +89,21 @@ func _fill(p: Dictionary) -> void:
 	if p.has("crumb"):
 		body.add_child(_label(p.crumb, UIUtil.serif(400), 13, UIUtil.CHROME_DIM))
 	if p.has("lead"):
-		body.add_child(_spaced(_label(p.lead, UIUtil.serif(600), 17, UIUtil.CHROME_TEXT, true, 10), 18, 10))
+		body.add_child(_spaced(_label(p.lead, UIUtil.serif(600), 17, UIUtil.CHROME_TEXT, true, _gap(17, 1.75)), 18, 10))
 	for para in p.get("body", []):
-		body.add_child(_spaced(_label(para, UIUtil.serif(400), 15, Color("#d9d4c6"), true, 12), 0, 12))
+		body.add_child(_spaced(_label(para, UIUtil.serif(400), 15, Color("#d9d4c6"), true, _gap(15, 1.85)), 0, 12))
 	if p.has("note"):
 		body.add_child(_sub("图中所绘"))
 		var tex := _card_image(p.id)
 		if tex:
 			var img := TextureRect.new()
 			img.texture = tex
-			img.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-			img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-			body.add_child(img)
+			img.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL   # height follows the card's width (img.pic width 100%, height auto)
+			img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+			body.add_child(_spaced(img, 0, 10))
 		var qp := PanelContainer.new()
 		qp.theme_type_variation = "Quote"
-		qp.add_child(_label(p.note, UIUtil.serif(400), 14, Color("#cfd6d2"), true, 11))
+		qp.add_child(_label(p.note, UIUtil.serif(400), 14, Color("#cfd6d2"), true, _gap(14, 1.8)))
 		body.add_child(qp)
 	if p.has("chips") and p.chips is Array and not p.chips.is_empty():
 		body.add_child(_sub("境内"))
@@ -124,6 +124,11 @@ func _chip(name: String) -> void:
 		UIUtil.director().select_place(World.by_name[name], true)
 
 
+## CSS line-height → LabelSettings.line_spacing: the extra space over the font's own line height (Noto Serif SC is ~1.5 em tall).
+func _gap(size: int, line_height: float) -> int:
+	return maxi(0, int(round(size * line_height - UIUtil.serif(400).get_height(size))))
+
+
 func _card_image(id: String) -> Texture2D:
 	var path := "res://ui/cards/card_%s.jpg" % id
 	return load(path) if ResourceLoader.exists(path) else null
@@ -136,7 +141,7 @@ func _label(text: String, font: Font, size: int, col: Color, wrap := false, line
 	s.line_spacing = line_gap
 	l.label_settings = s
 	if wrap:
-		l.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART   # ICU line breaks: CJK may break anywhere, but 。、，never start a line (CSS kinsoku)
 		l.custom_minimum_size.x = 10
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return l

@@ -40,11 +40,11 @@ shadow_size = 8
 shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
 shadow_offset = Vector2(0, 0)
 
-[node name="Intro" type="CanvasLayer" unique_id=247830114]
+[node name="Intro" type="CanvasLayer" unique_id=1175776152]
 layer = 15
 script = ExtResource("1_8k8jw")
 
-[node name="IntroRoot" type="Control" parent="." unique_id=472325410]
+[node name="IntroRoot" type="Control" parent="." unique_id=1940571288]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
@@ -52,7 +52,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Title" type="HBoxContainer" parent="IntroRoot" unique_id=1537019267]
+[node name="Title" type="HBoxContainer" parent="IntroRoot" unique_id=772989802]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 172.0
@@ -62,22 +62,23 @@ offset_bottom = 81.0
 mouse_filter = 2
 theme_override_constants/separation = 18
 
-[node name="@VBoxContainer@122" type="VBoxContainer" parent="IntroRoot/Title" unique_id=278464949]
+[node name="@VBoxContainer@121" type="VBoxContainer" parent="IntroRoot/Title" unique_id=1908519133]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="@MarginContainer@123" type="MarginContainer" parent="IntroRoot/Title/@VBoxContainer@122" unique_id=1032234083]
+[node name="@MarginContainer@122" type="MarginContainer" parent="IntroRoot/Title/@VBoxContainer@121" unique_id=259142598]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_top = 6
 
-[node name="@PanelContainer@124" type="PanelContainer" parent="IntroRoot/Title/@VBoxContainer@122/@MarginContainer@123" unique_id=363613507]
+[node name="@PanelContainer@123" type="PanelContainer" parent="IntroRoot/Title/@VBoxContainer@121/@MarginContainer@122" unique_id=1094596463]
 custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
 theme_type_variation = &"Seal"
 
-[node name="@Label@125" type="Label" parent="IntroRoot/Title/@VBoxContainer@122/@MarginContainer@123/@PanelContainer@124" unique_id=1171854478]
+[node name="@Label@124" type="Label" parent="IntroRoot/Title/@VBoxContainer@121/@MarginContainer@122/@PanelContainer@123" unique_id=1861257006]
 layout_mode = 2
 text = "人
 界"
@@ -85,7 +86,7 @@ label_settings = SubResource("LabelSettings_j68jg")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TitleText" type="Label" parent="IntroRoot/Title" unique_id=1690902573]
+[node name="TitleText" type="Label" parent="IntroRoot/Title" unique_id=1615367327]
 unique_name_in_owner = true
 layout_mode = 2
 text = "云
@@ -93,16 +94,16 @@ text = "云
 山"
 label_settings = SubResource("LabelSettings_3sa4d")
 
-[node name="@VBoxContainer@127" type="VBoxContainer" parent="IntroRoot/Title" unique_id=376094004]
+[node name="@VBoxContainer@126" type="VBoxContainer" parent="IntroRoot/Title" unique_id=1969801591]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="@MarginContainer@128" type="MarginContainer" parent="IntroRoot/Title/@VBoxContainer@127" unique_id=1175754411]
+[node name="@MarginContainer@127" type="MarginContainer" parent="IntroRoot/Title/@VBoxContainer@126" unique_id=1623889583]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_top = 18
 
-[node name="@Label@129" type="Label" parent="IntroRoot/Title/@VBoxContainer@127/@MarginContainer@128" unique_id=385589898]
+[node name="@Label@128" type="Label" parent="IntroRoot/Title/@VBoxContainer@126/@MarginContainer@127" unique_id=1263461429]
 layout_mode = 2
 text = "凡
 人
@@ -118,11 +119,11 @@ text = "凡
 脉"
 label_settings = SubResource("LabelSettings_q4ks3")
 
-[node name="SkipLayer" type="CanvasLayer" parent="." unique_id=1262715684]
+[node name="SkipLayer" type="CanvasLayer" parent="." unique_id=593722412]
 unique_name_in_owner = true
 layer = 16
 
-[node name="Skip" type="Label" parent="SkipLayer" unique_id=2134535997]
+[node name="Skip" type="Label" parent="SkipLayer" unique_id=1580037602]
 unique_name_in_owner = true
 anchors_preset = 7
 anchor_left = 0.5

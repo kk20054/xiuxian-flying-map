@@ -384,7 +384,7 @@ every SANDBOX mesh.visible = uMap < 0.999          (SANDBOX list L14613–14617:
                                                 │ M / modeSwitch / At > 11000 (cooldown ≤ 0)
                                                 ▼          │ 2.0 s
                                               toMap ──2.4 s──► map ──M / Esc / modeSwitch / 御空前往 / wheel-in past minView──► toFlight
- intro + M  → finishIntro() then startTransition('map')
+ intro: any key (M too) → skipIntro (×4); only the 收图 button → finishIntro() then startTransition('map')   (keydown L14527, toggleMap L14307)
 ```
 Transitions:
 - `toggleMap()` (L14306–14310): intro → finishIntro + map; flight → map; map → set `PLAYER.At = PLAYER.A = min(A, mapAt×0.8 = 8800)` then flight. (Ignored in toMap/toFlight/loading.)
@@ -477,7 +477,7 @@ If center and in map: `MAP.goal = { cx: p.x, cz: p.z, view: min(MAP.view, (regio
 | drag (1 pointer) | grab-the-ground pan with fling | pan: `cx −= dx·wpp`, `cz −= dy·wpp`, wpp = 2·cam.y·tan(fov/2)/innerHeight | skip |
 | pinch (2 pointers) | `zoomBy(prevDist/dist)` | same | |
 | E | land/toggle card at near hotspot | – | |
-| M | to map | to flight | finish intro → map |
+| M | to map | to flight | skip (×4), like any key — the 收图 button finishes the intro and opens the map |
 | H | toggle hint (hintT = 30 or −1) | (sets hidden) | |
 | / | – | focus search | |
 | Esc | close card | close card, else back to flight | |

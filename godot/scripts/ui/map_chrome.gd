@@ -36,9 +36,9 @@ func _ready() -> void:
 	for b in legend.get_children():
 		if b is Button:
 			b.toggled.connect(_legend_toggled.bind(b))
-	%ZIn.pressed.connect(func(): UIUtil.director().zoom_map(1.0 / 1.5))
-	%ZOut.pressed.connect(func(): UIUtil.director().zoom_map(1.5))
-	%ZHome.pressed.connect(func(): UIUtil.director().map_home_view())
+	%ZIn.pressed.connect(_zoom.bind(1.0 / 1.5))
+	%ZOut.pressed.connect(_zoom.bind(1.5))
+	%ZHome.pressed.connect(_zoom.bind(0.0))
 	World.ready_world.connect(_build)
 	if World.loaded:
 		_build()
@@ -228,13 +228,24 @@ func _unhandled_input(ev: InputEvent) -> void:
 		results.visible = false
 
 
+## + / − / ⌂ (factor 0 = home), only while the chrome is on
+func _zoom(factor: float) -> void:
+	if not on:
+		return
+	if factor == 0.0:
+		UIUtil.director().map_home_view()
+	else:
+		UIUtil.director().zoom_map(factor)
+
+
 func _label_input(ev: InputEvent, p: Dictionary) -> void:
-	if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+	if on and ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
 		_select(p)
 
 
 func _select(p: Dictionary) -> void:
-	UIUtil.director().select_place(p, true)
+	if on:
+		UIUtil.director().select_place(p, true)
 
 
 func _trail_toggled(v: bool) -> void:

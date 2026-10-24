@@ -178,11 +178,11 @@ shadow_size = 6
 shadow_color = Color(0.9647059, 0.9411765, 0.8784314, 1)
 shadow_offset = Vector2(0, 0)
 
-[node name="Hud" type="CanvasLayer" unique_id=780166259]
+[node name="Hud" type="CanvasLayer" unique_id=487951772]
 layer = 5
 script = ExtResource("1_7ihmi")
 
-[node name="HudRoot" type="Control" parent="." unique_id=1817416786]
+[node name="HudRoot" type="Control" parent="." unique_id=1779553743]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
@@ -190,7 +190,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Brand" type="HBoxContainer" parent="HudRoot" unique_id=170771514]
+[node name="Brand" type="HBoxContainer" parent="HudRoot" unique_id=1440135188]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 16.0
@@ -200,13 +200,14 @@ offset_bottom = 16.0
 mouse_filter = 2
 theme_override_constants/separation = 10
 
-[node name="@PanelContainer@10" type="PanelContainer" parent="HudRoot/Brand" unique_id=999029251]
+[node name="@PanelContainer@10" type="PanelContainer" parent="HudRoot/Brand" unique_id=1894831275]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
 theme_type_variation = &"Seal"
 
-[node name="@Label@11" type="Label" parent="HudRoot/Brand/@PanelContainer@10" unique_id=2115953946]
+[node name="@Label@11" type="Label" parent="HudRoot/Brand/@PanelContainer@10" unique_id=1329510344]
 layout_mode = 2
 text = "云
 梦"
@@ -214,25 +215,25 @@ label_settings = SubResource("LabelSettings_srpbi")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="@VBoxContainer@12" type="VBoxContainer" parent="HudRoot/Brand" unique_id=1730209496]
+[node name="@VBoxContainer@12" type="VBoxContainer" parent="HudRoot/Brand" unique_id=518742153]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="BrandTitle" type="Label" parent="HudRoot/Brand/@VBoxContainer@12" unique_id=121347248]
+[node name="BrandTitle" type="Label" parent="HudRoot/Brand/@VBoxContainer@12" unique_id=1959360859]
 unique_name_in_owner = true
 layout_mode = 2
 text = "云梦山"
 label_settings = SubResource("LabelSettings_spcu4")
 
-[node name="BrandSub" type="Label" parent="HudRoot/Brand/@VBoxContainer@12" unique_id=295333973]
+[node name="BrandSub" type="Label" parent="HudRoot/Brand/@VBoxContainer@12" unique_id=554435920]
 unique_name_in_owner = true
 layout_mode = 2
 text = "天南 › 溪国 · 西部灵脉"
 label_settings = SubResource("LabelSettings_m0eg6")
 
-[node name="Banner" type="VBoxContainer" parent="HudRoot" unique_id=529408755]
+[node name="Banner" type="VBoxContainer" parent="HudRoot" unique_id=1437865460]
 unique_name_in_owner = true
 layout_mode = 0
 anchor_left = 0.5
@@ -243,26 +244,26 @@ offset_right = 300.0
 mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="BannerName" type="Label" parent="HudRoot/Banner" unique_id=1039460345]
+[node name="BannerName" type="Label" parent="HudRoot/Banner" unique_id=2101696784]
 unique_name_in_owner = true
 layout_mode = 2
 text = "落云宗"
 label_settings = SubResource("LabelSettings_b00kl")
 horizontal_alignment = 1
 
-[node name="BannerSub" type="Label" parent="HudRoot/Banner" unique_id=137599053]
+[node name="BannerSub" type="Label" parent="HudRoot/Banner" unique_id=1176613801]
 unique_name_in_owner = true
 layout_mode = 2
 text = "云梦山 · 东脉"
 label_settings = SubResource("LabelSettings_65xic")
 horizontal_alignment = 1
 
-[node name="@MarginContainer@18" type="MarginContainer" parent="HudRoot/Banner" unique_id=1094180210]
+[node name="@MarginContainer@18" type="MarginContainer" parent="HudRoot/Banner" unique_id=1696831905]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_top = 8
 
-[node name="BannerRule" type="ColorRect" parent="HudRoot/Banner/@MarginContainer@18" unique_id=977923237]
+[node name="BannerRule" type="ColorRect" parent="HudRoot/Banner/@MarginContainer@18" unique_id=371650891]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 2)
 layout_mode = 2
@@ -270,7 +271,7 @@ size_flags_horizontal = 4
 mouse_filter = 2
 color = Color(0.72156864, 0.22352941, 0.16470589, 0.8)
 
-[node name="Hint" type="PanelContainer" parent="HudRoot" unique_id=1769265563]
+[node name="Hint" type="PanelContainer" parent="HudRoot" unique_id=1064661559]
 unique_name_in_owner = true
 layout_mode = 0
 anchor_top = 1.0
@@ -282,176 +283,194 @@ grow_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"HintPanel"
 
-[node name="@GridContainer@21" type="GridContainer" parent="HudRoot/Hint" unique_id=253349233]
+[node name="@GridContainer@21" type="GridContainer" parent="HudRoot/Hint" unique_id=2103807325]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 4
 columns = 2
 
-[node name="@HBoxContainer@22" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=231320737]
+[node name="@HBoxContainer@22" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=2028630471]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@PanelContainer@23" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=2065327312]
+[node name="@PanelContainer@23" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=1483480653]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@24" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@23" unique_id=904549228]
+[node name="@Label@24" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@23" unique_id=1336577622]
 layout_mode = 2
 text = "W"
 label_settings = SubResource("LabelSettings_mp5xd")
 
-[node name="@PanelContainer@25" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=566389511]
+[node name="@PanelContainer@25" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=784483994]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@26" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@25" unique_id=1946344419]
+[node name="@Label@26" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@25" unique_id=1851544740]
 layout_mode = 2
 text = "A"
 label_settings = SubResource("LabelSettings_u6vop")
 
-[node name="@PanelContainer@27" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=618336961]
+[node name="@PanelContainer@27" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=754287818]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@28" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@27" unique_id=976061586]
+[node name="@Label@28" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@27" unique_id=45532863]
 layout_mode = 2
 text = "S"
 label_settings = SubResource("LabelSettings_xtm2r")
 
-[node name="@PanelContainer@29" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=30666892]
+[node name="@PanelContainer@29" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22" unique_id=2024755206]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@30" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@29" unique_id=124011524]
+[node name="@Label@30" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@22/@PanelContainer@29" unique_id=1653604714]
 layout_mode = 2
 text = "D"
 label_settings = SubResource("LabelSettings_kc1f2")
 
-[node name="@Label@31" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=645132146]
+[node name="@Label@31" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1217662346]
 layout_mode = 2
 text = "御光飞行"
 label_settings = SubResource("LabelSettings_6mpex")
 
-[node name="@HBoxContainer@32" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=1616277473]
+[node name="@HBoxContainer@32" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=239434031]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@PanelContainer@33" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@32" unique_id=710394733]
+[node name="@PanelContainer@33" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@32" unique_id=1491495514]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@34" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@32/@PanelContainer@33" unique_id=1171024980]
+[node name="@Label@34" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@32/@PanelContainer@33" unique_id=1162916985]
 layout_mode = 2
 text = "Shift"
 label_settings = SubResource("LabelSettings_mlhsj")
 
-[node name="@Label@35" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=2031316322]
+[node name="@Label@35" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=309609949]
 layout_mode = 2
 text = "疾遁加速"
 label_settings = SubResource("LabelSettings_x3e77")
 
-[node name="@HBoxContainer@36" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=1994217456]
+[node name="@HBoxContainer@36" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=1992433632]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@PanelContainer@37" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36" unique_id=1259999728]
+[node name="@PanelContainer@37" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36" unique_id=748904760]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@38" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36/@PanelContainer@37" unique_id=2087498928]
+[node name="@Label@38" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36/@PanelContainer@37" unique_id=525220724]
 layout_mode = 2
 text = "Space"
 label_settings = SubResource("LabelSettings_exqf6")
 
-[node name="@Label@39" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36" unique_id=1588171933]
+[node name="@Label@39" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36" unique_id=485533232]
 layout_mode = 2
 text = " / "
 label_settings = SubResource("LabelSettings_3ju8l")
 
-[node name="@PanelContainer@40" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36" unique_id=1871413434]
+[node name="@PanelContainer@40" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36" unique_id=1054502051]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@41" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36/@PanelContainer@40" unique_id=1284016378]
+[node name="@Label@41" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@36/@PanelContainer@40" unique_id=2103353977]
 layout_mode = 2
 text = "Q"
 label_settings = SubResource("LabelSettings_b1px6")
 
-[node name="@Label@42" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1217577963]
+[node name="@Label@42" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=777894386]
 layout_mode = 2
 text = "升 / 降"
 label_settings = SubResource("LabelSettings_c3smh")
 
-[node name="@HBoxContainer@43" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=2137171503]
+[node name="@HBoxContainer@43" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=1865483436]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@Label@44" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@43" unique_id=1965005960]
+[node name="@Label@44" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@43" unique_id=1769779138]
 layout_mode = 2
 text = "滚轮 · 拖动"
 label_settings = SubResource("LabelSettings_5jwjf")
 
-[node name="@Label@45" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1592922252]
+[node name="@Label@45" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1305453368]
 layout_mode = 2
 text = "升降 · 平移"
 label_settings = SubResource("LabelSettings_nso1x")
 
-[node name="@HBoxContainer@46" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=901680353]
+[node name="@HBoxContainer@46" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=726392203]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@PanelContainer@47" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@46" unique_id=1328959320]
+[node name="@PanelContainer@47" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@46" unique_id=86851168]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@48" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@46/@PanelContainer@47" unique_id=1960306560]
+[node name="@Label@48" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@46/@PanelContainer@47" unique_id=1804060958]
 layout_mode = 2
 text = "E"
 label_settings = SubResource("LabelSettings_hyw70")
 
-[node name="@Label@49" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=291323035]
+[node name="@Label@49" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1737976271]
 layout_mode = 2
 text = "落脚（近宗门时）"
 label_settings = SubResource("LabelSettings_cxdcy")
 
-[node name="@HBoxContainer@50" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=672386724]
+[node name="@HBoxContainer@50" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=342863775]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@PanelContainer@51" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@50" unique_id=1803396923]
+[node name="@PanelContainer@51" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@50" unique_id=1267850911]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@52" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@50/@PanelContainer@51" unique_id=471483586]
+[node name="@Label@52" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@50/@PanelContainer@51" unique_id=1938673055]
 layout_mode = 2
 text = "M"
 label_settings = SubResource("LabelSettings_6y3bq")
 
-[node name="@Label@53" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1505594585]
+[node name="@Label@53" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=530963044]
 layout_mode = 2
 text = "收图 / 御空"
 label_settings = SubResource("LabelSettings_4sr2e")
 
-[node name="@HBoxContainer@54" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=1502179273]
+[node name="@HBoxContainer@54" type="HBoxContainer" parent="HudRoot/Hint/@GridContainer@21" unique_id=937645678]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="@PanelContainer@55" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@54" unique_id=1545763369]
+[node name="@PanelContainer@55" type="PanelContainer" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@54" unique_id=1046794501]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"KeyCap"
 
-[node name="@Label@56" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@54/@PanelContainer@55" unique_id=937107014]
+[node name="@Label@56" type="Label" parent="HudRoot/Hint/@GridContainer@21/@HBoxContainer@54/@PanelContainer@55" unique_id=1934728407]
 layout_mode = 2
 text = "`"
 label_settings = SubResource("LabelSettings_vjpmv")
 
-[node name="@Label@57" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1503635453]
+[node name="@Label@57" type="Label" parent="HudRoot/Hint/@GridContainer@21" unique_id=1594697925]
 layout_mode = 2
 text = "调试面板"
 label_settings = SubResource("LabelSettings_o8st7")
 
-[node name="Readout" type="VBoxContainer" parent="HudRoot" unique_id=1162148934]
+[node name="Readout" type="VBoxContainer" parent="HudRoot" unique_id=1106124384]
 unique_name_in_owner = true
 layout_mode = 0
 anchor_left = 1.0
@@ -468,24 +487,24 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 2
 
-[node name="@HBoxContainer@59" type="HBoxContainer" parent="HudRoot/Readout" unique_id=300513691]
+[node name="@HBoxContainer@59" type="HBoxContainer" parent="HudRoot/Readout" unique_id=643346277]
 layout_mode = 2
 mouse_filter = 2
 alignment = 2
 
-[node name="Alt" type="Label" parent="HudRoot/Readout/@HBoxContainer@59" unique_id=670791458]
+[node name="Alt" type="Label" parent="HudRoot/Readout/@HBoxContainer@59" unique_id=1897156791]
 unique_name_in_owner = true
 layout_mode = 2
 text = "—"
 label_settings = SubResource("LabelSettings_mgoxf")
 
-[node name="AltBand" type="Label" parent="HudRoot/Readout/@HBoxContainer@59" unique_id=1097202233]
+[node name="AltBand" type="Label" parent="HudRoot/Readout/@HBoxContainer@59" unique_id=1782406335]
 unique_name_in_owner = true
 layout_mode = 2
 text = " 丈"
 label_settings = SubResource("LabelSettings_e4yjp")
 
-[node name="Spd" type="Label" parent="HudRoot/Readout" unique_id=735496633]
+[node name="Spd" type="Label" parent="HudRoot/Readout" unique_id=987735072]
 unique_name_in_owner = true
 layout_mode = 2
 text = "遁速 0"

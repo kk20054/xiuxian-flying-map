@@ -27,7 +27,7 @@ func _build() -> void:
 
 func _on_pressed(p: Dictionary) -> void:
 	if Game.mode == Game.Mode.FLIGHT:
-		Game.open_card(p, true)
+		UIUtil.director().open_card_in_flight(p)       # brakes like E (openCard L14438)
 
 
 func _process(_dt: float) -> void:

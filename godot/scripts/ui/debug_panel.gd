@@ -37,6 +37,8 @@ func _ready() -> void:
 	%CloseDbg.pressed.connect(func(): _toggle(false))
 	%Export.pressed.connect(func(): out.text = JSON.stringify(Cfg.data, "  "))
 	%CopyOut.pressed.connect(func(): DisplayServer.clipboard_set(out.text))
+	get_viewport().size_changed.connect(_fit)
+	_fit()
 	for g in DEFS:
 		var gt := Label.new()
 		gt.text = g[0]
@@ -83,9 +85,16 @@ func _show(row: Dictionary) -> void:
 
 func _reset() -> void:
 	Cfg.reset()
-	for r in rows:
-		r.slider.set_value_no_signal(Cfg.f(r.d[0], r.d[2]))
+	for r in rows:                         # per key, so every system that listens re-applies its default
+		var v := Cfg.f(r.d[0], r.d[2])
+		r.slider.set_value_no_signal(v)
+		Cfg.s(r.d[0], Cfg.g(r.d[0], v))
 		_show(r)
+
+
+## max-height: calc(100vh − 110px) (CSS L151)
+func _fit() -> void:
+	panel.size.y = minf(760.0, panel.get_viewport_rect().size.y - 110.0)
 
 
 func _toggle(on: bool) -> void:

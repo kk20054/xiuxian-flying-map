@@ -50,13 +50,15 @@ var from_fov := 40.0
 # input
 var drag := {}                      # flight: {grab, last, v}; map: {last}
 var touch := {"mx": 0.0, "mz": 0.0, "boost": false}
-var pinch := {}
+var touches := {}                  # touch index → screen position (for the pinch)
+var pinch_d := 0.0
 var keys_down := {}
 
 const MAPQ := Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))   # looking straight down, north up (L14094)
 
 
 func _ready() -> void:
+	add_to_group("director")              # before the UI scenes' _ready (they are later siblings) look it up
 	cam = get_node(camera_path)
 	if light_path:
 		light = get_node_or_null(light_path)
@@ -149,13 +151,13 @@ func _update_intro(dt: float) -> void:
 	rig_target = Vector3(pos.x, 0, pos.z - 0.25 * A * (1.0 - k))
 	_apply(flight_pose(rig_target, a_eff))
 	var li := smoothstep(li_r[0], li_r[1], t)
-	var to := _light_pos(0.0)
+	var to := _light_pos(Time.get_ticks_msec() / 1000.0)
 	var from := pos + Vector3(-1.3 * A, Cfg.f("flight.lightHeight", 0.24) * A * 1.8, 0.9 * A)
 	var e := _ease_out(li)
 	light_p = from.lerp(to, e); light_p.y += sin(e * PI) * 0.12 * A
 	var v := (to - from) * 1.2 * (1.0 - e) if li < 1.0 else Vector3.ZERO
 	if light:
-		light.update_light(dt, light_p, Vector3(v.x, 0, v.z), cam, A, false, li)
+		light.update_light(dt, light_p, Vector3(v.x, 0, v.z), cam, A, false, smoothstep(0.0, 0.15, li))   # fully lit after 15 % of the arc (L14166)
 	if t >= dur:
 		finish_intro()
 
@@ -314,8 +316,7 @@ func _update_transition(dt: float) -> void:
 	cam.global_transform = Transform3D(Basis(q), Vector3(xz.x, y, xz.y))
 	cam.fov = lerpf(from_fov, Cfg.f("map.fov", 20) if to_map else Cfg.f("camera.fov", 40), e)
 	Game.map_k = smoothstep(0.32, 0.92, trans) if to_map else 1.0 - smoothstep(0.04, 0.66, trans)
-	if light:
-		light.update_light(dt, light_p, Vector3.ZERO, cam, A, false, 1.0 - Game.map_k)
+	_follow_light(dt, 1.0 - Game.map_k)
 	if trans >= 1.0:
 		Game.mode = Game.Mode.MAP if to_map else Game.Mode.FLIGHT
 
@@ -331,8 +332,15 @@ func _update_map(dt: float) -> void:
 	map_cz = clampf(map_cz, R.position.y - 2200.0, R.end.y + 2200.0)
 	_apply(map_pose())
 	cam.fov = Cfg.f("map.fov", 20)
+	_follow_light(dt, 0.0)
+
+
+## Off flight the light still sits over the player (lightPos() each transition/map frame), only faded.
+func _follow_light(dt: float, visible_k: float) -> void:
+	light_p = _light_pos(Time.get_ticks_msec() / 1000.0)
+	RenderingServer.global_shader_parameter_set("light_pos", Vector4(light_p.x, light_p.y, light_p.z, visible_k))
 	if light:
-		light.update_light(dt, light_p, Vector3.ZERO, cam, A, false, 0.0)
+		light.update_light(dt, light_p, Vector3.ZERO, cam, A, false, visible_k)
 
 
 ## 御空前往 (L14442): land 320 丈 south of the place so it is in view to the north, at cruising height.
@@ -345,10 +353,13 @@ func fly_to(p: Dictionary) -> void:
 	if light and light.has_method("reset"):
 		light.reset()
 	flew_to.emit(p)
-	if Game.mode == Game.Mode.FLIGHT:
-		rig_target = pos; a_eff = A
-	else:
-		start_transition(Game.Mode.FLIGHT)
+	start_transition(Game.Mode.FLIGHT)
+
+
+## A card opened in flight (E near a hotspot, or a click on its tag): brake to a quarter speed (openCard L14433–14439).
+func open_card_in_flight(p: Dictionary) -> void:
+	Game.open_card(p, true)
+	vel *= 0.25
 
 
 ## Select a place on the map (L14426): centre on it, zooming in but never out.
@@ -377,8 +388,8 @@ func zoom_by(factor: float) -> void:
 		Game.Mode.MAP:
 			var lo := Cfg.f("map.minView", 2400)
 			if factor < 1.0 and map_view <= lo * 1.01:
-				pos = Vector3(map_cx, 0, map_cz + 288.0); vel = Vector3.ZERO
-				A = clampf(3840.0, Cfg.f("zoom.low", 950), Cfg.f("zoom.mapAt", 11000) * 0.8); At = A
+				pos = Vector3(map_cx, 0, map_cz + lo * 0.12); vel = Vector3.ZERO
+				A = clampf(lo * 1.6, Cfg.f("zoom.low", 950), Cfg.f("zoom.mapAt", 11000) * 0.8); At = A
 				clear = World.ground_clear(pos.x, pos.z)
 				start_transition(Game.Mode.FLIGHT)
 			else:
@@ -391,21 +402,28 @@ func zoom_by(factor: float) -> void:
 func _unhandled_input(ev: InputEvent) -> void:
 	if Game.mode == Game.Mode.LOADING:
 		return
+	# during the intro every key / click / touch only speeds it up ×4 (keydown L14527); the 收图 button still toggles
 	if Game.mode == Game.Mode.INTRO and (ev is InputEventKey or ev is InputEventMouseButton or ev is InputEventScreenTouch) and ev.is_pressed():
-		if ev.is_action("toggle_map"):
-			toggle_map()
-		elif not ev.is_action("toggle_debug"):
+		if not ev.is_action("toggle_debug"):
 			skip_intro()
 		return
+	# a click on the 3D view takes focus away from the search box or a debug slider, as clicking the canvas blurs the
+	# focused input in the demo — otherwise WASD/M would stay captured by the control
+	if (ev is InputEventMouseButton or ev is InputEventScreenTouch) and ev.pressed:
+		get_viewport().gui_release_focus()
+	if ev is InputEventScreenTouch or ev is InputEventScreenDrag:
+		_touch_input(ev)
+		return
 	if ev is InputEventKey and ev.pressed and not ev.echo:
+		if _typing():
+			return                                                  # a focused slider/field keeps the keys (L14525)
 		if ev.is_action("toggle_map"):
 			toggle_map()
 		elif ev.is_action("land") and Game.mode == Game.Mode.FLIGHT and Game.near != null:
 			if Game.selected == Game.near:
 				Game.close_card()
 			else:
-				Game.open_card(Game.near, true)
-				vel *= 0.25                                     # brakes (L14438)
+				open_card_in_flight(Game.near)
 		elif ev.is_action("toggle_hint"):
 			Game.hint_t = 30.0 if Game.hint_t <= 0.0 else -1.0
 		elif ev.keycode == KEY_ESCAPE:
@@ -414,10 +432,12 @@ func _unhandled_input(ev: InputEvent) -> void:
 			elif Game.mode == Game.Mode.MAP:
 				toggle_map()
 	elif ev is InputEventMouseButton:
+		# one notch ≈ a browser deltaY of 100; high-resolution wheels and touchpads report fractions of a notch in factor
+		var notch: float = 100.0 * (ev.factor if ev.factor > 0.0 else 1.0)
 		if ev.button_index == MOUSE_BUTTON_WHEEL_UP and ev.pressed:
-			zoom_by(exp(-100.0 * Cfg.f("zoom.wheel", 0.0013)))
+			zoom_by(exp(-notch * Cfg.f("zoom.wheel", 0.0013)))
 		elif ev.button_index == MOUSE_BUTTON_WHEEL_DOWN and ev.pressed:
-			zoom_by(exp(100.0 * Cfg.f("zoom.wheel", 0.0013)))
+			zoom_by(exp(notch * Cfg.f("zoom.wheel", 0.0013)))
 		elif ev.button_index == MOUSE_BUTTON_LEFT:
 			if ev.pressed:
 				_drag_start(ev.position)
@@ -429,6 +449,29 @@ func _unhandled_input(ev: InputEvent) -> void:
 		zoom_by(exp(ev.delta.y * 30.0 * Cfg.f("zoom.wheel", 0.0013)))
 	elif ev is InputEventMagnifyGesture:
 		zoom_by(1.0 / maxf(ev.factor, 0.01))
+
+
+## Two-finger pinch (pointer tracking L14470–14485): the second finger cancels the grab and zooms by the change in spread.
+## One finger arrives as emulated mouse events (input_devices/pointing/emulate_mouse_from_touch) and drives the grab.
+func _touch_input(ev: InputEvent) -> void:
+	if ev is InputEventScreenTouch:
+		if ev.pressed:
+			touches[ev.index] = ev.position
+		else:
+			touches.erase(ev.index)
+		pinch_d = 0.0
+		if touches.size() == 2:
+			var ps := touches.values()
+			pinch_d = (ps[0] as Vector2).distance_to(ps[1])
+			drag = {}
+	elif ev is InputEventScreenDrag and touches.has(ev.index):
+		touches[ev.index] = ev.position
+		if touches.size() == 2:
+			var ps := touches.values()
+			var d := (ps[0] as Vector2).distance_to(ps[1])
+			if pinch_d > 0.0 and d > 0.0:
+				zoom_by(pinch_d / d)
+			pinch_d = d
 
 
 func _ground_at(sp: Vector2):
@@ -480,8 +523,10 @@ func _typing() -> bool:
 
 # ───────────────────────── helpers ─────────────────────────
 
+## 低空 / 中空 / 高空 halfway between the zoom levels (bandName L14105), so the readout follows the sliders.
 func band_name(a: float) -> String:
-	return "低空" if a < 1300.0 else ("中空" if a < 4825.0 else "高空")
+	var lo := Cfg.f("zoom.low", 950); var mid := Cfg.f("zoom.mid", 1650); var hi := Cfg.f("zoom.high", 8000)
+	return "低空" if a < (lo + mid) * 0.5 else ("中空" if a < (mid + hi) * 0.5 else "高空")
 
 
 static func _ease_in_out(x: float) -> float:

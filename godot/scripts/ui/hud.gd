@@ -22,6 +22,10 @@ func _ready() -> void:
 		c.modulate.a = 0.0
 	if DisplayServer.is_touchscreen_available():
 		hint.visible = false
+	# 御空前往 clears the last banner so the destination's name shows on arrival (flyTo L14445)
+	var d := UIUtil.director()
+	if d:
+		d.flew_to.connect(func(_p): last_banner = "")
 
 
 func _process(dt: float) -> void:
