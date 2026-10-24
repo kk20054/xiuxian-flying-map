@@ -63,9 +63,9 @@ const json = (name, obj) => write(name, Buffer.from(JSON.stringify(obj, null, 1)
 function png(name, w, h, data, { bits = 8, channels = 1 } = {}) {
   const p = new PNG({ width: w, height: h, bitDepth: bits, colorType: channels === 4 ? 6 : 0, inputColorType: channels === 4 ? 6 : 0, inputHasAlpha: channels === 4 });
   p.data = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-  if (bits === 16) {   // pngjs wants big-endian 16-bit samples
-    const b = Buffer.alloc(w * h * 2); for (let i = 0; i < w * h; i++) b.writeUInt16BE(data[i], i * 2); p.data = b;
-  }
+  // 16-bit: pngjs reads the samples as a platform-endian Uint16Array over the whole buffer (from offset 0) and writes
+  // them big-endian itself, so hand it an unshared copy — swapping here would store every sample byte-swapped
+  if (bits === 16) p.data = Buffer.from(new Uint16Array(data).buffer);
   write(name, PNG.sync.write(p, { bitDepth: bits, colorType: channels === 4 ? 6 : 0, inputColorType: channels === 4 ? 6 : 0, inputHasAlpha: channels === 4 }));
 }
 
