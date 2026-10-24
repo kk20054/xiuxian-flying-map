@@ -130,6 +130,10 @@ Cities (封日城, 韵州城): the same kit for gate towers, walls (`SM_BigWall_
 
 ## 3. Terrain
 
+> The geological rebuild of the land — rock types, faults, karst, Danxia, pillars, glacial troughs, the world plan
+> against the novel, and the tools that make it — has its own guide: [docs/terrain](../terrain/README.md). The items
+> below are the rendering side (textures, resolution) and still apply on top of it.
+
 1. **Resolution.** The world heightfield is 40 丈 (≈ 133 m) per cell, the sect patches 13.3 丈. For flying low over real
    forests, re-derive a 5–10 丈 field: either run the drainage model (doc 03 has a numpy port) at higher resolution
    seeded from `height.png`, or take `height.png` into Gaea / World Machine / Blender's geometry nodes for erosion and add

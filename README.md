@@ -17,7 +17,8 @@ streak of light and fold into a painted 舆图 — the original **Three.js demo*
 | [`docs/`](docs/README.md) | how the map is made: overview + six chapters covering all ~15 000 lines with line references, plus the Godot guides |
 | [`godot/`](godot) | Godot 4.4+ project (verified on 4.7.1): the exported world, flight & camera, fly ⇄ 舆图, painted map, every UI screen |
 | [`tools/export-world/`](tools/export-world) | runs the demo headless and exports its generated world (heights, water, zoning, trees, sect/city meshes) |
-| [`tools/blender/`](tools/blender) | import a region of the world into Blender; give your own meshes the ink-line vertex layout |
+| [`tools/blender/`](tools/blender) | import a region of the world into Blender; give your own meshes the ink-line vertex layout; hand-edit terrain and bake it back |
+| [`tools/terrain/`](tools/terrain) | the geological re-sculpt: a paintable rock plan → stream power + landform operators → a new terrain for Godot ([docs](docs/terrain/README.md)) |
 
 ## Run the demo
 
@@ -41,6 +42,8 @@ system, the boot pipeline and the frame. Then, by topic: [world data](docs/02-wo
 [UI, flight, the 舆图](docs/07-ui-flight-camera-map.md). For the Godot/Blender work: [port guide](docs/godot/README.md) ·
 [pipeline & Blender](docs/godot/01-pipeline-and-blender.md) · [UI recreation](docs/godot/02-ui-recreation.md) ·
 [upgrade roadmap](docs/godot/03-upgrade-roadmap.md) (real forests from the asset libraries, rebuilt sects, finer terrain).
+Terrain and level editing with real geological logic, aligned with the novel: [docs/terrain](docs/terrain/README.md)
+(tools in `tools/terrain`; fly over the re-sculpted land with `godot --path godot -- --terrain=res://data/terrain`).
 
 ## Licences and assets
 

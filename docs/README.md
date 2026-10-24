@@ -19,6 +19,13 @@ How the Xiuxian Flying Map demo (`demo/index.html`) is built, and how to rebuild
 - [UI recreation](godot/02-ui-recreation.md) — theme variations, element-by-element map, CSS → Godot.
 - [Upgrade roadmap](godot/03-upgrade-roadmap.md) — findings and a plan: real forests from the asset libraries, sects from the Temple kit, terrain, budgets, milestones.
 
+## Terrain & level editing
+
+- [Terrain & level editing](terrain/README.md) — how the land is made and edited today; landforms with real geological
+  logic (stream power with rock, folds, faults, 峰丛 / 峰林 karst, Wulingyuan pillars, Danxia, granite, loess, volcanoes,
+  glacial troughs, fans and terraces); the world plan aligned with 《凡人修仙传》; the tools (`tools/terrain`: plan → sculpt →
+  feng-shui reader → Blender round trip → Godot `--terrain`); how other projects do it; three sourced research dossiers.
+
 ## Images
 
 - `screenshots/` — the demo (`01_intro` … `11_mobile_map`), `screenshots/godot/` — the port in the same states,
