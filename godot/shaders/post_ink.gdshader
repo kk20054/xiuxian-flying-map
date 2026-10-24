@@ -16,6 +16,9 @@ void vertex() {
 
 float lin(vec2 uv, mat4 ip) {
 	float d = texture(depth_tex, uv).r;
+#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
+	d = d * 2.0 - 1.0;                 // OpenGL NDC depth is −1..1; Forward+/Mobile (Vulkan, reverse-Z) use the raw 0..1
+#endif
 	vec4 v = ip * vec4(uv * 2.0 - 1.0, d, 1.0);
 	return -v.z / v.w;
 }
