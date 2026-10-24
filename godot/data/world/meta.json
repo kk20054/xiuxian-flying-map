@@ -111,7 +111,8 @@
    "file": "water_sd.png",
    "w": 2304,
    "h": 1400,
-   "encoding": "uint16, d = (v - 32768) / 8 丈, + inside water"
+   "encoding": "uint16, d = (v - 32768) / 8 丈, + inside water",
+   "centres": "pixel (i, j) = mask texel (2i, 2j): x = rect.x0 + (2i + 0.5) / mask.w * (rect.x1 - rect.x0), z likewise with mask.h"
   },
   "seaDepth": {
    "file": "sea_depth.png",
@@ -227,17 +228,96 @@
   }
  },
  "eco": {
-  "stride": 7,
+  "stride": 10,
   "fields": [
    "model",
    "x",
    "y",
    "z",
    "scale",
-   "tint",
-   "flag"
+   "tintR",
+   "tintG",
+   "tintB",
+   "tintGrey",
+   "ground"
   ],
-  "count": 63319.71428571428
+  "tint": "r, g, b multiply, grey = how far toward grey (L850)",
+  "count": 443238,
+  "names": [
+   "birch2S",
+   "birch2A",
+   "birch2W",
+   "birch4S",
+   "birch4A",
+   "birch4W",
+   "birch6S",
+   "birch6A",
+   "birch6W",
+   "oak3S",
+   "oak3A",
+   "oak3W",
+   "oak5S",
+   "oak5A",
+   "oak5W",
+   "oak6S",
+   "oak6A",
+   "oak6W",
+   "spirit1",
+   "spirit2",
+   "spirit3",
+   "spirit4",
+   "mapleR",
+   "mapleO",
+   "mapleG",
+   "bush1S",
+   "bush1A",
+   "bush1W",
+   "bush4S",
+   "bush4A",
+   "bush4W",
+   "sbush1",
+   "sbush2",
+   "sbush3",
+   "sbush4",
+   "flower1",
+   "flower2",
+   "flower3",
+   "flower4",
+   "flower5",
+   "flower6",
+   "flower7",
+   "flower8",
+   "flower9",
+   "flower10",
+   "grass1S",
+   "grass1D",
+   "grass1A",
+   "grass1W",
+   "grass2S",
+   "grass2D",
+   "grass2A",
+   "grass2W",
+   "grass3S",
+   "grass3D",
+   "grass3A",
+   "grass3W",
+   "sgrass1",
+   "sgrass2",
+   "sgrass3",
+   "sgrass4",
+   "cover2S",
+   "cover2A",
+   "cover2W",
+   "cover4S",
+   "cover4A",
+   "cover4W",
+   "fern1S",
+   "fern1A",
+   "fern1W",
+   "fern2S",
+   "fern2A",
+   "fern2W"
+  ]
  },
  "config": {
   "assets": {
@@ -1001,12 +1081,15 @@
     "file": "meshes/sect_baiqiao_surroundings.glb",
     "meshes": 1,
     "triangles": 1754
-   },
-   {
-    "file": "meshes/sect_shuiying_surroundings.glb",
-    "meshes": 2,
-    "triangles": 127480
    }
   ]
- }
+ },
+ "repaired": [
+  "by hand after the export, without a re-export (see tools/export-world/README.md, known issues):",
+  "meshes.files: sect_shuiying_surroundings.glb dropped (it held only the two mirror copies of sect_shuiying and its ground)",
+  "eco: stride 10 / fields / count / names as an EcoList holds them (the export read it as stride 7)",
+  "water.sd.centres: this water_sd.png point-samples mask texel (2i, 2j)",
+  "mountain_color.png: the tile-edge rows and columns the skirts had darkened by 0.8 restored (to within 1 level)",
+  "layout.json: sites[].look from the demo SITE_DEFS"
+ ]
 }
