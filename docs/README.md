@@ -18,6 +18,7 @@ How the Xiuxian Flying Map demo (`demo/index.html`) is built, and how to rebuild
 - [Pipeline & Blender](godot/01-pipeline-and-blender.md) — the exporter, every exported file, the facet vertex layout, Blender import/ink tools.
 - [UI recreation](godot/02-ui-recreation.md) — theme variations, element-by-element map, CSS → Godot.
 - [Upgrade roadmap](godot/03-upgrade-roadmap.md) — findings and a plan: real forests from the asset libraries, sects from the Temple kit, terrain, budgets, milestones.
+- [Sects & the Spirit Eye Tree](godot/04-sects-and-spirit-tree-plan.md) — a flight-optimised build plan: what the camera resolves at each altitude, design rules, LOD/streaming/clearance budgets, a plan per sect and for the 灵眼之树.
 
 ## Terrain & level editing
 

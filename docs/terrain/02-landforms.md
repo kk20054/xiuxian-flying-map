@@ -160,7 +160,8 @@ that keeps rising, so erosion cannot cut the ridge through. Use it to keep a sec
   dolines where three cones meet. **Fenglin**: the plain at the water table + **karst_tower** instances (spacing 300 丈,
   42 % kept, h 20–70 丈, r 22–55 丈) on a 22 % talus plinth.
 - **Not yet**: tiankeng and stone forests as operators (the demo's 灵眼 basin and 笋石林 landmark are preserved); the
-  canon's 灵眼 cavern ([03](03-world-plan.md) §2) wants a tiankeng + a hero cave mesh.
+  灵眼之树's open cliff-ringed bowl (our lore, [03](03-world-plan.md) §5) wants its own fine patch + a cliff mesh, with the
+  canon's cavern as an optional cave under the cliff ([godot/04 §7](../godot/04-sects-and-spirit-tree-plan.md#7-灵眼之树-the-spirit-eye-tree)).
 - **皴**: 米点皴 in mist, 荷叶皴 on the cones (radial gullies), 披麻皴 on the soil-covered flanks.
 
 ### 3.5 Volcanic — 火山 (百巧院's 西脉, 七灵岛)

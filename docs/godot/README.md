@@ -3,7 +3,8 @@
 `godot/` is a working Godot 4 project that rebuilds the demo's flying map: the same world (exported from the demo, not
 re-invented), the same flight and camera maths, the fly ⇄ 舆图 transition, the painted map, and **the full UI**. It is
 meant as the base you extend with Blender assets — see [01 pipeline & Blender](01-pipeline-and-blender.md),
-[02 UI recreation](02-ui-recreation.md) and [03 upgrade roadmap](03-upgrade-roadmap.md).
+[02 UI recreation](02-ui-recreation.md), [03 upgrade roadmap](03-upgrade-roadmap.md) and
+[04 sects & the Spirit Eye Tree](04-sects-and-spirit-tree-plan.md).
 
 | | |
 |---|---|
@@ -19,7 +20,8 @@ meant as the base you extend with Blender assets — see [01 pipeline & Blender]
 3. Command-line flags (after `--`): `--skip-intro`, `--no-autoquality`, `--shots=<dir>` (scripted walkthrough that saves
    PNGs and quits — the same states as `docs/screenshots`), `--dump-sun` (writes the sun bake to `user://t_sun.png`),
    `--terrain=res://data/terrain` (fly over a geologically re-sculpted terrain made by `tools/terrain/sculpt.py`, with its
-   rock instances — see [docs/terrain](../terrain/README.md)), `--tour=<dir>` (one screenshot per landform region).
+   rock instances — see [docs/terrain](../terrain/README.md)), `--tour=<dir>` (one screenshot per landform region; with
+   `--tour-set=sects`, each sect and the 灵眼之树 at 低空 / 中空 / 高空; `--tour-only=<id>,<id>` for just those stops).
 
 ```bash
 godot --path godot -- --skip-intro

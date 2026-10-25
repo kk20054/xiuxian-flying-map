@@ -97,7 +97,7 @@ sit there. Trees are stored without heights (`trees.bin`), so they re-seat on th
 
 ![云梦山 before / after](img/cmp_yunmeng.png)
 
-*云梦山: the granite core sharpened, the limestone belt (blue) into fengcong cones with the 灵眼 天坑 kept, the
+*云梦山: the granite core sharpened, the limestone belt (blue) into fengcong cones with the 灵眼 bowl kept, the
 graben swamp (green), quartz sandstone joint gorges (right).*
 
 ![落云宗 / 南山 / islands](img/montage.png)
@@ -163,7 +163,11 @@ global `t_litho` (the terrain shader tints bare rock by it: granite pale, red be
 `rocks.gd` builds the rock instances from `rocks.bin` with the facet ink material (`rock_kit.gd`: procedural faceted
 prisms per kind — replace them with Blender models in the same vertex layout). With a sculpted terrain the plain is
 also shaded by its slope (the demo's plains were flat, so the port shaded everything below 30 丈 as level ground — fans,
-terraces and low mesas would not show). Without `--terrain` the port runs the exported land exactly as before.
+terraces and low mesas would not show) while keeping its painted fields and woods up to ~30 丈 of relief (the demo's
+mountain colour ramp starts above that), and the flight clears the rock instances (`World.ground_clear` reads them from a
+400-丈 grid, so the light rises over a pillar instead of passing through it). Without `--terrain` the port runs the
+exported land exactly as before. `--tour-set=sects` shoots each sect and the 灵眼之树 at 低空 / 中空 / 高空 — the check
+for the [sect build plan](../godot/04-sects-and-spirit-tree-plan.md).
 
 In the port (Compatibility renderer, `--tour`; left the exported land, right `--terrain=res://data/terrain`):
 
@@ -174,7 +178,8 @@ In the port (Compatibility renderer, `--tour`; left the exported land, right `--
 *落云宗 from the south: the pillars rising behind the sect's cloud basin.*
 
 ![鸾鸣宗](img/godot_luanming.png)
-*鸾鸣宗's basin: red-bed hills stepped into mesas (the plain is shaded by its slope now, the red beds stain their soil).*
+*鸾鸣宗's basin from 6 000 丈: the sect's hill in its cloud ring on the basin floor, red-earth fields among green ones
+(the red beds show in ploughed patches, not under the woods), the south rim's jointed red mesas across the foreground.*
 
 ![韵州 / 南山](img/godot_yunzhoucheng.png)
 *南山 above 韵州: cockpit karst cones in clusters, the plain at the water table.*

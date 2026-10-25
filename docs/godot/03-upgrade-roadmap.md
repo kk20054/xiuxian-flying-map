@@ -101,6 +101,10 @@ Fade by distance into the ground shader's flower dabs (the demo's `flowerField`,
 
 ## 2. Rebuilding the sects
 
+> The flight-optimised plan per sect and for the 灵眼之树 — camera resolution, design rules, LOD / streaming /
+> clearance budgets — is in [04 · sects and the Spirit Eye Tree](04-sects-and-spirit-tree-plan.md). This section is the
+> Temple-kit workflow it builds on.
+
 Per sect the docs already have a **build sheet** ([05](../05-sects-architecture-cities.md) §2: structures, sizes in 丈,
 relative placement, looks, animated parts, lights). The workflow:
 

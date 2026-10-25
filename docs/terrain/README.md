@@ -18,13 +18,15 @@ over the result.
    loess, alluvial fans and terraces, swamps, glacial, coasts; the cloud sea; 皴法 and 郭熙's composition rules;
    feng shui as measurable criteria; a reality check of every size.
 3. [The world plan](03-world-plan.md) — a geological history of 溪国 that explains every region, the rock and canon of
-   each place (《凡人修仙传》: novel / handbook / wiki / donghua), spirit veins and spirit eyes on geology, the canon
-   conflicts to decide, and next iterations per sect.
+   each place (《凡人修仙传》: novel / handbook / wiki / donghua), spirit veins and spirit eyes on geology, the lore
+   decisions (our lore kept where it differs from the novel, each for a flight reason), and next iterations per sect.
 4. [The tools](04-tools.md) — `make_plan.py`, `sculpt.py`, `fengshui.py`, Blender `terrain_edit.py` / `terrain_bake.py`,
    Godot `--terrain=`; file formats, the palette, a worked iteration.
 5. [How other projects do it](05-other-projects.md) — Terrain3D, godot_voxel, fastscapelib, Landlab, Schott 2023/2024,
    Paris's rock and karst work, runevision's erosion filter, mapgen4, BlenderGIS + Copernicus DEMs, game pipelines; what
    we adopted and what to do next.
+
+The sects and the 灵眼之树 have their own flight-optimised build plan: [godot/04](../godot/04-sects-and-spirit-tree-plan.md).
 
 Research dossiers (sourced, with source tags): [tools & projects](research/r1_tools_projects.md) ·
 [凡人修仙传 geography](research/r2_fanren_geography.md) · [landform geology, 皴法, 风水](research/r3_landform_geology.md).

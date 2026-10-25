@@ -41,8 +41,8 @@ A plausible history is what makes the parts agree with each other. Ours, oldest 
 | region | rock (plan colour) | canon (source kind) | why this rock | what the land does now |
 |---|---|---|---|---|
 | **云梦山 主脉** — 古剑门, 云梦山主峰, 飞练崖, 迎仙松 | granite core in a metamorphic fold belt | 古剑门 on the 主脉, sword cultivation (handbook); no landscape found | the hardest rock stands highest and breaks into sword-like spires and sheer walls | sharpened crests, joint slots, domes, granite spires; the 祖山 of every 云梦 sect's 龙脉 |
-| **云梦山 西脉** — 百巧院, 古修洞府, 天柱山 | volcanic | 百巧院 on the 西脉, artifact refining; a plaza "四面环山", a 百丈 tower against a cliff riddled with holes, a 地肺火池 inside the mountain (novel ch. 863 via search extract) | an old caldera: carvable welded-tuff walls for cave dwellings, earth-fire for the forges | an eroded caldera rim round 百巧院 (breached by its streams), cinder cones; 天柱山 kept as the demo's monolith (canon: "孤零零一座陡峭山峰", handbook → an inselberg / volcanic neck) |
-| **笋石林 · 灵眼之树** | limestone | 灵眼之树 inside a vast stalactite cavern, "此石窟長寬數百丈，高二三十丈", amid a maze of stone columns (novel ch. 628); 笋石林 is a demo route stop | the cavern needs limestone; its 石林 of columns is the canon stone forest — 笋石林 on the surface echoes it | fengcong cones riding on the massif; the round 灵眼 basin is kept and read as the **天坑** that opens into the cavern |
+| **云梦山 西脉** — 百巧院, 古修洞府, 天柱山 | volcanic | 百巧院 on the 西脉, artifact refining (handbook); the novel's plaza is "四面环山" with a 百丈 tower against a cliff riddled with holes and a 地肺火池 inside (ch. 863 via search extract) — **we keep our lore's horseshoe open to the south** (§5) | an old caldera, breached to the south: carvable welded-tuff walls for cave dwellings, earth-fire for the forges | an eroded caldera rim round 百巧院 that stays out of the southern sector (`"open": [180, 55]`) and is breached by its streams, cinder cones; 天柱山 kept as the demo's monolith (canon: "孤零零一座陡峭山峰", handbook → an inselberg / volcanic neck) |
+| **笋石林 · 灵眼之树** | limestone | the novel puts 灵眼之树 in a vast stalactite cavern ("此石窟長寬數百丈，高二三十丈", ch. 628) — **we keep our lore's open, cliff-ringed valley** (§5); 笋石林 is a demo route stop | a collapse basin in limestone explains the cliff ring and the tiered falls; the canon's cavern survives as a cave under the cliff | fengcong cones riding on the massif; the round 灵眼 basin kept (a demo landmark) as the open bowl |
 | **云梦山 东脉** — 落云宗, 子母峰, 听云亭 | quartz sandstone | 落云宗 on the 东脉, six 奇峰 天泉/火云/白凤/幻石/锁烟/隐剑 (handbook), a mist-filled protective formation (novel ch. 1173) | thick flat beds + two joint sets = the 张家界 peak forest; 奇峰 rising out of mist | joint gorges, plateau remnants and ~1 850 pillar instances along the valleys; the sect's own patch (with 火云峰's red Danxia bands) is kept |
 | **绿踪沼泽** | lacustrine, in a graben | on the 落云宗–古剑门 border, remote, miasma all year (handbook; ch. 604 title) | a fault-bounded basin between two ranges drains badly → swamp | flattened basin floor, reed islets; its two faults end with the basin, so the ridge south of it (落云宗's 过峡) survives |
 | **南山** (south of 韵州城) | limestone | — (韵州 / 韵州城 are unverified / the demo's) | a karst range beside a city is the Guilin–Yangshuo picture | cockpit karst cones in clusters, karst valleys, towers on the 韵州 plain |
@@ -65,7 +65,7 @@ A plausible history is what makes the parts agree with each other. Ours, oldest 
 | fault | 东山山前断层 | the eastern range front |
 | volcano | 百巧院 古破火山口 (caldera, r 3 800) · 灵鳌 · 灵凤 · 七灵主岛 (strato) · 灵龟 (caldera) | |
 | uplift ridge | **云梦东脉 龙脉** | 落云宗's dragon vein: from the 祖山 above 古剑门 down the 主脉, round the south of 绿踪, up to the 东脉 |
-| uplift | 鸾鸣丹霞丘 + two smaller | the red hills of the 鸾鸣 basin (to ~130 丈: Danxia relief 30–90 丈, ×2 for the walls) |
+| uplift | 鸾鸣丹霞丘 西 / 东 / 南 / 西南 | the red hills on the rim of the 鸾鸣 basin (to ~130 丈: Danxia relief 30–90 丈, ×2 for the walls); domes on the rim, not one on the sect, so the sect's preserved hill stands on a flat red floor instead of a square cut into an uplift |
 | glacier | ELA 650 丈 | palaeo-glaciation of 云梦's summits (cirques, short troughs) |
 
 ## 4. Spirit veins, spirit eyes, mist: the canon's vocabulary on geology
@@ -85,29 +85,39 @@ A plausible history is what makes the parts agree with each other. Ours, oldest 
   The perched mountain sects score 0 on 明堂 (no level ground in front — they look down on a cloud sea instead), which is
   a 仙侠 choice, not an error.
 
-## 5. Canon conflicts (flagged, not resolved here)
+## 5. Lore decisions: our lore, chosen for open-world flight
 
-From the dossier §5.2 — decisions for the lore owner; the terrain is built so either answer works:
+Where our lore and the novel disagree (dossier §5.2), **our lore stands** — each choice was made for a game seen from a
+flying, always-north-facing camera between 950 and 8 000 丈, and the terrain is built to it. The canon stays in the docs
+as background and, where it costs nothing, as a nod.
 
-| # | conflict | our current lore | canon | terrain implication |
-|---|---|---|---|---|
-| C1 | **灵眼之树** | an open cliff-ringed valley, a glowing crown | inside a giant stalactite cavern among stone columns; an arm-thick pale-green "stone pillar" under a gold light dome (novel ch. 628–629) | the plan already makes it limestone + a 天坑; the cavern is a hero mesh (godot_voxel or a modelled cave) |
-| C2 | **落云宗 layout** | pillar clusters round a cloud basin, halls on floating islands, no main peak | six separate peaks (白凤 small and far); a main peak with a town on its lower half and purple fog above (wiki); a mist-filled formation (novel) | a broad main massif with satellite pillars fits both; the pillars stay, a main peak could be raised with an uplift dome |
-| C3 | **province** | 韵州 / 韵州城 | 云梦山 is in 湳州, western 溪国 (wiki) | names only |
-| C4 | **子母峰** | one main peak with three small ones | shape unknown; the donghua gives 天泉峰 + two lesser peaks (renamed 青竹峰) | a mother-and-child pillar pair either way |
-| C5 | **百巧院** | a horseshoe open to the south, a 九十丈 tower in the valley | mountains on all four sides, a ~百丈 tower on a platform against the cliff (novel ch. 863) | the caldera rim now closes the basin; the tower and cliff caves are sect meshes |
-| C6–C11 | 古剑门's 太白峰 and glacier; the spies (正魔两道 jointly); 灵鳌 vs 灵鳖岛; 落云宗's two endings; 天柱山's 万余丈 (hyperbole); 封日城 (handbook only) | | | names and lore text |
+| # | topic | **kept (our lore)** | canon (for reference) | why it is better for flight | terrain / build consequence |
+|---|---|---|---|---|---|
+| C1 | **灵眼之树** | an open valley ringed by cliffs, the crown glowing pale cyan-white, streams falling in tiers | inside a giant stalactite cavern; an arm-thick pale-green "stone pillar" under a gold light dome (ch. 628–629) | a cave is invisible from the air; an open bowl with a glowing crown is a **beacon** you find by flying, and the tiered falls give the approach motion | limestone collapse basin, kept open to the sky; the cavern becomes a cave mouth under the cliff (optional interior) — [Spirit Eye Tree plan](../godot/04-sects-and-spirit-tree-plan.md#7-灵眼之树-the-spirit-eye-tree) |
+| C2 | **落云宗** | six sandstone pillar clusters round a cloud-filled basin, halls on floating islands, no main peak | six separate peaks; a main peak with a town on its lower half and purple fog above (wiki) | islands over a cloud sea are the one sect you **fly through** rather than over; the pillar ring frames it from every altitude | the pillar forest of the 东脉; islands are meshes over the basin's cloud level (472 丈) |
+| C3 | **province** | 韵州 / 韵州城 | 湳州 (wiki) | names only; 韵州城 is a landmark city on the approach plain | none |
+| C4 | **子母峰** | one main peak ringed by three low ones | shape unknown; the donghua's 天泉峰 + two lesser peaks | a ring of four peaks reads as a **formation site** (最宜布置法阵禁制) from above | a mother pillar and three children (the demo landmark), kept |
+| C5 | **百巧院** | a horseshoe open to the south, a 九十丈 five-storey stone tower in the valley | mountains on all four sides; a ~百丈 tower on a platform against the cliff | the player flies north into the open mouth and the camera looks **into** the bowl — tower, forge glow and cliff caves all face it | the caldera rim is breached to the south (`open: [180, 55]`) |
+| C6 | 古剑门's 太白峰 | the highest granite peak, snow, the 金剑 frozen in ice after the 百巧院 duel | sword art 太白剑诀 only | a snow-capped highest peak is the range's landmark from the north coast and from altitude | the granite core is the 祖山; palaeo-glacial cirques on its summit |
+| C7 | the spies | 勾结魔道 | 正魔两道 jointly (fan) | lore text only | none |
+| C8 | 灵鳌岛; the islands south of 大漩涡 | 灵鳌岛; south of the vortex | 灵鳖岛 (Baike); "near 溪国" | names; the vortex as a northern horizon landmark over the islands | none |
+| C9 | 落云宗's end | 终成天南第一大宗 | two versions of the ending | lore text only | none |
+| C10 | 天柱山 | "传说高达万余丈", a cloud belt round its waist | 万余丈 (hyperbole) | stays a legend; the 1 300-丈 monolith with a cloud belt is the west's direction marker | the demo's pillar mesh, cleared by the flight (`ground_clear`) |
+| C11 | 封日城 | in the handbook only | handbook | the north coast's harbour city on the headland | none |
 
 ## 6. Next iterations, per place (for Godot + Blender)
 
+The sects and the 灵眼之树 have a full flight-optimised build plan in
+[godot/04 · sects and the Spirit Eye Tree](../godot/04-sects-and-spirit-tree-plan.md); the notes below are the terrain side.
+
 - **古剑门** — a granite spire kit (Blender: jointed prisms with exfoliation sheets, 斧劈 facets); the halls on benches
   between spires; snow only above the palaeo-ELA cirques.
-- **落云宗** — keep the pillar forest; model 6 hero pillars for the named peaks (白凤 the smallest, far east); a main
-  massif with a town on its lower terraces if C2 goes canon; the formation mist as basin fog.
-- **百巧院** — the caldera wall as a hero cliff mesh with cave dwellings (Cappadocia-like) and a vent glow from the
-  地肺火池; the five-storey stone-tower hall on its platform against the cliff.
-- **灵眼之树** — a 天坑 shaft into a hero cavern (stalactite columns as instances of the stone-blade rock kind), the
-  pale-green "stone pillar" tree under its gold dome.
+- **落云宗** — keep the pillar forest; model 6 hero pillar clusters for the named peaks; the floating islands over the
+  basin's cloud sea; the formation mist as basin fog.
+- **百巧院** — the 蜂窝山 tuff wall (the caldera's back) as a hero cliff mesh with cave dwellings and forge glow; the
+  five-storey stone tower on the valley's stone terrace, the horseshoe open to the south.
+- **灵眼之树** — the open cliff-ringed valley with the glowing crown and tiered falls; the canon's cavern as an optional
+  cave under the cliff. Full plan: [godot/04](../godot/04-sects-and-spirit-tree-plan.md#7-灵眼之树-the-spirit-eye-tree).
 - **笋石林** — a stone-forest operator (blades 6–12 丈 [r3 S17]) around the demo's landmark.
 - **鸾鸣宗** — Danxia hero walls with alcoves (overhangs need meshes), a waterfall off a caprock edge.
 - **七灵岛** — black-sand beaches, young lava fields, steam; 大漩涡 as a maelstrom over the caldera.
