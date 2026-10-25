@@ -13,8 +13,8 @@
  "plan": "tools/terrain/plan",
  "steps": 24,
  "solver": {
-  "K0": 0.04003285914994791,
-  "dt": 13.221961762515019,
+  "K0": 0.03998457578421824,
+  "dt": 13.237927939545093,
   "steps": 24
  },
  "litho": {
@@ -81,7 +81,7 @@
  },
  "rocks": {
   "file": "rocks.bin",
-  "count": 2327,
+  "count": 2333,
   "layout": "float32 LE × 8: x, y (ground), z, radius, height, kind, yaw, var",
   "kinds": [
    "karst_tower",
@@ -94,12 +94,12 @@
   ],
   "per_kind": {
    "karst_tower": 442,
-   "sandstone_pillar": 1852,
+   "sandstone_pillar": 1855,
    "stone_blade": 0,
    "sea_stack": 15,
    "granite_spire": 8,
    "basalt_column": 0,
-   "danxia_butte": 10
+   "danxia_butte": 13
   }
  },
  "layers": {

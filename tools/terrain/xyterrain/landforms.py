@@ -152,8 +152,10 @@ def danxia(c, w):
     stepped = B + (np.floor(q) + riser) * T
     foot = smoothstep(0.0, 1.2, q)                                 # the lowest bed keeps its gentle apron
     hd = B + rel * (1 - foot) + (stepped - B) * foot
-    # two joint sets, broken into lengths so slots end inside the mesas
-    u, v = rotate(X, Z, P["strike"])
+    # two joint sets, wandering and broken into lengths so slots end inside the mesas
+    u0, v0 = rotate(X, Z, P["strike"])
+    u = u0 + 0.4 * P["joint"] * noise.fbm(u0 / 1300 + 2.3, v0 / 1300, 2, c.seed + 513)
+    v = v0 + 0.4 * P["joint"] * noise.fbm(u0 / 1300 - 6.1, v0 / 1300 + 1.4, 2, c.seed + 515)
     J, Wj = P["joint"], P["joint_w"]
     du = np.abs((u / J) - np.round(u / J)) * J
     dv = np.abs((v / (J * 1.3)) - np.round(v / (J * 1.3))) * J * 1.3
@@ -328,6 +330,10 @@ def volcanic(c, w, volcanoes=()):
             A = c.area.reshape(c.h.shape)[m] / (c.cell * c.cell)
             breach = smoothstep(math.log(40), math.log(600), np.log(np.maximum(A, 1)))
             rim = v["h"] * crest * np.exp(-((t - 0.8) / 0.13) ** 2) * (1 - 0.9 * breach) * smoothstep(30, 140, g)   # rims stand on high ground
+            if "open" in v:                                        # [azimuth°, half-width°]: a sector the rim stays out of
+                bearing = np.degrees(np.arctan2(X[m] - v["x"], -(Z[m] - v["z"])))          # clockwise from north
+                off = np.abs((bearing - v["open"][0] + 540) % 360 - 180)
+                rim = rim * smoothstep(v["open"][1] * 0.6, v["open"][1], off)
             floor = v.get("floor", 0.25) * v["h"] * smoothstep(0.75, 0.45, t)
             new = np.where(t < 0.68, np.minimum(g, floor + 0.2 * rim + 0.3 * g), np.maximum(g, g * 0.55 + rim))
         else:                                                      # stratovolcano: concave flanks, a summit crater

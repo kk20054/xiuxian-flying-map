@@ -29,13 +29,15 @@ REGIONS = [
      "stands highest and breaks into joint-bounded sword-like spires (剑峰) and sheer walls: 黄山 / 华山 country for a "
      "sword sect. 飞练崖 and 迎仙松 are its cliff and its crag pine."),
     ("云梦山 西脉 火山岩", "volcanic", {"ellipse": [-14500, 2500, 8500, 6000, 10]},
-     "百巧院's 西脉: 'mountains on four sides' in the novel → an old caldera with welded tuff walls; hydrothermal ores and "
-     "地火 are what an artifact-refining sect settles on. A cinder-cone field on the rest; 天柱山 at the west end stands "
-     "alone as an inselberg (kept as the demo's landmark)."),
+     "百巧院's 西脉: our lore's horseshoe of 蜂窝山 and two ridges open to the south (the novel encloses it on four sides; "
+     "kept open for flight — the player comes in from the south and the north-facing camera looks into the bowl) → an "
+     "old caldera breached to the south: carvable welded-tuff walls for the cave dwellings, hydrothermal ores and 地火 for "
+     "an artifact-refining sect. A cinder-cone field on the rest; 天柱山 at the west end stands alone (the demo's monolith)."),
     ("笋石林 · 灵眼 喀斯特", "limestone", {"ellipse": [-5800, 3800, 3300, 2300, 20]},
      "A limestone belt between the granite core and the volcanic west: 笋石林's stone shoots are a 石林 (Shilin-type) "
-     "pinnacle karst, and the novel puts 灵眼之树 inside a vast stalactite cavern ('石窟长宽数百丈') — the round basin at "
-     "灵眼之树 is read as the 天坑 (collapse doline) that opens into it."),
+     "pinnacle karst. 灵眼之树 stands in our lore's open cliff-ringed valley (kept over the novel's cavern: a beacon seen "
+     "from the air) — a collapse basin in the limestone explains the ring of cliffs and the falls; the canon's stalactite "
+     "cavern survives as a cave under the cliff."),
     ("云梦山 东脉 石英砂岩", "quartz_sandstone", {"ellipse": [13800, -500, 7000, 4800, 10]},
      "落云宗's 东脉 (天泉/火云/白凤/幻石/锁烟/隐剑): thick horizontal quartz-sandstone beds cut by two joint sets — the "
      "张家界 peak forest, pillars standing out of the cloud sea. 子母峰 (韩立's abode) is a mother-and-child pair of "
@@ -78,7 +80,8 @@ STRUCTURES = {
         {"name": "东山山前断层", "pts": [[85000, -30000], [85800, -16000], [86800, -3000]], "up": "E", "throw": 0.3, "reach": 8000},
     ],
     "volcanoes": [
-        {"name": "百巧院 古破火山口", "x": -10819, "z": 3174, "r": 3800, "h": 260, "kind": "caldera", "floor": 0.35},
+        {"name": "百巧院 古破火山口", "x": -10819, "z": 3174, "r": 3800, "h": 260, "kind": "caldera", "floor": 0.35, "open": [180, 55],
+         "note": "breached to the south: the horseshoe of our lore (蜂窝山 + two ridges, 朝南敞开) — the flight comes in from the south"},
         {"name": "灵鳌岛", "x": 33316, "z": -43580, "r": 1000, "h": 290},
         {"name": "灵凤岛", "x": 27329, "z": -54613, "r": 800, "h": 380},
         {"name": "灵龟岛", "x": 35280, "z": -53254, "r": 1000, "h": 170, "kind": "caldera", "floor": 0.2},
@@ -89,10 +92,13 @@ STRUCTURES = {
                                        [8000, 1340], [10000, 1620], [11477, -658]], "width": 900, "du": 0.3,
          "note": "落云宗's dragon vein: from the 祖山 above 古剑门 down the 主脉, round the south of 绿踪沼泽 (the saddle at "
                  "x 5000 is its 过峡) and up to the 东脉. Without it the solve's rivers cut the divide (fengshui.py: col −156 丈)"},
-        {"name": "鸾鸣丹霞丘", "x": 70700, "z": 6300, "r": 5500, "du": 0.5,
+        # the red hills stand on the basin's rim, the sect's own green hill on its floor (an uplift centred on the sect would
+        # meet its preserved ground head-on and draw a square round it)
+        {"name": "鸾鸣丹霞丘 西", "x": 64700, "z": 5000, "r": 3000, "du": 0.5,
          "note": "Danxia relief 100–300 m (r3 S3/S29) → 30–90 丈 real, ×2 for the walls of a phoenix sect"},
-        {"x": 64000, "z": 9000, "r": 2500, "du": 0.35},
-        {"x": 76500, "z": 3000, "r": 2600, "du": 0.35},
+        {"name": "鸾鸣丹霞丘 东", "x": 76700, "z": 5500, "r": 3200, "du": 0.5},
+        {"name": "鸾鸣丹霞丘 南", "x": 70700, "z": 12300, "r": 3000, "du": 0.45},
+        {"name": "鸾鸣丹霞丘 西南", "x": 64000, "z": 10000, "r": 2500, "du": 0.35},
     ],
     "glacier": {"ela": 650, "note": "a Pleistocene snow line below today's (the demo's snowLine 820): cirques and short troughs on 云梦's top"},
 }
