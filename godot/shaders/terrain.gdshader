@@ -87,7 +87,8 @@ void fragment() {
 	plain = mix(plain, c_field, gr.g * 0.25);
 	plain = mix(plain, c_yard, gr.b * 0.6);
 	vec4 mc = texture(t_mcolor, height_uv(xz));
-	float mk = smoothstep(1.0, 14.0, h) * step(0.5, mc.a);
+	// a sculpted plain has relief (fans, terraces, low mesas to ~30 丈): it keeps its fields and woods, the ramp starts above
+	float mk = (litho_on ? smoothstep(24.0, 48.0, h) : smoothstep(1.0, 14.0, h)) * step(0.5, mc.a);
 	// a wood on a gentle slope: the canopy's green under the trees (TERRAIN_FS L4717)
 	float wn = vnoise(xz / 36.0) - 0.5;
 	float wood_m = smoothstep(0.06, 0.5, gr.r + wn * 0.24) * smoothstep(0.55, 0.8, Ns.y) * (1.0 - smoothstep(380.0, 470.0, wp.y));
@@ -99,17 +100,21 @@ void fragment() {
 	base = season_ground(base, wp, Ns);
 	if (litho_on) {
 		// where the slope is too steep for soil the rock shows its own colour (Ns is smoothed over 80 丈, so a one-cell
-		// cliff reads ~40°); red beds and loess colour their own soil, so they show through on gentle ground too
+		// cliff reads ~40°); red beds and loess colour their own soil, so they show through on gentle ground too — in the
+		// fields, not under the woods (a red-bed basin is green farmland and forest between red cliffs, not a desert)
 		int id = int(texture(t_litho, height_uv(xz)).r * 255.0 + 0.5);
 		vec4 rc = rock_col(id);
-		float floor_k = id == 5 ? 0.5 : (id == 1 ? 0.45 : 0.0);
+		// red beds in patches (ploughed fields of 紫色土 among green ones: an even wash would read khaki), loess all over
+		float red_soil = 0.55 * smoothstep(0.45, 0.8, vnoise(xz / 260.0 + vec2(3.1, 7.7)));
+		float floor_k = (id == 5 ? red_soil : (id == 1 ? 0.45 : 0.0)) * (1.0 - 0.85 * max(wood_p * (1.0 - mk), wood_m * mk));
 		float bare = max(smoothstep(0.93, 0.7, Ns.y), floor_k) * smoothstep(2.0, 20.0, h);
 		base = mix(base, rc.rgb * (0.92 + 0.16 * mott), rc.a * bare);
 	}
 
 	vec3 col;
-	float plain_k = 1.0 - smoothstep(4.0, 30.0, h);
-	if (litho_on) plain_k *= smoothstep(0.86, 0.97, Ns.y);   // a sculpted plain has relief (fans, terraces, low mesas): shade its slopes
+	// a sculpted plain has relief (fans, terraces, low mesas to ~30 丈): lit as the plain where level, shaded on its slopes
+	float plain_k = 1.0 - (litho_on ? smoothstep(24.0, 48.0, h) : smoothstep(4.0, 30.0, h));
+	if (litho_on) plain_k *= smoothstep(0.86, 0.97, Ns.y);
 	vec3 lit = ao_mul(tone_col(base, t), s.b) + vec3(0.016, 0.02, 0.018) * N.y;
 	lit /= mix(1.0, max(toon.z * 0.96, 0.5), 1.0 - smoothstep(40.0, 420.0, wp.y));   // the low foot lit as the plain (L4760–4763)
 	// flat ground takes the lit tone it faces up into, the ranges' shadows fall across it (PLAINS_FS L5257–5258)

@@ -12,6 +12,8 @@ const DIR := "res://data/world/"
 ## exported ones (same grid), its rock map becomes t_litho, its rocks.bin feeds rocks.gd. Empty = the exported land.
 var terrain_dir := ""
 var t_litho: ImageTexture
+var rock_grid := {}             # Vector2i(cell of ROCK_CELL 丈) → PackedFloat32Array [x, z, r, top]… — the flight clears them
+const ROCK_CELL := 400.0
 
 var meta: Dictionary = {}
 var rect := Rect2()             # x0, z0, width, depth (丈)
@@ -157,6 +159,9 @@ func ground_clear(x: float, z: float, vx := 0.0, vz := 0.0) -> float:
 	if P is Dictionary and P.has("x"):
 		if Vector2(x - P.x, z - P.z).length() < float(P.get("r", 300.0)) + 260.0:
 			h = maxf(h, float(P.get("h", 1300.0)) + 190.0)
+	if not rock_grid.is_empty():          # a sculpted terrain's towers and pillars: never fly through them
+		h = maxf(h, _rock_top(x, z, 60.0))
+		h = maxf(h, _rock_top(x + vx * 0.6, z + vz * 0.6, 60.0))
 	return h * Cfg.f("terrain.relief", 1.0)
 
 
@@ -264,7 +269,35 @@ func _terrain_override(himg: Image) -> void:
 		t_litho = ImageTexture.create_from_image(lit)
 		RenderingServer.global_shader_parameter_set("t_litho", t_litho)
 		RenderingServer.global_shader_parameter_set("litho_on", true)
+	_load_rock_grid(terrain_dir + "rocks.bin")
 	print("World: terrain from ", terrain_dir)
+
+
+## The rock instances' footprints and tops, bucketed so ground_clear can lift the light over towers and pillars.
+func _load_rock_grid(path: String) -> void:
+	if not FileAccess.file_exists(path):
+		return
+	var d := FileAccess.get_file_as_bytes(path).to_float32_array()
+	for o in range(0, d.size() - 7, 8):
+		var key := Vector2i(int(floor(d[o] / ROCK_CELL)), int(floor(d[o + 2] / ROCK_CELL)))
+		if not rock_grid.has(key):
+			rock_grid[key] = PackedFloat32Array()
+		rock_grid[key].append_array(PackedFloat32Array([d[o], d[o + 2], d[o + 3], d[o + 1] + d[o + 4]]))
+
+
+func _rock_top(x: float, z: float, margin: float) -> float:
+	var top := 0.0
+	var ci := int(floor(x / ROCK_CELL)); var cj := int(floor(z / ROCK_CELL))
+	for dj in range(-1, 2):
+		for di in range(-1, 2):
+			var b = rock_grid.get(Vector2i(ci + di, cj + dj))
+			if b == null:
+				continue
+			for k in range(0, b.size(), 4):
+				var r: float = b[k + 2] + margin
+				if (x - b[k]) * (x - b[k]) + (z - b[k + 1]) * (z - b[k + 1]) < r * r:
+					top = maxf(top, b[k + 3])
+	return top
 
 
 func _png(file: String) -> Image:

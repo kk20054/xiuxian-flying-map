@@ -5,12 +5,15 @@ extends Node
 
 var dir := ""
 var tour := false
+var tour_set := "regions"
+var tour_only: PackedStringArray = []
 
 ## `-- --tour=<dir>`: a terrain tour instead — one shot over each landform region (compare `--terrain=…` runs with the
-## exported land). [place id, altitude 丈, camera offset south 丈]
+## exported land); `--tour-set=sects`: each sect and the 灵眼之树 at 低空 / 中空 / 高空; `--tour-only=<id>,<id>`: just those
+## stops. [place id, altitude 丈, offset south 丈]
 const TOUR := [["yunmeng", 2600.0, 2600.0], ["gujian", 1500.0, 1200.0], ["luoyun", 1650.0, 1500.0], ["zimu", 1300.0, 900.0],
 	["baiqiao", 2200.0, 2000.0], ["sunshi", 1500.0, 1200.0], ["lingyan", 1600.0, 1300.0], ["swamp", 1800.0, 1600.0],
-	["yunzhoucheng", 2600.0, 5200.0], ["minzhou", 2200.0, 2000.0], ["luanming", 2400.0, 2600.0], ["nihang", 2400.0, 2400.0],
+	["yunzhoucheng", 2600.0, 5200.0], ["minzhou", 2200.0, 2000.0], ["luanming", 6000.0, 3600.0], ["nihang", 2400.0, 2400.0],
 	["shuiying", 2400.0, 2600.0], ["qiling", 3200.0, 3000.0]]
 
 
@@ -20,6 +23,10 @@ func _ready() -> void:
 			dir = a.substr(8)
 		elif a.begins_with("--tour="):
 			dir = a.substr(7); tour = true
+		elif a.begins_with("--tour-set="):
+			tour_set = a.substr(11)
+		elif a.begins_with("--tour-only="):
+			tour_only = a.substr(12).split(",")
 	if dir == "":
 		queue_free()
 		return
@@ -29,10 +36,17 @@ func _ready() -> void:
 	var d := UIUtil.director()
 	if tour:
 		d.finish_intro()
-		for t in TOUR:
-			if World.by_id.has(t[0]):
+		var stops: Array = TOUR
+		if tour_set == "sects":
+			# each sect and the 灵眼之树 from the south at 低空, 中空 and 高空 (docs/godot/04: what each band must read)
+			stops = []
+			for id in ["gujian", "luoyun", "baiqiao", "luanming", "nihang", "shuiying", "lingyan"]:
+				for A in [950.0, 2600.0, 8000.0]:
+					stops.append([id, A, 0.25 * A, "%s_%d" % [id, int(A)]])
+		for t in stops:
+			if World.by_id.has(t[0]) and (tour_only.is_empty() or t[0] in tour_only):
 				await _fly(d, t[0], t[1], t[2], 2.0)
-				await _shot("tour_" + t[0])
+				await _shot("tour_" + (t[3] if t.size() > 3 else t[0]))
 		get_tree().quit()
 		return
 	await _wait(1.0)
